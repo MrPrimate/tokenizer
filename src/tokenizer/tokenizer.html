@@ -1,0 +1,62 @@
+<form>
+    <div id="vtta-tokenizer">
+        <!-- the uploaded file names will be set here -->
+        <input type="text" name="data.img" style="display: none" data-dtype="String" />
+        <input type="text" name="data.token.img" style="display: none" data-dtype="String" />
+
+        <div>
+            <div class="avatar">
+                <h1>Avatar</h1>
+                <div class="view"></div>
+                <div class="menu">
+                    <div class="section">
+                        <div class="title">Add Layer</div>
+                        <div class="content">
+                            <button class="menu-button" data-type="download" data-target="avatar"><i
+                                    class="fas fa-globe"></i></button>
+                            <button class="menu-button" data-type="upload" data-target="avatar"><i
+                                    class="fas fa-upload"></i></button>
+                            
+                            <input type="text" class="filePickerTarget" name="foundryAvatar" data-target="avatar"
+                                data-type="server"  data-dtype="String" />
+                            <button title="Use an image from Foundry Server" class="menu-button file-picker"
+                                data-type="imagevideo" data-target="foundryAvatar"><i
+                                    class="fas fa-server"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="token">
+                <h1>Token</h1>
+                <div class="view"></div>
+                <div class="menu">
+                    <div class="section">
+                        <div class="title">Add Layer</div>
+                        <div class="content">
+                            <button title="Use Avatar image" class="menu-button" data-type="avatar"
+                                data-target="token"><i class="fas fa-user"></i></button>
+                            <button title="Download from URL" class="menu-button" data-type="download"
+                                data-target="token"><i class="fas fa-globe"></i></button>
+                            <button title="Upload from your computer" class="menu-button" data-type="upload"
+                                data-target="token"><i class="fas fa-upload"></i></button>
+                            <input type="text" class="filePickerTarget" name="foundryToken" data-target="token"
+                                data-type="server" />
+                            <button title="Use an image from Foundry Server" class="menu-button file-picker"
+                                data-type="imagevideo" data-target="foundryToken"><i class="fas fa-server"></i></button>
+                            </div>
+                    </div>
+                    <div class="section">
+                        <div class="title">Actions</div>
+                        <div class="content">
+                            <button title="Save" class="menu-button" data-type="save" data-target="token"><i
+                                    class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button type="submit" id="ok" {{#unless isTrusted }}disabled{{/unless}}>OK</button>
+        </div>
+    </div>
+</form>

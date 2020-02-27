@@ -1,0 +1,251 @@
+#vtta-tokenizer button .fas {
+  position: relative;
+  top: -3px;
+}
+
+#vtta-tokenizer div.view > div > canvas {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  border: thin solid black;
+  margin-bottom: 5px;
+}
+
+#vtta-tokenizer > div {
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+}
+
+#vtta-tokenizer > div > div {
+  padding: 5px;
+}
+
+#vtta-tokenizer div.view-layer-control {
+  font-family: 'Roboto', sans-serif;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  background-color: lightgray;
+  border-bottom: thin solid darkgray;
+  padding: 5px;
+}
+
+#vtta-tokenizer div.view-layer-control canvas {
+  height: 40px;
+  width: 40px;
+  background-color: white;
+}
+
+#vtta-tokenizer #stage canvas.isColorPicking {
+  -webkit-box-shadow: -2px 2px 5px -2px rgb(229, 240, 162, 0.75);
+  -moz-box-shadow: -2px 2px 5px -2px rgb(229, 240, 162, 0.75);
+  box-shadow: -2px 2px 5px -2px rgb(229, 240, 162, 0.75);
+}
+
+#vtta-tokenizer div.view-layer-control span {
+  display: none;
+}
+
+#vtta-tokenizer div.view-layer-control .section,
+#vtta-tokenizer .section {
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  border: thin solid rgb(149, 159, 168);
+  background-color: rgb(194, 194, 194);
+  padding: 2px;
+  margin-right: 5px;
+}
+
+#vtta-tokenizer div.view-layer-control input[type='color'] {
+  display: none;
+}
+
+#vtta-tokenizer .filePickerTarget {
+  display: none;
+}
+
+#vtta-tokenizer div.view-layer-control button:disabled {
+  -webkit-appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+#vtta-tokenizer div.view-layer-control button,
+#vtta-tokenizer button {
+  border-radius: 8px;
+  border: thin solid black;
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  margin: 5px;
+  -webkit-appearance: none;
+  -webkit-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+  box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+}
+
+/* Move up/down control section */
+#vtta-tokenizer div.view-layer-control .section.move-control {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#vtta-tokenizer div.view-layer-control .section.move-control button {
+  border-radius: 4px;
+  height: 15px;
+  width: 30px;
+}
+
+#vtta-tokenizer div.view-layer-control .section.move-control button .fas {
+  position: relative;
+}
+
+#vtta-tokenizer div.view-layer-control .section.move-control button.move-up {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+#vtta-tokenizer div.view-layer-control .section.move-control button.move-up .fas {
+  top: -11px;
+}
+
+#vtta-tokenizer div.view-layer-control .section.move-control button.move-down {
+  margin-top: 2px;
+  padding-top: 2px;
+}
+#vtta-tokenizer div.view-layer-control .section.move-control button.move-down .fas {
+  top: -8px;
+}
+
+#vtta-tokenizer div.view-layer-control button.delete-control {
+  background-color: red;
+  color: white;
+}
+
+#vtta-tokenizer div.view-layer-control button.delete-control:disabled {
+  background-color: rgb(255, 124, 124);
+}
+
+#vtta-tokenizer div.view-layer-control button:disabled {
+  -webkit-appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+#vtta-tokenizer div.view-layer-control .color-picker {
+  border-radius: 100%;
+  border: thin solid black;
+  height: 25px;
+  width: 25px;
+  padding: 5px;
+  margin: 5px;
+  border: thin solid rgba(0, 0, 0, 0.486);
+
+  -webkit-appearance: none;
+  -webkit-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+  box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+}
+#vtta-tokenizer div.view-layer-control .color-picker.transparent {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#fff9f9+0,d8e1e7+50,b5c6d0+51,f7f7f7+100 */
+  background: rgb(255, 249, 249); /* Old browsers */
+  background: -moz-linear-gradient(
+    -45deg,
+    rgba(255, 249, 249, 1) 0%,
+    rgba(216, 225, 231, 1) 50%,
+    rgba(181, 198, 208, 1) 51%,
+    rgba(247, 247, 247, 1) 100%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    -45deg,
+    rgba(255, 249, 249, 1) 0%,
+    rgba(216, 225, 231, 1) 50%,
+    rgba(181, 198, 208, 1) 51%,
+    rgba(247, 247, 247, 1) 100%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 249, 249, 1) 0%,
+    rgba(216, 225, 231, 1) 50%,
+    rgba(181, 198, 208, 1) 51%,
+    rgba(247, 247, 247, 1) 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff9f9', endColorstr='#f7f7f7',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+#vtta-tokenizer div.view-layer-control button.active {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#e6f0a3+0,d2e638+50,c3d825+51,dbf043+100;Green+Gloss+%232 */
+  background: hsl(68, 72%, 79%); /* Old browsers */
+  background: -moz-linear-gradient(
+    -45deg,
+    rgba(230, 240, 163, 1) 0%,
+    rgba(210, 230, 56, 1) 50%,
+    rgba(195, 216, 37, 1) 51%,
+    rgba(219, 240, 67, 1) 100%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    -45deg,
+    rgba(230, 240, 163, 1) 0%,
+    rgba(210, 230, 56, 1) 50%,
+    rgba(195, 216, 37, 1) 51%,
+    rgba(219, 240, 67, 1) 100%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    135deg,
+    rgba(230, 240, 163, 1) 0%,
+    rgba(210, 230, 56, 1) 50%,
+    rgba(195, 216, 37, 1) 51%,
+    rgba(219, 240, 67, 1) 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f0a3', endColorstr='#dbf043',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+#vtta-tokenizer div.menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  background-color: lightgray;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+#vtta-tokenizer div.section {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  background-color: rgb(194, 194, 194);
+  border: thin solid rgb(149, 159, 168);
+}
+
+#vtta-tokenizer div.section div.title {
+  font-weight: normal;
+}
+
+#vtta-tokenizer div.section div.content {
+  display: flex;
+  flex-direction: row;
+}
+
+#vtta-tokenizer div.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#vtta-tokenizer div.footer button {
+  width: 25%;
+  line-height: 1px;
+}
