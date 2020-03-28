@@ -2,8 +2,9 @@
   "name": "vtta-tokenizer",
   "title": "Virtual Tabletop Assets - Tokenizer",
   "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "minimumCoreVersion": "0.4.4",
+  "compatibleCoreVersion": "0.5.2",
   "author": "Sebastian Will (vttassets@gmail.com)",
   "languages": [
     {

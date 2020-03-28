@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1]
+
+### Added
+
+- Added the `img.img-profile` CSS class to the supported Avatar image classes that Tokenizer hooks into. In total `img.sheet-profile`, `img.profile` and `img-profile-img` are the image CSS classes that Tokenizer will hook into on rendering character sheets (please, Atropos, stop chaging the CSS classnames in Simple World Building system ;)
+
 ## [2.0.0]
 
 Feature parity release for the relaunch of VTTAssets
