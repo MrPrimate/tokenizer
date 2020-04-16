@@ -21,10 +21,10 @@ let SettingsExtender = () => {
 
   function createExtraInputTypes() {
     const MODIFIERS = {
-      ctrlKey: 'Ctrl + ',
-      shiftKey: 'Shift + ',
-      metaKey: 'Meta + ',
-      altKey: 'Alt + ',
+      ctrlKey: "Ctrl + ",
+      shiftKey: "Shift + ",
+      metaKey: "Meta + ",
+      altKey: "Alt + ",
     };
 
     function parseModifiers(val, keyProp) {
@@ -32,7 +32,7 @@ let SettingsExtender = () => {
         (obj, [prop, val]) => {
           if (obj[keyProp].includes(val)) {
             obj[prop] = true;
-            obj[keyProp] = obj[keyProp].replace(val, '');
+            obj[keyProp] = obj[keyProp].replace(val, "");
           } else {
             obj[prop] = false;
           }
@@ -44,8 +44,8 @@ let SettingsExtender = () => {
 
     function formatModifiers(val) {
       return Object.entries(MODIFIERS).reduce((modifier, [mod, str]) => {
-        return modifier + (val[mod] ? str : '');
-      }, '');
+        return modifier + (val[mod] ? str : "");
+      }, "");
     }
 
     function modifiersEqual(e, modifiers) {
@@ -61,7 +61,7 @@ let SettingsExtender = () => {
       return modifiersEqual(e, binding) && e[keyProp] === binding[keyProp];
     }
 
-    const IGNORED_KEYS = ['Shift', 'Alt', 'Control', 'Meta', 'F5'];
+    const IGNORED_KEYS = ["Shift", "Alt", "Control", "Meta", "F5"];
 
     function MouseButtonBinding(val) {
       return val;
@@ -69,13 +69,13 @@ let SettingsExtender = () => {
 
     MouseButtonBinding._MOUSE_BUTTONS = new Proxy(
       {
-        0: 'LeftClick',
-        1: 'MiddleClick',
-        2: 'RightClick',
+        0: "LeftClick",
+        1: "MiddleClick",
+        2: "RightClick",
       },
       {
         get(obj, prop) {
-          return prop in obj ? obj[prop] : 'Mouse' + (+prop + 1);
+          return prop in obj ? obj[prop] : "Mouse" + (+prop + 1);
         },
       }
     );
@@ -95,29 +95,33 @@ let SettingsExtender = () => {
           return;
         }
         e.preventDefault();
-        if (e.key === 'Escape') {
+        if (e.key === "Escape") {
           const $input = $(e.target);
-          $input.val('');
+          $input.val("");
         }
       },
     };
-    MouseButtonBinding.parse = val => {
+    MouseButtonBinding.parse = (val) => {
       if (!val) return val;
-      const modifiers = parseModifiers(val, 'button');
+      const modifiers = parseModifiers(val, "button");
       if (/Mouse\d/.test(modifiers.button)) {
         modifiers.button = +modifiers.button[5];
       } else {
-        modifiers.button = Object.entries(MouseButtonBinding._MOUSE_BUTTONS).reduce((btn, [val, text]) => {
+        modifiers.button = Object.entries(
+          MouseButtonBinding._MOUSE_BUTTONS
+        ).reduce((btn, [val, text]) => {
           return btn === text ? +val : btn;
         }, modifiers.button);
       }
       return modifiers;
     };
-    MouseButtonBinding.format = val => {
-      return formatModifiers(val) + MouseButtonBinding._MOUSE_BUTTONS[val.button];
+    MouseButtonBinding.format = (val) => {
+      return (
+        formatModifiers(val) + MouseButtonBinding._MOUSE_BUTTONS[val.button]
+      );
     };
     MouseButtonBinding.eventIsForBinding = (event, button) => {
-      return eventIsForBinding(event, button, 'button');
+      return eventIsForBinding(event, button, "button");
     };
 
     function KeyBinding(val) {
@@ -125,10 +129,10 @@ let SettingsExtender = () => {
     }
 
     KeyBinding._LOCATIONS = {
-      0: '',
-      1: 'Left ',
-      2: 'Right ',
-      3: 'Numpad ',
+      0: "",
+      1: "Left ",
+      2: "Right ",
+      3: "Numpad ",
     };
     KeyBinding._eventHandlers = {
       keydown(e) {
@@ -141,24 +145,24 @@ let SettingsExtender = () => {
         e.preventDefault();
 
         const $input = $(e.target);
-        if (e.key === 'Escape') {
-          $input.val('');
+        if (e.key === "Escape") {
+          $input.val("");
           return;
         }
         $input.val(KeyBinding.format(e));
       },
     };
-    KeyBinding.parse = val => {
+    KeyBinding.parse = (val) => {
       if (!val) return val;
-      const withModifiers = parseModifiers(val, 'key');
+      const withModifiers = parseModifiers(val, "key");
 
       return Object.entries(KeyBinding._LOCATIONS)
-        .filter(entry => entry[1] !== '')
+        .filter((entry) => entry[1] !== "")
         .reduce(
           (obj, [prop, val]) => {
             if (obj.key.includes(val)) {
               obj.location = prop;
-              obj.key = obj.key.replace(val, '');
+              obj.key = obj.key.replace(val, "");
             }
             return obj;
           },
@@ -168,11 +172,13 @@ let SettingsExtender = () => {
           }
         );
     };
-    KeyBinding.format = val => {
-      return formatModifiers(val) + KeyBinding._LOCATIONS[val.location] + val.key;
+    KeyBinding.format = (val) => {
+      return (
+        formatModifiers(val) + KeyBinding._LOCATIONS[val.location] + val.key
+      );
     };
     KeyBinding.eventIsForBinding = (event, button) => {
-      return eventIsForBinding(event, button, 'key');
+      return eventIsForBinding(event, button, "key");
     };
 
     function FilePickerImage(val) {
@@ -197,30 +203,27 @@ let SettingsExtender = () => {
       FilePickerImageVideo,
       FilePickerAudio,
     };
-    FilePickerImage._init = $html => {
-      const base = 'FilePicker';
+    FilePickerImage._init = ($html) => {
+      const base = "FilePicker";
       const $filePickers = $html.find(`[data-dtype^="${base}"]`);
       $filePickers.each((idx, input) => {
         const $input = $(input);
         const $formGroup = $input.parent();
-        $formGroup.find('.hint').css('order', '100');
-        const target = $input.attr('name');
-        const type = $input
-          .data('dtype')
-          .substring(base.length)
-          .toLowerCase();
+        $formGroup.find(".hint").css("order", "100");
+        const target = $input.attr("name");
+        const type = $input.data("dtype").substring(base.length).toLowerCase();
         const $filePickerButton = $(
           `<button type=button class=file-picker title="Browse Files" tabindex=-1>` +
             `<i class="fas fa-file-import fa-fw"></i></button>`
         );
-        $filePickerButton.attr('data-type', type);
-        $filePickerButton.attr('data-target', target);
+        $filePickerButton.attr("data-type", type);
+        $filePickerButton.attr("data-target", target);
         $input.after($filePickerButton);
       });
     };
-    Object.values(filePickers).forEach(FilePicker => {
-      FilePicker.parse = val => val;
-      FilePicker.format = val => val;
+    Object.values(filePickers).forEach((FilePicker) => {
+      FilePicker.parse = (val) => val;
+      FilePicker.format = (val) => val;
     });
 
     class DirPicker extends FilePicker {
@@ -232,26 +235,28 @@ let SettingsExtender = () => {
 
       activateListeners($html) {
         super.activateListeners($html);
-        $html.find('.form-footer').remove();
-        $html.find('.dir').each((idx, li) => {
+        $html.find(".form-footer").remove();
+        $html.find(".dir").each((idx, li) => {
           const $li = $(li);
-          $li.css('padding-left', 0);
-          const $selectButton = $('<button type=button>Select</button>');
-          $selectButton.css('width', 'auto');
-          $selectButton.css('margin-left', '0');
-          this._addOnClick($selectButton, $li.data('path'));
+          $li.css("padding-left", 0);
+          const $selectButton = $("<button type=button>Select</button>");
+          $selectButton.css("width", "auto");
+          $selectButton.css("margin-left", "0");
+          this._addOnClick($selectButton, $li.data("path"));
           $li.prepend($selectButton);
         });
 
-        $html.find('.note').text('No subdirectories.');
+        $html.find(".note").text("No subdirectories.");
 
-        const $selectCurrent = $('<button type=button>Select current directory</button>');
-        this._addOnClick($selectCurrent, $html.find('[name=target]').val());
+        const $selectCurrent = $(
+          "<button type=button>Select current directory</button>"
+        );
+        this._addOnClick($selectCurrent, $html.find("[name=target]").val());
         $html.append($selectCurrent);
       }
 
       _addOnClick($selectButton, path) {
-        $selectButton.click(event => {
+        $selectButton.click((event) => {
           event.stopPropagation();
           $(this.field).val(path);
           this.close();
@@ -263,21 +268,23 @@ let SettingsExtender = () => {
       return val;
     }
 
-    DirectoryPicker.parse = val => val;
-    DirectoryPicker.format = val => val;
-    DirectoryPicker._init = $html => {
-      const $directoryPickers = $html.find(`[data-dtype="${DirectoryPicker.name}"]`);
+    DirectoryPicker.parse = (val) => val;
+    DirectoryPicker.format = (val) => val;
+    DirectoryPicker._init = ($html) => {
+      const $directoryPickers = $html.find(
+        `[data-dtype="${DirectoryPicker.name}"]`
+      );
       $directoryPickers.each((idx, input) => {
         const $input = $(input);
         const $browseButton = $(
           `<button type=button title="Browse Directories" tabindex=-1>` +
             `<i class="fas fa-file-import fa-fw"></i></button>`
         );
-        $browseButton.css('flex', '0 0 24px');
-        $browseButton.css('line-height', '24px');
-        $browseButton.css('margin-left', '4px');
+        $browseButton.css("flex", "0 0 24px");
+        $browseButton.css("line-height", "24px");
+        $browseButton.css("margin-left", "4px");
         $input.after($browseButton);
-        $browseButton.click(event => {
+        $browseButton.click((event) => {
           event.preventDefault();
           new DirPicker({
             field: $input,
@@ -297,7 +304,7 @@ let SettingsExtender = () => {
   }
 
   function extendSettingsWindow() {
-    Hooks.once('ready', () => {
+    Hooks.once("ready", () => {
       if (window.Azzu.ExtendedSettingsConfig) {
         return;
       }
@@ -310,15 +317,23 @@ let SettingsExtender = () => {
   class ExtendedSettingsConfig extends SettingsConfig {
     getData() {
       const data = super.getData();
-      data.modules
-        .flatMap(m => m.settings)
-        .forEach(setting => {
-          const key = setting.module + '.' + setting.key;
-          const type = game.settings.settings[key].type;
-          if (typeof type === 'function') {
+
+      let modules =
+        data.settings && data.settings.modules
+          ? data.settings.modules
+          : data.modules;
+      modules
+        .flatMap((m) => m.settings)
+        .forEach((setting) => {
+          const key = `${setting.module}.${setting.key}`;
+          const type =
+            game.settings.settings instanceof Map
+              ? game.settings.settings.get(key).type
+              : game.settings.settings[key].type;
+          if (typeof type === "function") {
             setting.type = type.name;
           } else {
-            setting.type = 'unknown';
+            setting.type = "unknown";
           }
         });
       return data;
@@ -328,7 +343,9 @@ let SettingsExtender = () => {
       let extraTypes = window.Azzu.SettingsTypes;
       // before super.activateListeners as FormApplication.activateListeners
       // initialises FilePickers
-      Object.values(extraTypes).forEach(type => type._init && type._init($html));
+      Object.values(extraTypes).forEach(
+        (type) => type._init && type._init($html)
+      );
 
       super.activateListeners($html);
 

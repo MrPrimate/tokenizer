@@ -12,7 +12,7 @@ export function init() {
     type: window.Azzu.SettingsTypes.FilePickerImage,
     default: "/modules/vtta-tokenizer/img/default-frame-pc.png",
     scope: "world",
-    config: true
+    config: true,
   });
 
   game.settings.register("vtta-tokenizer", "default-frame-npc", {
@@ -21,7 +21,7 @@ export function init() {
     type: window.Azzu.SettingsTypes.FilePickerImage,
     default: "/modules/vtta-tokenizer/img/default-frame-npc.png",
     scope: "world",
-    config: true
+    config: true,
   });
 
   game.settings.register("vtta-tokenizer", "image-upload-directory", {
@@ -31,7 +31,7 @@ export function init() {
     config: true,
     //type: String,
     type: window.Azzu.SettingsTypes.DirectoryPicker,
-    default: ""
+    default: "",
   });
 
   game.settings.register("vtta-tokenizer", "token-size", {
@@ -40,8 +40,44 @@ export function init() {
     scope: "world",
     config: true,
     type: Number,
-    default: 400
+    default: 400,
   });
+
+  // check for failed registered settings
+  let hasErrors = false;
+  if (game.settings.settings instanceof Map) {
+    for (let s of game.settings.settings.values()) {
+      if (s.module !== "vtta-tokenizer") continue;
+      try {
+        game.settings.get(s.module, s.key);
+      } catch (err) {
+        hasErrors = true;
+        ui.notifications.info(
+          `[${s.module}] Erroneous module settings found, resetting to default.`
+        );
+        game.settings.set(s.module, s.key, s.default);
+      }
+    }
+  } else {
+    for (let prop in game.settings.settings) {
+      let s = game.settings.settings[prop];
+      if (s.module !== "vtta-tokenizer") continue;
+      try {
+        game.settings.get(s.module, s.key);
+      } catch (err) {
+        hasErrors = true;
+        ui.notifications.info(
+          `[${s.module}] Erroneous module settings found, resetting to default.`
+        );
+        game.settings.set(s.module, s.key, s.default);
+      }
+    }
+  }
+  if (hasErrors) {
+    ui.notifications.warn(
+      "Please review the module settings to re-adjust them to your desired configuration."
+    );
+  }
 }
 
 export function ready() {
@@ -49,12 +85,12 @@ export function ready() {
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
-      return arr.concat(Object.values(classes).map(c => c.cls));
+      return arr.concat(Object.values(classes).map((c) => c.cls));
     }, [])
-    .map(cls => cls.name);
+    .map((cls) => cls.name);
 
   // register tokenizer on all character (npc and pc) sheets
-  sheetNames.forEach(sheetName => {
+  sheetNames.forEach((sheetName) => {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (!game.user.isTrusted) {
         if (!hasShownWarning) {
@@ -64,35 +100,29 @@ export function ready() {
           );
         }
       } else {
-        $(html)
-          .find("img.sheet-profile")
-          .off("click");
+        $(html).find("img.sheet-profile").off("click");
 
         $(html)
           .find("img.sheet-profile")
-          .on("click", event => {
+          .on("click", (event) => {
             let tokenizer = new Tokenizer({}, app.entity);
             tokenizer.render(true);
           });
 
-        $(html)
-          .find("img.profile")
-          .off("click");
+        $(html).find("img.profile").off("click");
 
         $(html)
           .find("img.profile")
-          .on("click", event => {
+          .on("click", (event) => {
             let tokenizer = new Tokenizer({}, app.entity);
             tokenizer.render(true);
           });
 
-        $(html)
-          .find("img.profile-img")
-          .off("click");
+        $(html).find("img.profile-img").off("click");
 
         $(html)
           .find("img.profile-img")
-          .on("click", event => {
+          .on("click", (event) => {
             let tokenizer = new Tokenizer({}, app.entity);
             tokenizer.render(true);
           });

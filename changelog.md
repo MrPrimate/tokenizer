@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.3] Foundry 0.5.4 compatibilty release
+
+### Added
+
+- Tooltips provided by @mtvjr
+
 ## [2.0.2] Foundry 0.5.3 compatability release
 
 ### Changed
