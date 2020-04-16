@@ -25,6 +25,7 @@ export default class Control {
 
     // a nicer looking proxy for the color picker
     this.colorSelectorProxy = document.createElement('div');
+    this.colorSelectorProxy.title = "Edit tint"
     this.colorSelectorProxy.classList.add('color-picker', 'transparent');
     this.colorSelectorProxy.addEventListener('click', event => {
       this.colorSelector.click();
@@ -45,6 +46,7 @@ export default class Control {
     this.clearColor = document.createElement('button');
     this.clearColor.disabled = true;
     this.clearColor.classList.add('danger');
+    this.clearColor.title = "Clear tint";
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-minus-circle');
     this.clearColor.appendChild(buttonText);
@@ -60,6 +62,7 @@ export default class Control {
 
     // get color from canvas
     this.getColor = document.createElement('button');
+    this.getColor.title = "Pick tint color from canvas"
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-eye-dropper');
     this.getColor.appendChild(buttonText);
@@ -94,6 +97,7 @@ export default class Control {
     // Set the mask of this layer
     this.maskControl = document.createElement('button');
     this.maskControl.classList.add('mask-control');
+    this.maskControl.title = "Toggle masking";
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-mask');
     this.maskControl.appendChild(buttonText);
@@ -113,6 +117,7 @@ export default class Control {
 
     // Makes the layer active for translating/ scaling
     this.activeControl = document.createElement('button');
+    this.activeControl.title = "Enable/disable transformations";
     this.activeControl.classList.add('mask-control');
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-lock');
@@ -131,6 +136,7 @@ export default class Control {
     // centers the layer on the view
     this.centerControl = document.createElement('button');
     this.centerControl.classList.add('center-control');
+    this.centerControl.title = "Center layer";
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-compress-arrows-alt');
     this.centerControl.appendChild(buttonText);
@@ -147,9 +153,10 @@ export default class Control {
     moveManagementSection.name = 'color-management';
     moveManagementSection.classList.add('section');
 
-    // moving down
+    // moving up
     this.moveUpControl = document.createElement('button');
     this.moveUpControl.classList.add('move-control', 'move-up');
+    this.moveUpControl.title = "Move layer up";
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-caret-up');
     this.moveUpControl.appendChild(buttonText);
@@ -164,9 +171,10 @@ export default class Control {
       );
     });
 
-    // moving up
+    // moving down
     this.moveDownControl = document.createElement('button');
     this.moveDownControl.classList.add('move-control', 'move-down');
+    this.moveDownControl.title = "Move layer down";
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-caret-down');
     this.moveDownControl.appendChild(buttonText);
@@ -189,6 +197,7 @@ export default class Control {
     // delete
     this.deleteControl = document.createElement('button');
     this.deleteControl.classList.add('delete-control');
+    this.deleteControl.title = "Delete layer (cannot be undone)";
     var buttonText = document.createElement('i');
     buttonText.classList.add('fas', 'fa-trash-alt');
     this.deleteControl.appendChild(buttonText);

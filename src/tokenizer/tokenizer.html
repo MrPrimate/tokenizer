@@ -12,9 +12,9 @@
                     <div class="section">
                         <div class="title">Add Layer</div>
                         <div class="content">
-                            <button class="menu-button" data-type="download" data-target="avatar"><i
+                            <button title="Use an image from the Internet" class="menu-button" data-type="download" data-target="avatar"><i
                                     class="fas fa-globe"></i></button>
-                            <button class="menu-button" data-type="upload" data-target="avatar"><i
+                            <button title="Upload from your computer" class="menu-button" data-type="upload" data-target="avatar"><i
                                     class="fas fa-upload"></i></button>
                             
                             <input type="text" class="filePickerTarget" name="foundryAvatar" data-target="avatar"
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="footer">
-            <button type="submit" id="ok" {{#unless isTrusted }}disabled{{/unless}}>OK</button>
+            <button title="Save and close" type="submit" id="ok" {{#unless isTrusted }}disabled{{/unless}}>OK</button>
         </div>
     </div>
 </form>
