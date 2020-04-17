@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.4] Foundry 0.5.5 compatibilty release
+
+**Note**: This release is available for 0.5.5 and up only.
+
+### Fixed
+
+- Repairing corrupted game settings now in `ready` to avoid throwing errors for incorrectly using the uninitialized ui.notifications
+
 ## [2.0.3] Foundry 0.5.4 compatibilty release
 
 ### Added

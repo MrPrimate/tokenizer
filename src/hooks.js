@@ -1,6 +1,6 @@
 import Tokenizer from "./tokenizer/index.js";
 
-import SettingsExtender from "./libs/settingsExtender.js";
+import SettingsExtender from "./libs/settings-extender.js";
 SettingsExtender();
 
 export function init() {
@@ -42,46 +42,32 @@ export function init() {
     type: Number,
     default: 400,
   });
+}
+
+export function ready() {
+  console.log("VTTA Tokenizer | Ready");
 
   // check for failed registered settings
   let hasErrors = false;
-  if (game.settings.settings instanceof Map) {
-    for (let s of game.settings.settings.values()) {
-      if (s.module !== "vtta-tokenizer") continue;
-      try {
-        game.settings.get(s.module, s.key);
-      } catch (err) {
-        hasErrors = true;
-        ui.notifications.info(
-          `[${s.module}] Erroneous module settings found, resetting to default.`
-        );
-        game.settings.set(s.module, s.key, s.default);
-      }
-    }
-  } else {
-    for (let prop in game.settings.settings) {
-      let s = game.settings.settings[prop];
-      if (s.module !== "vtta-tokenizer") continue;
-      try {
-        game.settings.get(s.module, s.key);
-      } catch (err) {
-        hasErrors = true;
-        ui.notifications.info(
-          `[${s.module}] Erroneous module settings found, resetting to default.`
-        );
-        game.settings.set(s.module, s.key, s.default);
-      }
+
+  for (let s of game.settings.settings.values()) {
+    if (s.module !== "vtta-tokenizer") continue;
+    try {
+      game.settings.get(s.module, s.key);
+    } catch (err) {
+      hasErrors = true;
+      ui.notifications.info(
+        `[${s.module}] Erroneous module settings found, resetting to default.`
+      );
+      game.settings.set(s.module, s.key, s.default);
     }
   }
+
   if (hasErrors) {
     ui.notifications.warn(
       "Please review the module settings to re-adjust them to your desired configuration."
     );
   }
-}
-
-export function ready() {
-  console.log("VTTA Tokenizer | Ready");
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
