@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.7] Hotfix
+
+- Disabled buttons if browsing for files is disabled
+
 ## [2.0.5] Hotfix
 
 ### Fixed

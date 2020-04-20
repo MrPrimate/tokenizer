@@ -85,7 +85,8 @@ export function ready() {
       }
     });
     Hooks.on("render" + sheetName, (app, html, data) => {
-      if (FilePicker.canUpload) {
+      if (game.user && game.user.can("FILES_UPLOAD")) {
+        console.log("Replacing click");
         $(html).find("img.sheet-profile").off("click");
 
         $(html)

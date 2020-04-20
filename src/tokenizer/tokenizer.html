@@ -19,9 +19,9 @@
                             
                             <input type="text" class="filePickerTarget" name="foundryAvatar" data-target="avatar"
                                 data-type="server"  data-dtype="String" />
-                            <button title="Use an image from Foundry Server" class="menu-button file-picker"
+                            {{#if canBrowse }}<button title="Use an image from Foundry Server" class="menu-button file-picker"
                                 data-type="imagevideo" data-target="foundryAvatar"><i
-                                    class="fas fa-server"></i></button>
+                                    class="fas fa-server"></i></button>{{/if}}
                         </div>
                     </div>
                 </div>
@@ -39,10 +39,10 @@
                                 data-target="token"><i class="fas fa-globe"></i></button>
                             <button title="Upload from your computer" class="menu-button" data-type="upload"
                                 data-target="token"><i class="fas fa-upload"></i></button>
-                            <input type="text" class="filePickerTarget" name="foundryToken" data-target="token"
+                            {{#if canBrowse }}<input type="text" class="filePickerTarget" name="foundryToken" data-target="token"
                                 data-type="server" />
-                            <button title="Use an image from Foundry Server" class="menu-button file-picker"
-                                data-type="imagevideo" data-target="foundryToken"><i class="fas fa-server"></i></button>
+                                <button title="Use an image from Foundry Server" class="menu-button file-picker"
+                                data-type="imagevideo" data-target="foundryToken"><i class="fas fa-server"></i></button>{{/if}}
                             </div>
                     </div>
                     <div class="section">
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="footer">
-            <button title="Save and close" type="submit" id="ok" {{#unless isTrusted }}disabled{{/unless}}>OK</button>
+            <button title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>OK</button>
         </div>
     </div>
 </form>
