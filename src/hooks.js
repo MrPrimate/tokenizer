@@ -77,15 +77,15 @@ export function ready() {
 
   // register tokenizer on all character (npc and pc) sheets
   sheetNames.forEach((sheetName) => {
+    Hooks.once("render" + sheetName, (app, html, data) => {
+      if (!FilePicker.canUpload) {
+        ui.notifications.info(
+          game.i18n.localize("vtta-tokenizer.requires-upload-permission")
+        );
+      }
+    });
     Hooks.on("render" + sheetName, (app, html, data) => {
-      if (!game.user.isTrusted) {
-        if (!hasShownWarning) {
-          hasShownWarning = true;
-          ui.notifications.info(
-            game.i18n.localize("vtta-tokenizer.ERROR_REQUIRES_TRUSTED_PLAYER")
-          );
-        }
-      } else {
+      if (FilePicker.canUpload) {
         $(html).find("img.sheet-profile").off("click");
 
         $(html)

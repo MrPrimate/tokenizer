@@ -6,5 +6,6 @@
   "vtta-tokenizer.image-upload-directory.name": "Avatar/ Token upload directory",
   "vtta-tokenizer.image-upload-directory.hint": "Specificies the avatar and token upload location on the server, relative to the Foundry /Data directory, e.g. 'img/uploads' is '[Foundry]/Data/img/uploads'. Create this directory on the server manually.",
   "vtta-tokenizer.token-size.name": "Token size",
-  "vtta-tokenizer.token-size.hint": "Specifies the token size (width and height). A value higher than 200 is recommended."
+  "vtta-tokenizer.token-size.hint": "Specifies the token size (width and height). A value higher than 200 is recommended.",
+  "vtta-tokenizer.requires-upload-permission": "Tokenizer requires the permission to Upload Files. Please inform your Gamemaster."
 }

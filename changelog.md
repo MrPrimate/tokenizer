@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.5] Hotfix
+
+### Fixed
+
+- Migrated the check for the permission to upload files to the new permission system, displaying a notification of the permission is not granted
+
 ## [2.0.4] Foundry 0.5.5 compatibilty release
 
 **Note**: This release is available for 0.5.5 and up only.

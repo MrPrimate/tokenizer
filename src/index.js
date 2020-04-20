@@ -1,8 +1,5 @@
-import { init, ready } from './hooks.js';
-
-// show the trusted player warning only once
-let hasShownWarning = false;
+import { init, ready } from "./hooks.js";
 
 // registering the hooks
-Hooks.on('ready', ready);
-Hooks.on('init', init);
+Hooks.on("ready", ready);
+Hooks.on("init", init);
