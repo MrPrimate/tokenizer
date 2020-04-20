@@ -78,7 +78,7 @@ export function ready() {
   // register tokenizer on all character (npc and pc) sheets
   sheetNames.forEach((sheetName) => {
     Hooks.once("render" + sheetName, (app, html, data) => {
-      if (!FilePicker.canUpload) {
+      if (!game.user || !game.user.can("FILES_UPLOAD")) {
         ui.notifications.info(
           game.i18n.localize("vtta-tokenizer.requires-upload-permission")
         );
