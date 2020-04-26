@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.0] Storage Galore
+
+### Added
+
+- Support for S3 as a storage target
+
 ## [2.0.7] Hotfix
 
 - Disabled buttons if browsing for files is disabled

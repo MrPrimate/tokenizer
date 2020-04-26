@@ -36,23 +36,66 @@ export default class Tokenizer extends FormApplication {
     let avatarFilename = `${this.actor.data.name}.Avatar.${this.actor._id}.png`;
     let tokenFilename = `${this.actor.data.name}.Token.${this.actor._id}.png`;
 
+    const targetPath = game.settings.get(
+      "vtta-tokenizer",
+      "image-upload-directory"
+    );
     if (this.Token) {
-      Promise.all([
-        Utils.uploadToFoundry(this.Avatar.get("blob"), avatarFilename),
-        Utils.uploadToFoundry(this.Token.get("blob"), tokenFilename),
-      ]).then(async (results) => {
-        await this.actor.update({
-          img: results[0] + "?t=" + new Date().getTime(),
-        });
-        await this.actor.update({
-          "token.img": results[1] + "?t=" + new Date().getTime(),
-        });
-      });
-    } else {
-      Utils.uploadToFoundry(this.Avatar.get("blob"), avatarFilename).then(
-        async (img) =>
-          await this.actor.update({ img: img + "?t=" + new Date().getTime() })
+      // get the data
+      Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(
+        async (dataResults) => {
+          avatarFilename = await Utils.uploadToFoundryV2(
+            dataResults[0],
+            targetPath,
+            avatarFilename
+          );
+
+          tokenFilename = await Utils.uploadToFoundryV2(
+            dataResults[1],
+            targetPath,
+            tokenFilename
+          );
+
+          await this.actor.update({
+            img: avatarFilename + "?t=" + new Date().getTime(),
+            token: {
+              img: tokenFilename + "?t=" + new Date().getTime(),
+            },
+          });
+        }
       );
+
+      // Promise.all([
+      //   Utils.uploadToFoundryV2(
+      //     this.Avatar.get("blob"),
+      //     targetPath,
+      //     avatarFilename
+      //   ),
+      //   Utils.uploadToFoundryV2(
+      //     this.Token.get("blob"),
+      //     targetPath,
+      //     tokenFilename
+      //   ),
+      // ]).then(async (results) => {
+      //   await this.actor.update({
+      //     img: results[0] + "?t=" + new Date().getTime(),
+      //   });
+      //   await this.actor.update({
+      //     "token.img": results[1] + "?t=" + new Date().getTime(),
+      //   });
+      // });
+    } else {
+      this.Token.get("blob").then((data) => {
+        Utils.uploadToFoundryV2(data, targetPath, tokenFilename).then(
+          async (img) =>
+            await this.actor.update({ img: img + "?t=" + new Date().getTime() })
+        );
+      });
+      // ,
+      //   Utils.uploadToFoundry(this.Avatar.get("blob"), avatarFilename).then(
+      //     async (img) =>
+      //       await this.actor.update({ img: img + "?t=" + new Date().getTime() })
+      //   );
     }
   }
 

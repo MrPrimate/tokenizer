@@ -1,6 +1,6 @@
 import Tokenizer from "./tokenizer/index.js";
 
-import SettingsExtender from "./libs/settings-extender.js";
+import SettingsExtender from "./libs/settings-extender-patched.js";
 SettingsExtender();
 
 export function init() {
