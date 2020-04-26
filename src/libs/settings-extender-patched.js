@@ -340,7 +340,7 @@ let SettingsExtender = () => {
         }
       }
       return {
-        source: source,
+        source: current,
         current: path,
       };
     };
