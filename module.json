@@ -2,7 +2,7 @@
   "name": "vtta-tokenizer",
   "title": "Virtual Tabletop Assets - Tokenizer",
   "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "minimumCoreVersion": "0.5.5",
   "compatibleCoreVersion": "0.5.5",
   "author": "Sebastian Will (vttassets@gmail.com)",
@@ -19,11 +19,7 @@
     }
   ],
   "esmodules": ["./src/index.js"],
-  "styles": [
-    "./css/module-settings.css",
-    "./css/default.css",
-    "./src/tokenizer/tokenizer.css"
-  ],
+  "styles": ["./css/module-settings.css", "./css/default.css", "./src/tokenizer/tokenizer.css"],
   "packs": [],
   "url": "https://www.vttassets.com/asset/vtta-tokenizer",
   "manifest": "https://www.vttassets.com/manifest/vtta-tokenizer/stable",

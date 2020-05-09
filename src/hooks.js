@@ -56,62 +56,59 @@ export function ready() {
       game.settings.get(s.module, s.key);
     } catch (err) {
       hasErrors = true;
-      ui.notifications.info(
-        `[${s.module}] Erroneous module settings found, resetting to default.`
-      );
+      ui.notifications.info(`[${s.module}] Erroneous module settings found, resetting to default.`);
       game.settings.set(s.module, s.key, s.default);
     }
   }
 
   if (hasErrors) {
-    ui.notifications.warn(
-      "Please review the module settings to re-adjust them to your desired configuration."
-    );
+    ui.notifications.warn("Please review the module settings to re-adjust them to your desired configuration.");
   }
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
-      return arr.concat(Object.values(classes).map((c) => c.cls));
+      return arr.concat(Object.values(classes).map(c => c.cls));
     }, [])
-    .map((cls) => cls.name);
+    .map(cls => cls.name);
 
   // register tokenizer on all character (npc and pc) sheets
-  sheetNames.forEach((sheetName) => {
+  sheetNames.forEach(sheetName => {
     Hooks.once("render" + sheetName, (app, html, data) => {
       if (!game.user || !game.user.can("FILES_UPLOAD")) {
-        ui.notifications.info(
-          game.i18n.localize("vtta-tokenizer.requires-upload-permission")
-        );
+        ui.notifications.info(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
       }
     });
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user && game.user.can("FILES_UPLOAD")) {
-        console.log("Replacing click");
-        $(html).find("img.sheet-profile").off("click");
+        const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img"];
 
         $(html)
-          .find("img.sheet-profile")
-          .on("click", (event) => {
-            let tokenizer = new Tokenizer({}, app.entity);
-            tokenizer.render(true);
-          });
+          .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map(cls => `img.${cls}`).join(", "))
+          .each((index, element) => {
+            // deactivating the original FilePicker click
+            $(element).off("click");
 
-        $(html).find("img.profile").off("click");
-
-        $(html)
-          .find("img.profile")
-          .on("click", (event) => {
-            let tokenizer = new Tokenizer({}, app.entity);
-            tokenizer.render(true);
-          });
-
-        $(html).find("img.profile-img").off("click");
-
-        $(html)
-          .find("img.profile-img")
-          .on("click", (event) => {
-            let tokenizer = new Tokenizer({}, app.entity);
-            tokenizer.render(true);
+            // replace it with Tokenizer OR FilePicker click
+            $(element).on("click", event => {
+              if (!event.shiftKey) {
+                event.stopPropagation();
+                let tokenizer = new Tokenizer({}, app.entity);
+                tokenizer.render(true);
+                event.preventDefault();
+              } else {
+                // showing the filepicker
+                new FilePicker({
+                  type: "image",
+                  current: data.actor.data.img,
+                  callback: path => {
+                    event.currentTarget.src = path;
+                    app._onSubmit(event);
+                  },
+                  top: app.position.top + 40,
+                  left: app.position.left + 10,
+                }).browse(data.actor.data.img);
+              }
+            });
           });
       }
     });

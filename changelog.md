@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.1]
+
+### Added
+
+- Holding SHIFT while clicking on your avatar image opens up the default Filepicker instead of Tokenizer. This can be used to reset the avatar image to high-res images after creating a token
+
 ## [2.1.0] Storage Galore
 
 ### Added
