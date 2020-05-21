@@ -36,34 +36,21 @@ export default class Tokenizer extends FormApplication {
     let avatarFilename = `${this.actor.data.name}.Avatar.${this.actor._id}.png`;
     let tokenFilename = `${this.actor.data.name}.Token.${this.actor._id}.png`;
 
-    const targetPath = game.settings.get(
-      "vtta-tokenizer",
-      "image-upload-directory"
-    );
+    const targetPath = game.settings.get("vtta-tokenizer", "image-upload-directory");
     if (this.Token) {
       // get the data
-      Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(
-        async (dataResults) => {
-          avatarFilename = await Utils.uploadToFoundryV2(
-            dataResults[0],
-            targetPath,
-            avatarFilename
-          );
+      Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async dataResults => {
+        avatarFilename = await Utils.uploadToFoundryV2(dataResults[0], targetPath, avatarFilename);
 
-          tokenFilename = await Utils.uploadToFoundryV2(
-            dataResults[1],
-            targetPath,
-            tokenFilename
-          );
+        tokenFilename = await Utils.uploadToFoundryV2(dataResults[1], targetPath, tokenFilename);
 
-          await this.actor.update({
-            img: avatarFilename + "?t=" + new Date().getTime(),
-            token: {
-              img: tokenFilename + "?t=" + new Date().getTime(),
-            },
-          });
-        }
-      );
+        await this.actor.update({
+          img: avatarFilename + "?t=" + new Date().getTime(),
+          token: {
+            img: tokenFilename + "?t=" + new Date().getTime(),
+          },
+        });
+      });
 
       // Promise.all([
       //   Utils.uploadToFoundryV2(
@@ -85,10 +72,9 @@ export default class Tokenizer extends FormApplication {
       //   });
       // });
     } else {
-      this.Token.get("blob").then((data) => {
+      this.Token.get("blob").then(data => {
         Utils.uploadToFoundryV2(data, targetPath, tokenFilename).then(
-          async (img) =>
-            await this.actor.update({ img: img + "?t=" + new Date().getTime() })
+          async img => await this.actor.update({ img: img + "?t=" + new Date().getTime() })
         );
       });
       // ,
@@ -105,13 +91,16 @@ export default class Tokenizer extends FormApplication {
     super.activateListeners(html);
 
     let avatarView = document.querySelector(".avatar > .view");
-    this.Avatar = new View(
-      game.settings.get("vtta-tokenizer", "token-size"),
-      avatarView
-    );
+    this.Avatar = null;
+
     Utils.download(this.actor.data.img)
-      .then((img) => this.Avatar.addImageLayer(img))
-      .catch((error) => ui.notifications.error(error));
+      .then(img => {
+        const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth);
+        console.log("Setting Avatar dimensions to " + MAX_DIMENSION + "/" + MAX_DIMENSION);
+        this.Avatar = new View(MAX_DIMENSION, avatarView);
+        this.Avatar.addImageLayer(img);
+      })
+      .catch(error => ui.notifications.error(error));
 
     let tokenView = document.querySelector(".token > .view");
     if (this.actor.data.token.randomImg) {
@@ -120,68 +109,53 @@ export default class Tokenizer extends FormApplication {
       info.style.fontSize = "1.5rem";
       info.style.textAlign = "center";
 
-      info.innerHTML = game.i18n.localize(
-        "vtta-tokenizer.ERROR_WILDCARD_IMAGE_SET"
-      );
+      info.innerHTML = game.i18n.localize("vtta-tokenizer.ERROR_WILDCARD_IMAGE_SET");
       tokenView.appendChild(info);
 
       let tokenMenu = document.querySelector(".token .menu");
       tokenMenu.style.visibility = "hidden";
     } else {
-      this.Token = new View(
-        game.settings.get("vtta-tokenizer", "token-size"),
-        tokenView
-      );
+      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
 
       // Add the actor image to the token view
       Utils.download(this.actor.data.token.img)
-        .then((img) => {
+        .then(img => {
           this.Token.addImageLayer(img);
 
           // load the default frame, if there is one set
           let type = this.actor.data.type === "character" ? "pc" : "npc";
-          let defaultFrame = game.settings
-            .get("vtta-tokenizer", "default-frame-" + type)
-            .replace(/^\/|\/$/g, "");
+          let defaultFrame = game.settings.get("vtta-tokenizer", "default-frame-" + type).replace(/^\/|\/$/g, "");
 
           if (defaultFrame && defaultFrame.trim() !== "") {
             let masked = true;
             Utils.download(defaultFrame)
-              .then((img) => this.Token.addImageLayer(img, masked))
-              .catch((error) => ui.notifications.error(error));
+              .then(img => this.Token.addImageLayer(img, masked))
+              .catch(error => ui.notifications.error(error));
           }
         })
-        .catch((error) => ui.notifications.error(error));
+        .catch(error => ui.notifications.error(error));
     }
 
-    $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {
-      let eventTarget =
-        event.target == event.currentTarget
-          ? event.target
-          : event.currentTarget;
-      let view =
-        eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
+    $("#vtta-tokenizer .filePickerTarget").on("change", event => {
+      let eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
+      let view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
       let type = eventTarget.dataset.type;
 
       Utils.download(eventTarget.value)
-        .then((img) => view.addImageLayer(img))
-        .catch((error) => ui.notifications.error(error));
+        .then(img => view.addImageLayer(img))
+        .catch(error => ui.notifications.error(error));
     });
 
-    $("#vtta-tokenizer button.menu-button").click(async (event) => {
+    $("#vtta-tokenizer button.menu-button").click(async event => {
       event.preventDefault();
-      let eventTarget =
-        event.target == event.currentTarget
-          ? event.target
-          : event.currentTarget;
+      let eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
 
-      let view =
-        eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
+      let view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
       let type = eventTarget.dataset.type;
 
       switch (eventTarget.dataset.type) {
         case "upload":
-          Utils.upload().then((img) => view.addImageLayer(img));
+          Utils.upload().then(img => view.addImageLayer(img));
           break;
         case "download":
           // show dialog, then download
@@ -206,8 +180,8 @@ export default class Tokenizer extends FormApplication {
                 label: "OK",
                 callback: () => {
                   Utils.download($("#url").val())
-                    .then((img) => view.addImageLayer(img))
-                    .catch((error) => ui.notification.error(error));
+                    .then(img => view.addImageLayer(img))
+                    .catch(error => ui.notification.error(error));
                 },
               },
             },
@@ -217,7 +191,7 @@ export default class Tokenizer extends FormApplication {
 
           break;
         case "avatar":
-          this.Avatar.get("img").then((img) => view.addImageLayer(img));
+          this.Avatar.get("img").then(img => view.addImageLayer(img));
           break;
       }
     });

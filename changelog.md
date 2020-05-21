@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.1.3] ALL THE PIXELS
+
+### Fixed
+
+- No more distortions when selecting pixel sizes > 400 in the game settings
+- Existing Avatar images retain their original (squared) image dimensions they have, even after editing with Tokenizer. That means you can 
+   - Hold SHIFT while clicking on your Avatar image to upload an Avatar of your choice and or your desired resolution
+   - After setting your Avatar image, click **again** on your Avatar, this time do not hold shift to open up Tokenizer
+   - Your Avatar image area will have the dimensions of your original image, your Token image area will have the dimensions set in your game settings
+
+## [2.1.2] Foundry 0.6.6 compatibility release
+
+No changes
+
 ## [2.1.1]
 
 ### Added
