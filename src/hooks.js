@@ -80,7 +80,7 @@ export function ready() {
     });
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user && game.user.can("FILES_UPLOAD")) {
-        const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img"];
+        const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
 
         $(html)
           .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map(cls => `img.${cls}`).join(", "))

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.4] Hotfix
+
+### Added 
+
+- CSS selector 'player-image' to support pathfinder 2E (again)
+- Certified compatibility for Foundry 0.6.0
+
 ## [2.1.3] ALL THE PIXELS
 
 ### Fixed
