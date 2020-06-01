@@ -1,3 +1,5 @@
+import DirectoryPicker from "./libs/DirectoryPicker.js";
+
 export default class Utils {
   static generateUUID() {
     // I generate the UID from two parts here
@@ -28,13 +30,13 @@ export default class Utils {
     fileInput.click();
 
     return new Promise((resolve, reject) => {
-      fileInput.addEventListener("change", (event) => {
+      fileInput.addEventListener("change", event => {
         // setup the FileReader
         let file = event.target.files[0];
         let reader = new FileReader();
         reader.addEventListener("load", () => {
           let img = document.createElement("img");
-          img.addEventListener("load", (result) => {
+          img.addEventListener("load", result => {
             resolve(img);
           });
           img.src = reader.result;
@@ -57,38 +59,27 @@ export default class Utils {
     return new Promise((resolve, reject) => {
       let img = new Image();
       img.crossOrigin = "Anonymous";
-      img.addEventListener("load", (event) => {
+      img.addEventListener("load", event => {
         resolve(img);
       });
-      img.addEventListener("error", (event) => {
+      img.addEventListener("error", event => {
         reject(event);
       });
-      let imgSrc =
-        url.toLowerCase().indexOf("http") === 0
-          ? "https://proxy.iungimus.de/get/" + url
-          : url;
+      let imgSrc = url.toLowerCase().indexOf("http") === 0 ? "https://proxy.iungimus.de/get/" + url : url;
       img.src = imgSrc;
     });
   }
 
   static async uploadToFoundry(data, filename) {
     return new Promise((resolve, reject) => {
-      data.then((blob) => {
+      data.then(blob => {
         // replacing special characters in the desired filename with underscores
         filename = filename.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
 
         let formData = new FormData();
-        formData.append(
-          "target",
-          game.settings.get("vtta-tokenizer", "image-upload-directory")
-        );
+        formData.append("target", game.settings.get("vtta-tokenizer", "image-upload-directory"));
 
-        let target =
-          game.data.version === "0.4.0"
-            ? "user"
-            : game.data.version === "0.4.1"
-            ? "user"
-            : "data";
+        let target = game.data.version === "0.4.0" ? "user" : game.data.version === "0.4.1" ? "user" : "data";
         formData.append("source", target);
 
         formData.append("upload", blob, filename);
@@ -98,12 +89,7 @@ export default class Utils {
         req.onreadystatechange = () => {
           if (req.readyState !== 4) return;
           if (req.status === 200) {
-            resolve(
-              `${game.settings.get(
-                "vtta-tokenizer",
-                "image-upload-directory"
-              )}/${filename}`
-            );
+            resolve(`${game.settings.get("vtta-tokenizer", "image-upload-directory")}/${filename}`);
           } else {
             reject(req.responseText);
           }
@@ -125,7 +111,8 @@ export default class Utils {
        * "[core] path"
        * @param {string} val A reference to the target path coming from settingsextender (patched)
        */
-      const getDataSource = (val) => {
+
+      const getDataSource = val => {
         let source = "data";
         let path = val;
 
@@ -166,6 +153,16 @@ export default class Utils {
       );
       resolve(result.path);
     });
+  }
+
+  static async uploadToFoundryV3(data, filename) {
+    // create new file from the response
+    let file = new File([data], filename, { type: data.type });
+
+    const options = DirectoryPicker.parse(game.settings.get("vtta-tokenizer", "image-upload-directory"));
+    const result = await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
+    return result.path;
+    // return DirectoryPicker.uploadToPath(game.settings.get("vtta-tokenizer", "image-upload-directory"), file);
   }
 
   //   static async uploadImage(url, targetDirectory, baseFilename) {

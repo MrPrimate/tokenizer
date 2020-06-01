@@ -1,7 +1,9 @@
 import Tokenizer from "./tokenizer/index.js";
+import ImagePicker from "./libs/ImagePicker.js";
+import DirectoryPicker from "./libs/DirectoryPicker.js";
 
-import SettingsExtender from "./libs/settings-extender-patched.js";
-SettingsExtender();
+// import SettingsExtender from "./libs/settings-extender-patched.js";
+// SettingsExtender();
 
 export function init() {
   console.log("VTTA Tokenizer | Init");
@@ -9,7 +11,7 @@ export function init() {
   game.settings.register("vtta-tokenizer", "default-frame-pc", {
     name: "vtta-tokenizer.default-frame-pc.name",
     hint: "vtta-tokenizer.default-frame-pc.hint",
-    type: window.Azzu.SettingsTypes.FilePickerImage,
+    type: ImagePicker.Image,
     default: "/modules/vtta-tokenizer/img/default-frame-pc.png",
     scope: "world",
     config: true,
@@ -18,7 +20,8 @@ export function init() {
   game.settings.register("vtta-tokenizer", "default-frame-npc", {
     name: "vtta-tokenizer.default-frame-npc.name",
     hint: "vtta-tokenizer.default-frame-npc.hint",
-    type: window.Azzu.SettingsTypes.FilePickerImage,
+    type: ImagePicker.Image,
+    //type: window.Azzu.SettingsTypes.FilePickerImage,
     default: "/modules/vtta-tokenizer/img/default-frame-npc.png",
     scope: "world",
     config: true,
@@ -30,7 +33,7 @@ export function init() {
     scope: "world",
     config: true,
     //type: String,
-    type: window.Azzu.SettingsTypes.DirectoryPicker,
+    type: DirectoryPicker.Directory,
     default: "",
   });
 
