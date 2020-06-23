@@ -1,0 +1,11 @@
+{
+  "vtta-tokenizer.default-frame-npc.name": "Borda padrão para NPC",
+  "vtta-tokenizer.default-frame-npc.hint": "Uma imagem de borda para enviar aos arquivos do Foundry e ser utilizado como padrão.",
+  "vtta-tokenizer.default-frame-pc.name": "Borda padrão apra Personagem",
+  "vtta-tokenizer.default-frame-pc.hint": "Uma imagem de borda para enviar aos arquivos do Foundry e ser utilizado como padrão.",
+  "vtta-tokenizer.image-upload-directory.name": "Diretório para envio de Avatar/ Token",
+  "vtta-tokenizer.image-upload-directory.hint": "Especifique um local no servidor para nviar os avatares e tokens, relativos ao diretório /Data no servidor Foundry, ex. 'img/uploads' é '[Foundry]/Data/img/uploads'. Crie esse diretório manualmente no servidor.",
+  "vtta-tokenizer.token-size.name": "tamanho do Token",
+  "vtta-tokenizer.token-size.hint": "Especifique o tamanho do token (largura x altura). Um valor maior que 200 é recomendavel.",
+  "vtta-tokenizer.requires-upload-permission": "Tokenizer requer permissão de Envio de arquivos. Porfavor informe ao seu Mestre."
+}
