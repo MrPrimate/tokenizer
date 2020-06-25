@@ -74,7 +74,7 @@ export default class Tokenizer extends FormApplication {
 
       // updating the avatar filename
       const update = {
-        img: avatarFilename,
+        img: avatarFilename + "?" + +new Date(),
       };
 
       // for non-wildcard tokens, we set the token img now
@@ -91,7 +91,7 @@ export default class Tokenizer extends FormApplication {
         }
       } else {
         update.token = {
-          img: tokenFilename,
+          img: tokenFilename + "?" + +new Date(),
         };
       }
 
