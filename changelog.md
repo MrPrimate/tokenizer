@@ -5,6 +5,7 @@
 ### Added
 
 - Certified Foundry 0.6.4 compatibility
+- pt-BR localization thanks to rinnocenti
 
 ### Changed
 
