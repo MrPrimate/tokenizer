@@ -1,0 +1,11 @@
+{
+  "vtta-tokenizer.default-frame-npc.name": "Marco por defecto para PNJ",
+  "vtta-tokenizer.default-frame-npc.hint": "Una imagen almacenada en el servidor Foundry que será utilizada como marco por defecto para npcs.",
+  "vtta-tokenizer.default-frame-pc.name": "Marco por defecto para Personajes",
+  "vtta-tokenizer.default-frame-pc.hint": "Una imagen almacenada en el servidor Foundry que será utilizada como marco por defecto para personajes.",
+  "vtta-tokenizer.image-upload-directory.name": "Directorio de subida de Avatares/Iconos",
+  "vtta-tokenizer.image-upload-directory.hint": "Especifica la localización en el servidor donde se subirán avatares e iconos, relativo al directorio Data de Foundry, p.ej. 'img/uploads' será '[Foundry]/Data/img/uploads'. Debes crear manualmente este directorio en el servidor.",
+  "vtta-tokenizer.token-size.name": "Tamaño de Icono",
+  "vtta-tokenizer.token-size.hint": "Especifica el tamaño de icono (ancho y alto). Se recomienza usar un valor por encima de 200.",
+  "vtta-tokenizer.requires-upload-permission": "Tokenizer necesita permiso para subir ficheros. Por favor, notifícaselo a tu Director de Juego."
+}

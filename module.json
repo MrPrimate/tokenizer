@@ -16,6 +16,11 @@
       "lang": "de",
       "name": "Deutsch",
       "path": "lang/de.json"
+    },
+    {
+      "lang": "es",
+      "name": "Spanish",
+      "path": "lang/es.json"
     }
   ],
   "esmodules": ["./src/index.js"],
