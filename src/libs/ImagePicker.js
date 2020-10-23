@@ -26,7 +26,7 @@ class ImagePicker extends FilePicker {
   }
 
   // returns the type "Directory" for rendering the SettingsConfig
-  static Image(val) {
+  static Img(val) {
     return val;
   }
 
@@ -69,7 +69,7 @@ class ImagePicker extends FilePicker {
   // Adds a FilePicker-Simulator-Button next to the input fields
   static processHtml(html) {
     $(html)
-      .find(`input[data-dtype="Image"]`)
+      .find(`input[data-dtype="Img"]`)
       .each(function () {
         if (!$(this).next().length) {
           let picker = new ImagePicker({

@@ -11,7 +11,7 @@ export function init() {
   game.settings.register("vtta-tokenizer", "default-frame-pc", {
     name: "vtta-tokenizer.default-frame-pc.name",
     hint: "vtta-tokenizer.default-frame-pc.hint",
-    type: ImagePicker.Image,
+    type: ImagePicker.Img,
     default: "/modules/vtta-tokenizer/img/default-frame-pc.png",
     scope: "world",
     config: true,
@@ -20,7 +20,7 @@ export function init() {
   game.settings.register("vtta-tokenizer", "default-frame-npc", {
     name: "vtta-tokenizer.default-frame-npc.name",
     hint: "vtta-tokenizer.default-frame-npc.hint",
-    type: ImagePicker.Image,
+    type: ImagePicker.Img,
     //type: window.Azzu.SettingsTypes.FilePickerImage,
     default: "/modules/vtta-tokenizer/img/default-frame-npc.png",
     scope: "world",
