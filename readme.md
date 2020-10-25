@@ -1,5 +1,7 @@
 # VTTA Tokenizer
 
+This is a temporary fork to maintain compatibility with Foundry v0.7.5 till Sebastian returns from absence.
+
 ![](https://img.shields.io/badge/Foundry-v0.4.0-informational)
 
 Your players identify with their characters and a token represents their character - it should look awesome. Tokenizer is there to help.
