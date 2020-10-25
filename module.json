@@ -1,7 +1,7 @@
 {
   "name": "vtta-tokenizer",
-  "title": "Tokenizer - Temporary edition",
-  "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads",
+  "title": "Tokenizer - v0.7.5 edition",
+  "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads. This is a fork until vtta-tokenizer is fixed for v0.7.5.",
   "version": "2.2.2",
   "minimumCoreVersion": "0.7.5",
   "compatibleCoreVersion": "0.7.5",
@@ -28,5 +28,5 @@
   "packs": [],
   "url": "https://github.com/mrprimate/vtta-tokenizer/",
   "manifest": "https://github.com/mrprimate/vtta-tokenizer/releases/download/latest/module.json",
-  "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/2.2.2/module.zip"
+  "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/2.2.2/vtta-tokenizer.zip"
 }
