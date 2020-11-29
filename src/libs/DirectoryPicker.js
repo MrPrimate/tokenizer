@@ -39,6 +39,8 @@ class DirectoryPicker extends FilePicker {
 
   // parses the string back to something the FilePicker can understand as an option
   static parse(str) {
+    if (str === null)
+      str = "";
     let matches = str.match(/\[(.+)\]\s*(.+)/);
     if (matches) {
       let source = matches[1];
