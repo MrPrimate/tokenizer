@@ -1,10 +1,10 @@
 {
   "name": "vtta-tokenizer",
   "title": "Tokenizer",
-  "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads. This is a fork until vtta-tokenizer is fixed for v0.7.5.",
-  "version": "2.2.4",
+  "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads.",
+  "version": "2.2.5",
   "minimumCoreVersion": "0.7.5",
-  "compatibleCoreVersion": "0.7.8",
+  "compatibleCoreVersion": "0.7.9",
   "author": "Sebastian Will (vttassets@gmail.com), MrPrimate (jack@mrprimate.co.uk",
   "languages": [
     {

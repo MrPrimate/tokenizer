@@ -2,6 +2,7 @@
  * Game Settings: Directory
  */
 
+
 class DirectoryPicker extends FilePicker {
   constructor(options = {}) {
     super(options);
@@ -27,7 +28,7 @@ class DirectoryPicker extends FilePicker {
 
   // returns the type "Directory" for rendering the SettingsConfig
   static Directory(val) {
-    return val;
+    return new String(val);
   }
 
   // formats the data into a string for saving it as a GameSetting

@@ -1,6 +1,7 @@
 /**
- * Game Settings: Directory
+ * Game Settings: ImagePicker
  */
+
 
 class ImagePicker extends FilePicker {
   constructor(options = {}) {
@@ -25,9 +26,9 @@ class ImagePicker extends FilePicker {
     return FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
   }
 
-  // returns the type "Directory" for rendering the SettingsConfig
+  // returns the type "Img" for rendering the SettingsConfig
   static Img(val) {
-    return val;
+    return new String(val);
   }
 
   // formats the data into a string for saving it as a GameSetting
