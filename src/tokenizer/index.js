@@ -31,7 +31,7 @@ export default class Tokenizer extends FormApplication {
 
   async _getFilename(suffix = "Avatar") {
     const isWildCard = () => this.actor.data.token.randomImg;
-    const actorName = this.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
+    const actorName = Utils.makeSlug(this.actor.name);
 
     if (suffix === "Token" && isWildCard()) {
       const options = DirectoryPicker.parse(game.settings.get("vtta-tokenizer", "image-upload-directory"));

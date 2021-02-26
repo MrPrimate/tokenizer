@@ -162,108 +162,17 @@ export default class Utils {
     const options = DirectoryPicker.parse(game.settings.get("vtta-tokenizer", "image-upload-directory"));
     const result = await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
     return result.path;
-    // return DirectoryPicker.uploadToPath(game.settings.get("vtta-tokenizer", "image-upload-directory"), file);
   }
 
-  //   static async uploadImage(url, targetDirectory, baseFilename) {
-  //     async function download(url) {
-  //       return new Promise((resolve, reject) => {
-  //         try {
-  //           let req = new XMLHttpRequest();
-  //           req.open("GET", url);
-  //           req.responseType = "blob";
-  //           req.onerror = () => reject("Network error");
-  //           req.onload = () => {
-  //             if (req.status === 200) resolve(req.response);
-  //             else reject("Loading error: " + req.statusText);
-  //           };
-  //           req.send();
-  //         } catch (error) {
-  //           reject(error.message);
-  //         }
-  //       });
-  //     }
-
-  //     async function upload(data, path, filename) {
-  //       return new Promise(async (resolve, reject) => {
-  //         // create new file from the response
-  //         let file = new File([data], filename, { type: data.type });
-
-  //         /**
-  //          * Extract the datasource from the path
-  //          * "[s3:bucketname] path"
-  //          * "[data] path"
-  //          * "[core] path"
-  //          * @param {string} val A reference to the target path coming from settingsextender (patched)
-  //          */
-  //         const getDataSource = (val) => {
-  //           let source = "data";
-  //           let path = val;
-
-  //           // check if we are using the patched settings extender
-  //           let matches = val.trim().match(/\[(.+)\]\s*(.+)/);
-  //           if (matches) {
-  //             // we do
-  //             source = matches[1];
-  //             // get bucket information, if S3 is used
-  //             const [s3Source, bucket] = source.split(":");
-  //             if (bucket !== undefined) {
-  //               return {
-  //                 source: s3Source,
-  //                 bucket: bucket,
-  //                 path: matches[2],
-  //               };
-  //             } else {
-  //               return {
-  //                 source: source,
-  //                 bucket: null,
-  //                 path: matches[2],
-  //               };
-  //             }
-  //           } else {
-  //             return {
-  //               source: source,
-  //               path: path,
-  //             };
-  //           }
-  //         };
-
-  //         const target = getDataSource(path);
-  //         let result = await FilePicker.upload(
-  //           target.source,
-  //           target.path,
-  //           file,
-  //           target.bucket ? { bucket: target.bucket } : {}
-  //         );
-  //         resolve(result.path);
-  //       });
-  //     }
-
-  //     async function process(url, path, filename) {
-  //       let data = await download(url);
-  //       let result = await upload(data, path, filename);
-  //       return result;
-  //     }
-
-  //     // prepare filenames
-  //     let filename = baseFilename;
-  //     let ext = url.split(".").pop().split(/\#|\?/)[0];
-
-  //     // uploading the character avatar and token
-  //     try {
-  //       let result = await process(
-  //         "https://proxy.vttassets.com/?url=" + url,
-  //         targetDirectory,
-  //         filename + "." + ext
-  //       );
-  //       return result;
-  //     } catch (error) {
-  //       console.log(error);
-  //       ui.notifications.warn(
-  //         "Image upload failed. Please check your vtta-dndbeyond upload folder setting"
-  //       );
-  //       return null;
-  //     }
-  //   }
-  // }
+  static makeSlug(s) {
+    const toReplace = "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(",");
+    const replacers = "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(",");
+    const replaceDict = Object.fromEntries(toReplace.map((_, i) => [toReplace[i], replacers[i]]));
+    return s.toLowerCase()
+      .split("")
+      .map(x => replaceDict.hasOwnProperty(x) ? replaceDict[x] : x)
+      .join("")
+      .replace(/[^\w.]/gi, "_")
+      .replace(/__+/g, "_")
+  }
 }
