@@ -2,8 +2,6 @@ import Tokenizer from "./tokenizer/index.js";
 import ImagePicker from "./libs/ImagePicker.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
 
-// import SettingsExtender from "./libs/settings-extender-patched.js";
-// SettingsExtender();
 
 export function init() {
   console.log("VTTA Tokenizer | Init");
