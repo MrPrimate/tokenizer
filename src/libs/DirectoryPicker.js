@@ -28,7 +28,7 @@ class DirectoryPicker extends FilePicker {
 
   // returns the type "Directory" for rendering the SettingsConfig
   static Directory(val) {
-    return new String(val);
+    return val == null ? '' : String(val);
   }
 
   // formats the data into a string for saving it as a GameSetting
@@ -39,13 +39,13 @@ class DirectoryPicker extends FilePicker {
   }
 
   // parses the string back to something the FilePicker can understand as an option
-  static parse(str) {
-    if (str === null)
-      str = "";
-    let matches = str.match(/\[(.+)\]\s*(.+)/);
+  static parse(inStr) {
+    const str = inStr ?? ''
+    let matches = str.match(/\[(.+)\]\s*(.+)?/u);
+
     if (matches) {
-      let source = matches[1];
-      const current = matches[2].trim();
+      let [,source, current = ''] = matches;
+      current = current.trim();
       const [s3, bucket] = source.split(":");
       if (bucket !== undefined) {
         return {

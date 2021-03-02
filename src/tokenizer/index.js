@@ -102,7 +102,7 @@ export default class Tokenizer extends FormApplication {
   /* -------------------------------------------- */
 
   async _initAvatar (html, inputUrl) {
-    const url = inputUrl ?? 'icons/svg/mystery-man.svg'
+    const url = inputUrl ?? CONST.DEFAULT_TOKEN ?? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
     const avatarView = document.querySelector(".avatar > .view");
     if(this.Avatar) {
       this.Avatar.canvas.remove()
@@ -122,9 +122,8 @@ export default class Tokenizer extends FormApplication {
       $(html).parent().parent().css("height", "auto");
     } catch (error) {
       if(inputUrl) {
-        console.error(error)
-        ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to mystery-man.`)
-        this._initAvatar(html)
+        ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to default.`)
+        await this._initAvatar(html)
       } else {
         ui.notifications.error('Failed to load fallback image.')
       }
@@ -163,24 +162,7 @@ export default class Tokenizer extends FormApplication {
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
 
       // Add the actor image to the token view
-      Utils.download(this.actor.data.token.img)
-        .then(img => {
-          this.Token.addImageLayer(img);
-
-          // load the default frame, if there is one set
-          let type = this.actor.data.type === "character" ? "pc" : "npc";
-          let defaultFrame = game.settings.get("vtta-tokenizer", "default-frame-" + type).replace(/^\/|\/$/g, "");
-
-          if (defaultFrame && defaultFrame.trim() !== "") {
-            let masked = true;
-            let options = DirectoryPicker.parse(defaultFrame);
-            // Utils.download(defaultFrame)
-            Utils.download(options.current)
-              .then(img => this.Token.addImageLayer(img, masked))
-              .catch(error => ui.notifications.error(error));
-          }
-        })
-        .catch(error => ui.notifications.error(error));
+      this._initToken(this.actor.data.token.img);
     }
 
     $("#vtta-tokenizer .filePickerTarget").on("change", event => {
@@ -197,8 +179,8 @@ export default class Tokenizer extends FormApplication {
       event.preventDefault();
       let eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
 
-      let view = (eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token) ?? this.Token ?? this.Avatar;
-      console.log(this.Avatar, this.Token)
+      let view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token
+
       let type = eventTarget.dataset.type;
 
       switch (eventTarget.dataset.type) {
@@ -246,5 +228,42 @@ export default class Tokenizer extends FormApplication {
     });
 
     super.activateListeners(html);
+  }
+
+  async _initToken(src) {
+    let imgSrc = src ?? CONST.DEFAULT_TOKEN
+    try {
+      const img = await Utils.download(imgSrc)
+      await this._setTokenImgAndFrame(img);
+    }
+    catch (error) {
+      if(!src || src === CONST.DEFAULT_TOKEN) {
+        console.error(`Failed to load fallback token: "${imgSrc}"`)
+      }
+      else {
+        ui.notifications.error(`Failed to load token: "${imgSrc}", falling back to "${CONST.DEFAULT_TOKEN}"`)
+        console.error(error)
+        await this._initToken()
+      }
+    }
+  }
+
+  async _setTokenImgAndFrame(img) {
+    this.Token.addImageLayer(img);
+    // load the default frame, if there is one set
+    let type = this.actor.data.type === "character" ? "pc" : "npc";
+    let defaultFrame = game.settings.get("vtta-tokenizer", "default-frame-" + type).replace(/^\/|\/$/g, "");
+
+    if (defaultFrame && defaultFrame.trim() !== "") {
+      let masked = true;
+      let options = DirectoryPicker.parse(defaultFrame);
+      // Utils.download(defaultFrame)
+      try {
+        const img = await Utils.download(options.current);
+        this.Token.addImageLayer(img, masked);
+      } catch (error) {
+        ui.notifications.error(`Failed to load frame: "${options.current}"`);
+      }
+    }
   }
 }

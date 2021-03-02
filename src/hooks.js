@@ -54,7 +54,8 @@ export function ready() {
   for (let s of game.settings.settings.values()) {
     if (s.module !== "vtta-tokenizer") continue;
     try {
-      game.settings.get(s.module, s.key);
+      const setting = game.settings.get(s.module, s.key);
+      if(setting == "null" && key === 'image-upload-directory') throw new Error()
     } catch (err) {
       hasErrors = true;
       ui.notifications.info(`[${s.module}] Erroneous module settings found, resetting to default.`);
