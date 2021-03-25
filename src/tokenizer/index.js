@@ -15,7 +15,7 @@ export default class Tokenizer extends FormApplication {
     options.template = "modules/vtta-tokenizer/src/tokenizer/tokenizer.html";
     options.width = 900;
     options.height = "auto";
-    options.classes = ["vtta"];
+    options.classes = ["tokenizer"];
     return options;
   }
 

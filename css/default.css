@@ -1,13 +1,13 @@
-.window-app.vtta {
+.window-app.tokenizer {
   font-family: Roboto, Helvetica, sans-serif;
 }
 
-.window-app.vtta h1,
-.window-app.vtta h2,
-.window-app.vtta h3,
-.window-app.vtta h4,
-.window-app.vtta h5,
-.window-app.vtta h6 {
+.window-app.tokenizer h1,
+.window-app.tokenizer h2,
+.window-app.tokenizer h3,
+.window-app.tokenizer h4,
+.window-app.tokenizer h5,
+.window-app.tokenizer h6 {
   font-family: "Roboto Condensed", Helvetica, sans-serif;
 }
 
