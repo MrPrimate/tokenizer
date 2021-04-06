@@ -74,7 +74,7 @@ export default class Utils {
     if (!url) url = "icons/mystery-man.png";
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
     const useProxy = Utils.useProxy(url);
-    console.log(`Proxy for ${img}: ${useProxy}`);
+    console.log(`Proxy for ${url}: ${useProxy}`);
     return new Promise((resolve, reject) => {
       let img = new Image();
       img.crossOrigin = "Anonymous";
