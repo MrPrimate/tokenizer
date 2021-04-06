@@ -2,7 +2,7 @@
   "name": "vtta-tokenizer",
   "title": "Tokenizer",
   "description": "Tiny yet capable in-game token editor, requires trusted user level for uploads.",
-  "version": "2.2.9-jschoudt",
+  "version": "2.2.10-jschoudt",
   "minimumCoreVersion": "0.7.5",
   "compatibleCoreVersion": "0.7.9",
   "author": "Sebastian Will (vttassets@gmail.com), MrPrimate (jack@mrprimate.co.uk), Jerre Schoudt (jschoudt@gmail.com)",
@@ -28,5 +28,5 @@
   "packs": [],
   "url": "https://github.com/jschoudt/vtta-tokenizer/",
   "manifest": "https://github.com/jschoudt/vtta-tokenizer/releases/download/latest/module.json",
-  "download": "https://github.com/jschoudt/vtta-tokenizer/releases/download/2.2.9-jerre/vtta-tokenizer.zip"
+  "download": "https://github.com/jschoudt/vtta-tokenizer/releases/download/2.2.10-jschoudt/vtta-tokenizer.zip"
 }
