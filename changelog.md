@@ -1,10 +1,10 @@
 # Changelog
 
-## [2.2.9-jschoudt]
+## [2.2.10-jschoudt]
 
 ### Changed
 
-- Removed proxy that was failing for me, building a personal release.
+- Removed proxy that was failing for me
 
 ## [2.2.1]
 
