@@ -51,11 +51,30 @@ export default class Utils {
   }
 
   /**
+   * Should the image use the proxy?
+   * @param {*} url 
+   */
+  static useProxy(url) {
+    if (
+      url.toLowerCase().startsWith("https://www.dndbeyond.com/") ||
+      url.toLowerCase().startsWith("https://dndbeyond.com/") ||
+      url.toLowerCase().startsWith("https://media-waterdeep.cursecdn.com/")
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Downloads an image from a given URL
    * @param {String} url URL of the image that we try to download
    */
-  static download(url) {
+  static async download(url) {
     if (!url) url = "icons/mystery-man.png";
+    const proxy = await game.settings.get("vtta-tokenizer", "proxy");
+    const useProxy = Utils.useProxy(url);
+    console.log(`Proxy for ${img}: ${useProxy}`);
     return new Promise((resolve, reject) => {
       let img = new Image();
       img.crossOrigin = "Anonymous";
@@ -65,7 +84,7 @@ export default class Utils {
       img.addEventListener("error", event => {
         reject(event);
       });
-      let imgSrc = url.toLowerCase().indexOf("http") === 0 ? "https://proxy.iungimus.de/get/" + url : url;
+      let imgSrc = useProxy ? proxy + url : url;
       img.src = imgSrc;
     });
   }
