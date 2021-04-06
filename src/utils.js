@@ -65,8 +65,7 @@ export default class Utils {
       img.addEventListener("error", event => {
         reject(event);
       });
-      let imgSrc = url.toLowerCase().indexOf("http") === 0 ? "https://proxy.iungimus.de/get/" + url : url;
-      img.src = imgSrc;
+      img.src = url;
     });
   }
 
