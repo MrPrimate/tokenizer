@@ -26,7 +26,7 @@
   "esmodules": ["./src/index.js"],
   "styles": ["./css/module-settings.css", "./css/default.css", "./src/tokenizer/tokenizer.css"],
   "packs": [],
-  "url": "https://github.com/mrprimate/vtta-tokenizer/",
-  "manifest": "https://github.com/mrprimate/vtta-tokenizer/releases/download/latest/module.json",
-  "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/2.2.9-jerre/vtta-tokenizer.zip"
+  "url": "https://github.com/jschoudt/vtta-tokenizer/",
+  "manifest": "https://github.com/jschoudt/vtta-tokenizer/releases/download/latest/module.json",
+  "download": "https://github.com/jschoudt/vtta-tokenizer/releases/download/2.2.9-jerre/vtta-tokenizer.zip"
 }
