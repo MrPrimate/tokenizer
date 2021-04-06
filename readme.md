@@ -1,23 +1,15 @@
 # VTTA Tokenizer
-
-This is a temporary fork to maintain compatibility with Foundry v0.7.5 till Sebastian returns from absence.
-
-![](https://img.shields.io/badge/Foundry-v0.4.0-informational)
-
-Your players identify with their characters and a token represents their character - it should look awesome. Tokenizer is there to help.
-
 ## Token creation made easy
 
-One of the primary goals of everything I develop is: Make it easy to use, and do not overburden the user with features. Therefore, uploading your base images, that is: your layers, is really simple. You have three options:
+ You have three options:
 
 - Load an image from your local harddrive (you sure have a great collection already)
-- Load an image from any URL (which is publicly accessible, this module can't hack into NASA, sorry)
+- Load an image from any URL (which is publicly accessible, and not using CORS)
+- Load an image from D&DBeyond
   or
 - just select an image already uploaded to the Foundry server
 
 Overlay this image by adding as many layers on top or beneath it, think of it as putting sheets of paper on top of each other, each having a different cut out, therefore showing parts of the layers beneath it and covering other areas. You can achieve this effect by using images that are transparent in certain areas and opaque on others.
-
-You can play around with a Tokenizer version on this website, which is working all the same as the in-game editor, besides being able to save the image to your Foundry server (I still can't hack, remember?). You head [over to the Tokenizer Tool page](/tools/tokenizer) and have a look.
 
 ### Adjust a single layer
 
