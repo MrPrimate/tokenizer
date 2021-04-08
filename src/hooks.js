@@ -82,13 +82,8 @@ export function ready() {
 
   // register tokenizer on all character (npc and pc) sheets
   sheetNames.forEach(sheetName => {
-    Hooks.once("render" + sheetName, (app, html, data) => {
-      if (!game.user || !game.user.can("FILES_UPLOAD")) {
-        ui.notifications.info(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
-      }
-    });
     Hooks.on("render" + sheetName, (app, html, data) => {
-      if (game.user && game.user.can("FILES_UPLOAD")) {
+      if (game.user) {
         const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
 
         $(html)
@@ -100,6 +95,9 @@ export function ready() {
             // replace it with Tokenizer OR FilePicker click
             $(element).on("click", event => {
               if (!event.shiftKey) {
+                if (!game.user.can("FILES_UPLOAD")) {
+                  ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+                }
                 event.stopPropagation();
                 let tokenizer = new Tokenizer({}, app.entity);
                 tokenizer.render(true);
