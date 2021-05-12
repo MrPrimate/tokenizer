@@ -10,7 +10,7 @@ export function init() {
     name: "vtta-tokenizer.default-frame-pc.name",
     hint: "vtta-tokenizer.default-frame-pc.hint",
     type: ImagePicker.Img,
-    default: "/modules/vtta-tokenizer/img/default-frame-pc.png",
+    default: "modules/vtta-tokenizer/img/default-frame-pc.png",
     scope: "world",
     config: true,
   });
@@ -19,8 +19,7 @@ export function init() {
     name: "vtta-tokenizer.default-frame-npc.name",
     hint: "vtta-tokenizer.default-frame-npc.hint",
     type: ImagePicker.Img,
-    //type: window.Azzu.SettingsTypes.FilePickerImage,
-    default: "/modules/vtta-tokenizer/img/default-frame-npc.png",
+    default: "modules/vtta-tokenizer/img/default-frame-npc.png",
     scope: "world",
     config: true,
   });
@@ -30,7 +29,15 @@ export function init() {
     hint: "vtta-tokenizer.image-upload-directory.hint",
     scope: "world",
     config: true,
-    //type: String,
+    type: DirectoryPicker.Directory,
+    default: "",
+  });
+
+  game.settings.register("vtta-tokenizer", "npc-image-upload-directory", {
+    name: "vtta-tokenizer.npc-image-upload-directory.name",
+    hint: "vtta-tokenizer.npc-image-upload-directory.hint",
+    scope: "world",
+    config: true,
     type: DirectoryPicker.Directory,
     default: "",
   });
@@ -53,10 +60,15 @@ export function init() {
 }
 
 export function ready() {
-  console.log("VTTA Tokenizer | Ready");
+  console.log("Tokenizer | Ready");
 
   // check for failed registered settings
   let hasErrors = false;
+
+  // Set base character upload folder.
+  const characterUploads = game.settings.get("vtta-tokenizer", "image-upload-directory");
+  const npcUploads = game.settings.get("vtta-tokenizer", "npc-image-upload-directory");
+  if (characterUploads != "" && npcUploads == "") game.settings.set("vtta-tokenizer", "npc-image-upload-directory", characterUploads);
 
   for (let s of game.settings.settings.values()) {
     if (s.module !== "vtta-tokenizer") continue;
@@ -99,7 +111,9 @@ export function ready() {
                   ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
                 }
                 event.stopPropagation();
-                let tokenizer = new Tokenizer({}, app.entity);
+
+                const doc = isNewerVersion(game.data.version, "0.8.2") ? app.document : app.entity;
+                let tokenizer = new Tokenizer({}, doc);
                 tokenizer.render(true);
                 event.preventDefault();
               } else {

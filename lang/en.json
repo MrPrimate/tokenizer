@@ -3,8 +3,10 @@
   "vtta-tokenizer.default-frame-npc.hint": "A frame image stored on the Foundry server and that is used as a default frame.",
   "vtta-tokenizer.default-frame-pc.name": "Default Character frame",
   "vtta-tokenizer.default-frame-pc.hint": "A frame image stored on the Foundry server and that is used as a default frame.",
-  "vtta-tokenizer.image-upload-directory.name": "Avatar/ Token upload directory",
-  "vtta-tokenizer.image-upload-directory.hint": "Specificies the avatar and token upload location on the server, relative to the Foundry /Data directory, e.g. 'img/uploads' is '[Foundry]/Data/img/uploads'. Create this directory on the server manually.",
+  "vtta-tokenizer.image-upload-directory.name": "Player image upload directory",
+  "vtta-tokenizer.image-upload-directory.hint": "The avatar and token upload location on the server, relative to the Foundry /Data directory, e.g. 'img/uploads' is '[Foundry]/Data/img/uploads'.",
+  "vtta-tokenizer.npc-image-upload-directory.name": "NPC image upload directory for NPC tokens",
+  "vtta-tokenizer.npc-image-upload-directory.hint": "The avatar and token upload location on the server, relative to the Foundry /Data directory, e.g. 'img/uploads' is '[Foundry]/Data/img/uploads'.",
   "vtta-tokenizer.token-size.name": "Token size",
   "vtta-tokenizer.token-size.hint": "Specifies the token size (width and height). A value higher than 200 is recommended.",
   "vtta-tokenizer.requires-upload-permission": "Tokenizer requires the permission to Upload Files. Please inform your Gamemaster."

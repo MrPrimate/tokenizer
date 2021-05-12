@@ -34,7 +34,7 @@ export default class Tokenizer extends FormApplication {
     const actorName = Utils.makeSlug(this.actor.name);
 
     if (suffix === "Token" && isWildCard()) {
-      const options = DirectoryPicker.parse(game.settings.get("vtta-tokenizer", "image-upload-directory"));
+      const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(this.actor.data.type));
 
       let tokenWildcard = this.actor.data.token.img;
 
@@ -69,8 +69,8 @@ export default class Tokenizer extends FormApplication {
 
     // get the data
     Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async dataResults => {
-      avatarFilename = await Utils.uploadToFoundryV3(dataResults[0], avatarFilename);
-      tokenFilename = await Utils.uploadToFoundryV3(dataResults[1], tokenFilename);
+      avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.actor.data.type);
+      tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.actor.data.type);
 
       // updating the avatar filename
       const update = {
@@ -80,7 +80,7 @@ export default class Tokenizer extends FormApplication {
       // for non-wildcard tokens, we set the token img now
       if (this.actor.data.token.randomImg) {
         const actorName = this.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
-        const options = DirectoryPicker.parse(game.settings.get("vtta-tokenizer", "image-upload-directory"));
+        const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(this.actor.data.type));
 
         if (this.actor.data.token.img.indexOf("*") === -1) {
           // set it to a wildcard we can actually use
@@ -235,8 +235,7 @@ export default class Tokenizer extends FormApplication {
     try {
       const img = await Utils.download(imgSrc)
       await this._setTokenImgAndFrame(img);
-    }
-    catch (error) {
+    } catch (error) {
       if(!src || src === CONST.DEFAULT_TOKEN) {
         console.error(`Failed to load fallback token: "${imgSrc}"`)
       }

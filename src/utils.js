@@ -24,6 +24,16 @@ export default class Utils {
     return undefined;
   }
 
+  static getBaseUploadFolder(type) {
+    if (type === "character") {
+      return game.settings.get("vtta-tokenizer", "image-upload-directory")
+    } else if (type === "npc") {
+      return game.settings.get("vtta-tokenizer", "npc-image-upload-directory")
+    } else {
+      return game.settings.get("vtta-tokenizer", "image-upload-directory");
+    }
+  }
+
   static upload() {
     let fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -89,96 +99,11 @@ export default class Utils {
     });
   }
 
-  static async uploadToFoundry(data, filename) {
-    return new Promise((resolve, reject) => {
-      data.then(blob => {
-        // replacing special characters in the desired filename with underscores
-        filename = filename.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
-
-        let formData = new FormData();
-        formData.append("target", game.settings.get("vtta-tokenizer", "image-upload-directory"));
-
-        let target = game.data.version === "0.4.0" ? "user" : game.data.version === "0.4.1" ? "user" : "data";
-        formData.append("source", target);
-
-        formData.append("upload", blob, filename);
-
-        let req = new XMLHttpRequest();
-        req.open("POST", "/upload", true);
-        req.onreadystatechange = () => {
-          if (req.readyState !== 4) return;
-          if (req.status === 200) {
-            resolve(`${game.settings.get("vtta-tokenizer", "image-upload-directory")}/${filename}`);
-          } else {
-            reject(req.responseText);
-          }
-        };
-        req.send(formData);
-      });
-    });
-  }
-
-  static async uploadToFoundryV2(data, path, filename) {
-    return new Promise(async (resolve, reject) => {
-      // create new file from the response
-      let file = new File([data], filename, { type: data.type });
-
-      /**
-       * Extract the datasource from the path
-       * "[s3:bucketname] path"
-       * "[data] path"
-       * "[core] path"
-       * @param {string} val A reference to the target path coming from settingsextender (patched)
-       */
-
-      const getDataSource = val => {
-        let source = "data";
-        let path = val;
-
-        // check if we are using the patched settings extender
-        let matches = val.trim().match(/\[(.+)\]\s*(.+)/);
-        if (matches) {
-          // we do
-          source = matches[1];
-          // get bucket information, if S3 is used
-          const [s3Source, bucket] = source.split(":");
-          if (bucket !== undefined) {
-            return {
-              source: s3Source,
-              bucket: bucket,
-              path: matches[2],
-            };
-          } else {
-            return {
-              source: source,
-              bucket: null,
-              path: matches[2],
-            };
-          }
-        } else {
-          return {
-            source: source,
-            path: path,
-          };
-        }
-      };
-
-      const target = getDataSource(path);
-      let result = await FilePicker.upload(
-        target.source,
-        target.path,
-        file,
-        target.bucket ? { bucket: target.bucket } : {}
-      );
-      resolve(result.path);
-    });
-  }
-
-  static async uploadToFoundryV3(data, filename) {
+  static async uploadToFoundry(data, filename, type) {
     // create new file from the response
     let file = new File([data], filename, { type: data.type });
 
-    const options = DirectoryPicker.parse(game.settings.get("vtta-tokenizer", "image-upload-directory"));
+    const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(type));
     const result = await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
     return result.path;
   }

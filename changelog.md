@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.1.0]
+
+* Support for Foundry v0.8.3
+* Can upload NPC tokens to a seperate folder to PC's.
+
+
 ## [2.2.1]
 
 ### Added
