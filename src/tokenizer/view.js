@@ -75,11 +75,13 @@ export default class View {
           img.src = this.canvas.toDataURL();
         });
       case 'blob':
+        const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
         return new Promise((resolve, reject) => {
           try {
             this.canvas.toBlob(blob => {
               resolve(blob);
-            });
+            },
+            `image/${imageFormat}`);
           } catch (error) {
             reject(error);
           }

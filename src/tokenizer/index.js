@@ -32,6 +32,7 @@ export default class Tokenizer extends FormApplication {
   async _getFilename(suffix = "Avatar") {
     const isWildCard = () => this.actor.data.token.randomImg;
     const actorName = Utils.makeSlug(this.actor.name);
+    const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
 
     if (suffix === "Token" && isWildCard()) {
       const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(this.actor.data.type));
@@ -40,7 +41,7 @@ export default class Tokenizer extends FormApplication {
 
       if (tokenWildcard.indexOf("*") === -1) {
         // set it to a wildcard we can actually use
-        tokenWildcard = `${options.current}/${actorName}.Token-*.png`;
+        tokenWildcard = `${options.current}/${actorName}.Token-*.${imageFormat}`;
       }
       // get the next free index
       const browser = await FilePicker.browse(options.activeSource, tokenWildcard, {
@@ -56,12 +57,14 @@ export default class Tokenizer extends FormApplication {
 
       return targetFilename;
     }
-    return `${actorName}.${suffix}.png`;
+    return `${actorName}.${suffix}.${imageFormat}`;
   }
 
   _updateObject(event, formData) {
     // Update the object this ApplicationForm is based on
     // e.g. this.object.update(formData)
+
+    const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
 
     // upload token and avatar
     let avatarFilename = formData.targetAvatarFilename;
@@ -86,7 +89,7 @@ export default class Tokenizer extends FormApplication {
           // set it to a wildcard we can actually use
           ui.notifications.info("Tokenizer: Wildcarding token image to " + this.actor.data.token.img);
           update.token = {
-            img: `${options.current}/${actorName}.Token-*.png`,
+            img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
           };
         }
       } else {
@@ -113,8 +116,8 @@ export default class Tokenizer extends FormApplication {
     this.Avatar = null
     try {
       const img = await Utils.download(url)
-      const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth);
-      console.log("Setting Avatar dimensions to " + MAX_DIMENSION + "/" + MAX_DIMENSION);
+      const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth, game.settings.get("vtta-tokenizer", "portrait-size"));
+      console.log("Setting Avatar dimensions to " + MAX_DIMENSION + "x" + MAX_DIMENSION);
       this.Avatar = new View(MAX_DIMENSION, avatarView);
       this.Avatar.addImageLayer(img);
 

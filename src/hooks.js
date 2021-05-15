@@ -42,9 +42,28 @@ export function init() {
     default: "",
   });
 
+  game.settings.register("vtta-tokenizer", "image-save-type", {
+    name: "vtta-tokenizer.image-save-type.name",
+    hint: "vtta-tokenizer.image-save-type.hint",
+    scope: "world",
+    config: true,
+    default: "webp",
+    choices: { "webp": "*.webp", "png": "*.png" },
+    type: String,
+  });
+
   game.settings.register("vtta-tokenizer", "token-size", {
     name: "vtta-tokenizer.token-size.name",
     hint: "vtta-tokenizer.token-size.hint",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 400,
+  });
+
+  game.settings.register("vtta-tokenizer", "portrait-size", {
+    name: "vtta-tokenizer.portrait-size.name",
+    hint: "vtta-tokenizer.portrait-size.hint",
     scope: "world",
     config: true,
     type: Number,
