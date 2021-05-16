@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.1.1]
+
+* Support for saving files as webp as default. (PNG is still available in settings). (Thanks JamzTheMan !)
+* Image size is now an option. (Thanks JamzTheMan !)
+
 ## [3.1.0]
 
 * Support for Foundry v0.8.3
