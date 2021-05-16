@@ -79,7 +79,7 @@ export default class Layer {
     let ctx = temp.getContext('2d');
     let pixels = ctx.getImageData(0, 0, this.source.width + 2, this.source.height + 2);
 
-    const transparencyThreshold = 50;
+    const transparencyThreshold = 254;
 
     let completelyTransparent = () => {
       let pixels = this.source.getContext('2d').getImageData(0, 0, this.source.width, this.source.height).data;

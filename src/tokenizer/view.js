@@ -75,11 +75,13 @@ export default class View {
           img.src = this.canvas.toDataURL();
         });
       case 'blob':
+        const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
         return new Promise((resolve, reject) => {
           try {
             this.canvas.toBlob(blob => {
-              resolve(blob);
-            });
+                  resolve(blob);
+                },
+                `image/${imageFormat}`);
           } catch (error) {
             reject(error);
           }
@@ -470,20 +472,21 @@ export default class View {
   }
 
   redraw() {
+    let maskLayer = undefined
     let ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.width, this.height);
 
     if (this.maskId !== null) {
       // get the mask layer
-      let maskLayer = this.layers.find(layer => layer.id === this.maskId);
+      maskLayer = this.layers.find(layer => layer.id === this.maskId);
       // draw the mask at the same position and scale as the source of the layer itself
       ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(
-        maskLayer.sourceMask,
-        maskLayer.position.x,
-        maskLayer.position.y,
-        maskLayer.source.width * maskLayer.scale,
-        maskLayer.source.height * maskLayer.scale
+          maskLayer.sourceMask,
+          maskLayer.position.x,
+          maskLayer.position.y,
+          maskLayer.source.width * maskLayer.scale,
+          maskLayer.source.height * maskLayer.scale
       );
 
       ctx.globalCompositeOperation = 'source-atop';
@@ -493,6 +496,15 @@ export default class View {
     // draw all the layers on top of each other
     for (let i = this.layers.length - 1; i >= 0; i--) {
       ctx.drawImage(this.layers[i].view, 0, 0, this.width, this.height);
+    }
+
+    // draw the mask again on top as clipping may have happened to semi-transparent pixels
+    // but only if defined as the top layer
+    if (maskLayer !== undefined) {
+      if(this.layers[0].id == maskLayer.id) {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.drawImage(maskLayer.view, 0, 0, this.width, this.height);
+      }
     }
   }
 }
