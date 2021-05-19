@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.1.2]
+
+* Japanese localisation (Thanks BrotherSharper and asami )
+
 ## [3.1.1]
 
 * Support for saving files as webp as default. (PNG is still available in settings). (Thanks JamzTheMan !)
