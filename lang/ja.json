@@ -1,0 +1,18 @@
+{
+    "vtta-tokenizer.default-frame-npc.name": "デフォルトのNPCフレーム",
+    "vtta-tokenizer.default-frame-npc.hint": "Foundryサーバーに保存され、デフォルトのフレームとして使用されるフレームイメージ。",
+    "vtta-tokenizer.default-frame-pc.name": "デフォルトのPCフレーム",
+    "vtta-tokenizer.default-frame-pc.hint": "Foundryサーバーに保存され、デフォルトのフレームとして使用されるフレームイメージ。",
+    "vtta-tokenizer.image-upload-directory.name": "プレイヤー肖像 アップロードディレクトリ",
+    "vtta-tokenizer.image-upload-directory.hint": "Foundry /Data ディレクトリを基準にした、サーバー上の肖像とトークンのアップロード場所を指定します。｢img/uploads｣は｢[Foundry]/Data/img/uploads｣です。サーバー上にこのディレクトリを作成します。",
+    "vtta-tokenizer.npc-image-upload-directory.name": "NPC肖像/ﾄｰｸﾝ用 アップロードディレクトリ",
+    "vtta-tokenizer.npc-image-upload-directory.hint": "Foundry /Data ディレクトリを基準にした、サーバー上の肖像とトークンのアップロード場所を指定します。｢img/uploads｣は｢[Foundry]/Data/img/uploads｣です。",
+    "vtta-tokenizer.image-save-type.name": "画像ファイルの種類",
+    "vtta-tokenizer.image-save-type.hint": "アバターとトークンの画像はこの形式で保存されます。Webpは通常より小さなファイルサイズを生成するのに適しています。",
+    "vtta-tokenizer.token-size.name": "トークンサイズ",
+    "vtta-tokenizer.token-size.hint": "トークンサイズ（幅と高さ）を指定します。 200より高い値をお勧めします。",
+    "vtta-tokenizer.portrait-size.name": "肖像サイズ",
+    "vtta-tokenizer.portrait-size.hint": "サイズ (幅と高さ) を指定します。200より高い値をお勧めします。",
+    "vtta-tokenizer.requires-upload-permission": "Tokenizerには、ファイルをアップロードするためのアクセス権が必要です。GMに知らせてください。"
+  }
+  
