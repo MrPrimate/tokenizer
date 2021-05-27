@@ -26,6 +26,7 @@ export default class Tokenizer extends FormApplication {
       data: this.actor.data,
       canUpload: game.user && game.user.can("FILES_UPLOAD"), //game.user.isTrusted || game.user.isGM,
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
+      tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && Boolean(game.TokenVariants),
     };
   }
 
@@ -104,10 +105,10 @@ export default class Tokenizer extends FormApplication {
 
   /* -------------------------------------------- */
 
-  async _initAvatar (html, inputUrl) {
+  async _initAvatar(html, inputUrl) {
     const url = inputUrl ?? CONST.DEFAULT_TOKEN ?? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
     const avatarView = document.querySelector(".avatar > .view");
-    if(this.Avatar) {
+    if (this.Avatar) {
       this.Avatar.canvas.remove()
       this.Avatar.stage.remove()
       this.Avatar.controlsArea.remove()
@@ -124,7 +125,7 @@ export default class Tokenizer extends FormApplication {
       // Setting the height of the form to the desired auto height
       $(html).parent().parent().css("height", "auto");
     } catch (error) {
-      if(inputUrl) {
+      if (inputUrl) {
         ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to default.`)
         await this._initAvatar(html)
       } else {
@@ -227,6 +228,11 @@ export default class Tokenizer extends FormApplication {
         case "avatar":
           this.Avatar.get("img").then(img => view.addImageLayer(img));
           break;
+        case "tokenVariants":
+          game.TokenVariants.displayArtSelect(this.actor.name,
+            (imgSrc) => Utils.download(imgSrc).then(img => view.addImageLayer(img)),
+            eventTarget.dataset.target === "avatar" ? "portrait" : "token");
+          break;
       }
     });
 
@@ -239,7 +245,7 @@ export default class Tokenizer extends FormApplication {
       const img = await Utils.download(imgSrc)
       await this._setTokenImgAndFrame(img);
     } catch (error) {
-      if(!src || src === CONST.DEFAULT_TOKEN) {
+      if (!src || src === CONST.DEFAULT_TOKEN) {
         console.error(`Failed to load fallback token: "${imgSrc}"`)
       }
       else {
