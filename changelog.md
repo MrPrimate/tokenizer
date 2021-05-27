@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.1.3]
+
+* Add a button to load token image from Token Variants module.
+
 # [3.1.2]
 
 * Japanese localisation (Thanks BrotherSharper and asami )
