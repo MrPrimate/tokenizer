@@ -22,6 +22,10 @@
                             {{#if canBrowse }}<button title="Use an image from Foundry Server"
                                 class="menu-button file-picker" data-type="imagevideo" data-target="foundryAvatar"><i
                                     class="fas fa-server"></i></button>{{/if}}
+                            {{#if tokenVariantsEnabled}} <button
+                                title="Use an image from Foundry Server through TokenVariants" class="menu-button"
+                                data-type="tokenVariants" data-target="avatar"><i
+                                    class="fas fa-images"></i></button>{{/if}}
                         </div>
                     </div>
                 </div>
@@ -44,6 +48,10 @@
                             <button title="Use an image from Foundry Server" class="menu-button file-picker"
                                 data-type="imagevideo" data-target="foundryToken"><i
                                     class="fas fa-server"></i></button>{{/if}}
+                            {{#if tokenVariantsEnabled}} <button
+                                title="Use an image from Foundry Server through TokenVariants" class="menu-button"
+                                data-type="tokenVariants" data-target="token"><i
+                                    class="fas fa-images"></i></button>{{/if}}
                         </div>
                     </div>
                     <div class="section">
