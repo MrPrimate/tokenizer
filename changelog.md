@@ -1,6 +1,6 @@
 # Changelog
 
-# [3.1.3]
+# [3.1.3/4]
 
 * Add a button to load token image from Token Variants module.
 
