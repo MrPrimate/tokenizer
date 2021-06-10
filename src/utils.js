@@ -11,6 +11,21 @@ export default class Utils {
     return firstPart + secondPart;
   }
 
+  static U2A(str) {
+    let reserved = '';
+    const code = str.match(/&#(d+);/g);
+
+    if (code === null) {
+      return str;
+    }
+
+    for (var i = 0; i < code.length; i++) {
+      reserved += String.fromCharCode(code[i].replace(/[&#;]/g, ''));
+    }
+
+    return reserved;
+}
+
   static getElementPosition(obj) {
     var curleft = 0,
       curtop = 0;
@@ -108,15 +123,43 @@ export default class Utils {
     return result.path;
   }
 
-  static makeSlug(s) {
+  static getHash(str, algo = "SHA-256") {
+    let strBuf = new TextEncoder('utf-8').encode(str);
+    return crypto.subtle.digest(algo, strBuf)
+      .then(hash => {
+        // window.hash = hash;
+        // here hash is an arrayBuffer, 
+        // so we'll connvert it to its hex version
+        let result = '';
+        const view = new DataView(hash);
+        for (let i = 0; i < hash.byteLength; i += 4) {
+          result += ('00000000' + view.getUint32(i).toString(16)).slice(-8);
+        }
+        return result;
+      });
+  }
+
+  static async makeSlug(actor) {
     const toReplace = "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(",");
     const replacers = "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(",");
     const replaceDict = Object.fromEntries(toReplace.map((_, i) => [toReplace[i], replacers[i]]));
-    return s.toLowerCase()
+    const unicodeString = actor.name.toLowerCase()
       .split("")
       .map(x => replaceDict.hasOwnProperty(x) ? replaceDict[x] : x)
       .join("")
       .replace(/[^\w.]/gi, "_")
       .replace(/__+/g, "_")
+    let asciiString = Utils.U2A(unicodeString);
+    return new Promise((resolve) => {
+      if (asciiString.length < 2) {
+        // asciiString = actor.id;
+        Utils.getHash(actor.name).then((hash) => {
+          console.debug("Tokenizer is having to use a hashed file name.");
+          resolve(hash);
+        });
+      } else {
+        resolve(asciiString);
+      }
+    });
   }
 }

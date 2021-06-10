@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.1.5]
+
+* File names are now converted to ascii to deal with Foundry unicode filename issues. It will revert to hash of character name if a suitable string cannot be generated.
+
 # [3.1.3/4]
 
 * Add a button to load token image from Token Variants module.

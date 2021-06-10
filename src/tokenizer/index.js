@@ -32,7 +32,7 @@ export default class Tokenizer extends FormApplication {
 
   async _getFilename(suffix = "Avatar") {
     const isWildCard = () => this.actor.data.token.randomImg;
-    const actorName = Utils.makeSlug(this.actor.name);
+    const actorName = await Utils.makeSlug(this.actor);
     const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
 
     if (suffix === "Token" && isWildCard()) {
