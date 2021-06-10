@@ -1,6 +1,6 @@
 # Changelog
 
-# [3.1.5]
+# [3.1.5/6]
 
 * File names are now converted to ascii to deal with Foundry unicode filename issues. It will revert to hash of character name if a suitable string cannot be generated.
 

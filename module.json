@@ -2,11 +2,11 @@
   "name": "vtta-tokenizer",
   "title": "Tokenizer",
   "description": "Tiny yet capable in-game token editor",
-  "version": "3.1.5",
-  "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/3.1.5/vtta-tokenizer.zip",
+  "version": "3.1.6",
+  "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/3.1.6/vtta-tokenizer.zip",
   "manifest": "https://github.com/mrprimate/vtta-tokenizer/releases/download/latest/module.json",
   "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.8.5",
+  "compatibleCoreVersion": "0.8.6",
   "author": "Sebastian Will (vttassets@gmail.com), MrPrimate (jack@mrprimate.co.uk)",
   "languages": [
     {
