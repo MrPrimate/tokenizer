@@ -125,11 +125,13 @@ export default class Utils {
 
   static getHash(str, algo = "SHA-256") {
     let strBuf = new TextEncoder('utf-8').encode(str);
-    return crypto.subtle.digest(algo, strBuf)
+
+    if (window.isSecureContext) {
+      return crypto.subtle.digest(algo, strBuf)
       .then(hash => {
         // window.hash = hash;
         // here hash is an arrayBuffer, 
-        // so we'll connvert it to its hex version
+        // so we'll convert it to its hex version
         let result = '';
         const view = new DataView(hash);
         for (let i = 0; i < hash.byteLength; i += 4) {
@@ -137,6 +139,11 @@ export default class Utils {
         }
         return result;
       });
+    } else {
+      return new Promise(resolve => {
+        resolve(str.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0));
+      }); 
+    }
   }
 
   static async makeSlug(actor) {
