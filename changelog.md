@@ -3,6 +3,7 @@
 
 # [3.2.1]
 
+* Option to place Tokenizer button on title bar.
 * Option to turn off auto add frame in settings.
 * Option to specify a directory to use as frames.
 * Drop down will present available frames to apply to a token.
