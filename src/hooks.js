@@ -88,6 +88,15 @@ export function init() {
     default: 400,
   });
 
+  game.settings.register("vtta-tokenizer", "title-link", {
+    name: "vtta-tokenizer.title-link.name",
+    hint: "vtta-tokenizer.title-link.hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("vtta-tokenizer", "proxy", {
     scope: "world",
     config: false,
@@ -96,11 +105,23 @@ export function init() {
   });
 }
 
+function launchTokenizer(doc) {
+  if (!game.user.can("FILES_UPLOAD")) {
+    ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+  }
+
+  const tokenizer = new Tokenizer({}, doc);
+  tokenizer.render(true);
+
+}
+
 export function ready() {
   console.log("Tokenizer | Ready");
 
   // check for failed registered settings
   let hasErrors = false;
+
+  const titleLink = game.settings.get("vtta-tokenizer", "title-link");
 
   // Set base character upload folder.
   const characterUploads = game.settings.get("vtta-tokenizer", "image-upload-directory");
@@ -133,6 +154,20 @@ export function ready() {
   sheetNames.forEach(sheetName => {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user) {
+        const doc = isNewerVersion(game.data.version, "0.8.2") ? app.document : app.entity;
+
+        if (titleLink) {
+          const button = $(`<a class="header-button vtta-tokenizer" id="vtta-tokenizer-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
+          html.closest('.app').find('#vtta-tokenizer-button').remove();
+          let titleElement = html.closest('.app').find('.window-title');
+          if (!app._minimized) button.insertAfter(titleElement);
+
+          button.click((event) => {
+            event.preventDefault();
+            launchTokenizer(doc);
+          });
+        }
+
         const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
 
         $(html)
@@ -144,14 +179,8 @@ export function ready() {
             // replace it with Tokenizer OR FilePicker click
             $(element).on("click", event => {
               if (!event.shiftKey) {
-                if (!game.user.can("FILES_UPLOAD")) {
-                  ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
-                }
                 event.stopPropagation();
-
-                const doc = isNewerVersion(game.data.version, "0.8.2") ? app.document : app.entity;
-                let tokenizer = new Tokenizer({}, doc);
-                tokenizer.render(true);
+                launchTokenizer(doc);
                 event.preventDefault();
               } else {
                 // showing the filepicker
