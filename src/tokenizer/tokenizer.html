@@ -62,6 +62,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="menu">
+                    <div class="section">
+                        <div class="title">Add Frame</div>
+                        <div class="content">
+                            <select name="frame-selector" id="frame-selector">
+                                {{#each this.frames}}
+                                <option value="{{this.key}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                                {{/each}}
+                            </select>
+                            <button title="Apply Frame" class="menu-button" data-type="frame"
+                                data-target="token"><i class="fas fa-user-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="footer">

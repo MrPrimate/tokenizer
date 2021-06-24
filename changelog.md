@@ -1,5 +1,12 @@
 # Changelog
 
+
+# [3.2.1]
+
+* Option to turn off auto add frame in settings.
+* Option to specify a directory to use as frames.
+* Drop down will present available frames to apply to a token.
+
 # [3.1.5/6]
 
 * File names are now converted to ascii to deal with Foundry unicode filename issues. It will revert to hash of character name if a suitable string cannot be generated.

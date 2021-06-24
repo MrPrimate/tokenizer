@@ -1,5 +1,8 @@
 import DirectoryPicker from "./libs/DirectoryPicker.js";
 
+const SKIPPING_WORDS = [
+  "the", "of", "at", "it", "a,"
+];
 export default class Utils {
   static generateUUID() {
     // I generate the UID from two parts here
@@ -12,7 +15,7 @@ export default class Utils {
   }
 
   static U2A(str) {
-    let reserved = '';
+    let reserved = "";
     const code = str.match(/&#(d+);/g);
 
     if (code === null) {
@@ -20,11 +23,11 @@ export default class Utils {
     }
 
     for (var i = 0; i < code.length; i++) {
-      reserved += String.fromCharCode(code[i].replace(/[&#;]/g, ''));
+      reserved += String.fromCharCode(code[i].replace(/[&#;]/g, ""));
     }
 
     return reserved;
-}
+  }
 
   static getElementPosition(obj) {
     var curleft = 0,
@@ -41,9 +44,9 @@ export default class Utils {
 
   static getBaseUploadFolder(type) {
     if (type === "character") {
-      return game.settings.get("vtta-tokenizer", "image-upload-directory")
+      return game.settings.get("vtta-tokenizer", "image-upload-directory");
     } else if (type === "npc") {
-      return game.settings.get("vtta-tokenizer", "npc-image-upload-directory")
+      return game.settings.get("vtta-tokenizer", "npc-image-upload-directory");
     } else {
       return game.settings.get("vtta-tokenizer", "image-upload-directory");
     }
@@ -55,13 +58,13 @@ export default class Utils {
     fileInput.click();
 
     return new Promise((resolve, reject) => {
-      fileInput.addEventListener("change", event => {
+      fileInput.addEventListener("change", (event) => {
         // setup the FileReader
         let file = event.target.files[0];
         let reader = new FileReader();
         reader.addEventListener("load", () => {
           let img = document.createElement("img");
-          img.addEventListener("load", result => {
+          img.addEventListener("load", (result) => {
             resolve(img);
           });
           img.src = reader.result;
@@ -77,7 +80,7 @@ export default class Utils {
 
   /**
    * Should the image use the proxy?
-   * @param {*} url 
+   * @param {*} url
    */
   static useProxy(url) {
     if (
@@ -103,10 +106,10 @@ export default class Utils {
     return new Promise((resolve, reject) => {
       let img = new Image();
       img.crossOrigin = "Anonymous";
-      img.addEventListener("load", event => {
+      img.addEventListener("load", (event) => {
         resolve(img);
       });
-      img.addEventListener("error", event => {
+      img.addEventListener("error", (event) => {
         reject(event);
       });
       let imgSrc = useProxy ? proxy + url : url;
@@ -119,43 +122,61 @@ export default class Utils {
     let file = new File([data], filename, { type: data.type });
 
     const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(type));
-    const result = await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
+    const result = await FilePicker.upload(
+      options.activeSource,
+      options.current,
+      file,
+      { bucket: options.bucket }
+    );
     return result.path;
   }
 
   static getHash(str, algo = "SHA-256") {
-    let strBuf = new TextEncoder('utf-8').encode(str);
+    let strBuf = new TextEncoder("utf-8").encode(str);
 
     if (window.isSecureContext) {
-      return crypto.subtle.digest(algo, strBuf)
-      .then(hash => {
+      return crypto.subtle.digest(algo, strBuf).then((hash) => {
         // window.hash = hash;
-        // here hash is an arrayBuffer, 
+        // here hash is an arrayBuffer,
         // so we'll convert it to its hex version
-        let result = '';
+        let result = "";
         const view = new DataView(hash);
         for (let i = 0; i < hash.byteLength; i += 4) {
-          result += ('00000000' + view.getUint32(i).toString(16)).slice(-8);
+          result += ("00000000" + view.getUint32(i).toString(16)).slice(-8);
         }
         return result;
       });
     } else {
-      return new Promise(resolve => {
-        resolve(str.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0));
-      }); 
+      return new Promise((resolve) => {
+        resolve(
+          str.split("").reduce(function (a, b) {
+            a = (a << 5) - a + b.charCodeAt(0);
+            return a & a;
+          }, 0)
+        );
+      });
     }
   }
 
   static async makeSlug(actor) {
-    const toReplace = "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(",");
-    const replacers = "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(",");
-    const replaceDict = Object.fromEntries(toReplace.map((_, i) => [toReplace[i], replacers[i]]));
-    const unicodeString = actor.name.toLowerCase()
+    const toReplace =
+      "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(
+        ","
+      );
+    const replacers =
+      "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(
+        ","
+      );
+    const replaceDict = Object.fromEntries(
+      toReplace.map((_, i) => [toReplace[i], replacers[i]])
+    );
+    const unicodeString = actor.name
+      .toLowerCase()
       .split("")
-      .map(x => replaceDict.hasOwnProperty(x) ? replaceDict[x] : x)
+      .map((x) => (replaceDict.hasOwnProperty(x) ? replaceDict[x] : x))
       .join("")
       .replace(/[^\w.]/gi, "_")
-      .replace(/__+/g, "_")
+      .replace(/__+/g, "_");
     let asciiString = Utils.U2A(unicodeString);
     return new Promise((resolve) => {
       if (asciiString.length < 2) {
@@ -168,5 +189,17 @@ export default class Utils {
         resolve(asciiString);
       }
     });
+  }
+
+  static titleString (text) {
+    const words = text.trim().split(" ");
+
+    for (let i = 0; i < words.length; i++) {
+      if (i == 0 || !SKIPPING_WORDS.includes(words[i])) {
+        words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+      }
+    }
+
+    return  words.join(" ");
   }
 }

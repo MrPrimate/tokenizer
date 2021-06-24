@@ -21,12 +21,43 @@ export default class Tokenizer extends FormApplication {
 
   /* -------------------------------------------- */
 
-  getData() {
+  async getData() {
+    const defaultFrames = [
+      {
+        key: game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, ""),
+        label: "Default Player Frame",
+        selected: false,
+      },
+      {
+        key: game.settings.get("vtta-tokenizer", "default-frame-npc").replace(/^\/|\/$/g, ""),
+        label: "Default NPC Frame",
+        selected: true,
+      }
+    ];
+
+    const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
+    console.debug(`Checking for files in ${directoryPath}...`);
+    const dir = DirectoryPicker.parse(directoryPath);
+    const fileList = await DirectoryPicker.browse(dir.activeSource, dir.current, { bucket: dir.bucket });
+
+    const folderFrames = fileList.files.map((file) => {
+      const labelSplit = file.split("/").pop().trim();
+      const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
+      return {
+        key: file,
+        label: Utils.titleString(label),
+        selected: false,
+      }
+    });
+
+    const frames = defaultFrames.concat(folderFrames);
+
     return {
       data: this.actor.data,
       canUpload: game.user && game.user.can("FILES_UPLOAD"), //game.user.isTrusted || game.user.isGM,
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
       tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && Boolean(game.TokenVariants),
+      frames: frames,
     };
   }
 
@@ -153,15 +184,7 @@ export default class Tokenizer extends FormApplication {
       $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
       // load the default frame, if there is one set
-      let type = this.actor.data.type === "character" ? "pc" : "npc";
-      let defaultFrame = game.settings.get("vtta-tokenizer", "default-frame-" + type).replace(/^\/|\/$/g, "");
-
-      if (defaultFrame && defaultFrame.trim() !== "") {
-        let masked = true;
-        let options = DirectoryPicker.parse(defaultFrame);
-        // Utils.download(defaultFrame)
-        Utils.download(options.current).then(img => this.Token.addImageLayer(img, masked));
-      }
+      this._setTokenFrame();
     } else {
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
 
@@ -182,10 +205,7 @@ export default class Tokenizer extends FormApplication {
     $("#vtta-tokenizer button.menu-button").click(async event => {
       event.preventDefault();
       let eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-
       let view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token
-
-      let type = eventTarget.dataset.type;
 
       switch (eventTarget.dataset.type) {
         case "upload":
@@ -233,6 +253,10 @@ export default class Tokenizer extends FormApplication {
             (imgSrc) => Utils.download(imgSrc).then(img => view.addImageLayer(img)),
             eventTarget.dataset.target === "avatar" ? "portrait" : "token");
           break;
+        case "frame":
+          const frame = document.getElementById("frame-selector").value;
+          this._setTokenFrame(frame);
+          break;
       }
     });
 
@@ -256,22 +280,31 @@ export default class Tokenizer extends FormApplication {
     }
   }
 
-  async _setTokenImgAndFrame(img) {
-    this.Token.addImageLayer(img);
+  async _setTokenFrame(fileName) {
+    if (!game.settings.get("vtta-tokenizer", "add-frame-default")) return;
     // load the default frame, if there is one set
-    let type = this.actor.data.type === "character" ? "pc" : "npc";
-    let defaultFrame = game.settings.get("vtta-tokenizer", "default-frame-" + type).replace(/^\/|\/$/g, "");
+    const type = this.actor.data.type === "character" ? "pc" : "npc";
+    const isDefault = game.settings.get("vtta-tokenizer", `default-frame-pc`).replace(/^\/|\/$/g, "") ||
+      fileName != game.settings.get("vtta-tokenizer", `default-frame-npc`).replace(/^\/|\/$/g, "");
+    const framePath = fileName && !isDefault
+      ? `${game.settings.get("vtta-tokenizer", "frame-directory")}/${fileName}`
+      : fileName && isDefault
+        ? fileName.replace(/^\/|\/$/g, "")
+        : game.settings.get("vtta-tokenizer", `default-frame-${type}`).replace(/^\/|\/$/g, "");
 
-    if (defaultFrame && defaultFrame.trim() !== "") {
-      let masked = true;
-      let options = DirectoryPicker.parse(defaultFrame);
-      // Utils.download(defaultFrame)
+    if (framePath && framePath.trim() !== "") {
+      const options = DirectoryPicker.parse(framePath);
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, masked);
+        this.Token.addImageLayer(img, true);
       } catch (error) {
         ui.notifications.error(`Failed to load frame: "${options.current}"`);
       }
     }
+  }
+
+  async _setTokenImgAndFrame(img) {
+    this.Token.addImageLayer(img);
+    await this._setTokenFrame();
   }
 }

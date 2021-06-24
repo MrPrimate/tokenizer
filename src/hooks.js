@@ -24,6 +24,24 @@ export function init() {
     config: true,
   });
 
+  game.settings.register("vtta-tokenizer", "frame-directory", {
+    name: "vtta-tokenizer.frame-directory.name",
+    hint: "vtta-tokenizer.frame-directory.hint",
+    scope: "world",
+    config: true,
+    type: DirectoryPicker.Directory,
+    default: "",
+  });
+
+  game.settings.register("vtta-tokenizer", "add-frame-default", {
+    name: "vtta-tokenizer.add-frame-default.name",
+    hint: "vtta-tokenizer.add-frame-default.hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
   game.settings.register("vtta-tokenizer", "image-upload-directory", {
     name: "vtta-tokenizer.image-upload-directory.name",
     hint: "vtta-tokenizer.image-upload-directory.hint",
