@@ -1,5 +1,8 @@
 # Changelog
 
+# [3.2.2]
+
+* Frames drop down is now fixed width.
 
 # [3.2.1]
 

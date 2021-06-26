@@ -94,9 +94,9 @@
 }
 
 #vtta-tokenizer select {
-  flex: 80%;
   border: thin solid black;
   height: 30px;
+  width: 290px;
   padding: 5px;
   margin: 5px;
   -webkit-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
