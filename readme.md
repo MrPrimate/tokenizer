@@ -9,15 +9,15 @@
   or
 - just select an image already uploaded to the Foundry server
 
-Overlay this image by adding as many layers on top or beneath it, think of it as putting sheets of paper on top of each other, each having a different cut out, therefore showing parts of the layers beneath it and covering other areas. You can achieve this effect by using images that are transparent in certain areas and opaque on others.
+Overlay this image by adding layers on top or beneath it, think of it as putting sheets of paper on top of each other, each having a different cut out, therefore showing parts of the layers beneath it and covering other areas. You can achieve this effect by using images that are transparent in certain areas and opaque on others.
 
 ### Adjust a single layer
 
-Adjusting, that means: rotating the image, scaling the image or moving the image around, is really easy, too: Just unlock the layer by pressing the lock symbol and you see that is this layer is unlocked and ready for your transformation:
+Rotating the image, scaling the image, or moving the image around is easy:  unlock the layer by pressing the lock symbol and the layer is unlocked and ready for your transformation:
 
-![Layer transformation](/img/asset/vtta-tokenizer/layer-transformation.gif)
+![Layer transformation](/docs/manipulate-layer.gif)
 
-Just move your mouse over the image, and
+Move your mouse over the image, and
 
 - **drag** to translate the image to any position you like
 - **scroll your mousewheel** to zoom in and out of the image _or_
@@ -25,25 +25,23 @@ Just move your mouse over the image, and
 
 ### Changing the layer order
 
-You added a tint that is overlaying the token frame, too? Don't worry, just re-order your layers by using the tiny arrow buttons up and down until everything looks great.
-
-![Layer ordering](/img/asset/vtta-tokenizer/layer-ordering.gif)
+You added a tint that is overlaying the token frame, too? Don't worry, re-order your layers by using the arrow buttons up and down until everything looks great.
 
 ### Setting the mask
 
-Once you are done layering your token, you will want to have a mask, probably. E.g. you have that nice, round token border frame that came with the module, or from your own collection, and you want everything overflowing this frame to be transparent, to be gone.
+Once you're done layering your token, you will probably want to have a mask. This is usually a round token border frame and you want everything overflowing this frame to be transparent/removed.
 
-I got you.
 
-![Layer masking](/img/asset/vtta-tokenizer/layer-masking.gif)
+![Layer masking](/docs/masks.gif)
 
-Just hit the mask button on the layer that should define the contour of your image and the magic happens: A very neat algorithm creates an automatic mask and applies this mask to every layer on your token, correctly stamping each layer according to your frame.
+Hit the mask button on the layer that should define the contour of your image apply this mask to every layer on your token, stamping each layer according to your frame.
 
-**Does this work for every image?** No, it doesn't. For every token that fails, you can provide a custom mask by creating it in the graphic editor of your choice, and upload it to Tokenizer, then use that as the mask for your token. Just create a transparent image and paint everything you want to be opaque later with black / white / green, whatever but **not transparent** and it will work correctly. Give it a try!
+**Does this work for every image?** No, it doesn't. For every token that fails, you can provide a custom mask by creating it in the graphic editor of your choice, and upload it to Tokenizer, then use that as the mask for your token.
+Create a transparent image and paint everything you want to be opaque later with black / white / green, whatever but **not transparent** and it should work. Give it a try!
 
 ### Saving the token
 
-Just hit the **Okay** button to save the token to the Foundry VTT server.
+Click the **Okay** button to save the token to the Foundry VTT server.
 
 ### F.A.Q.
 
@@ -51,12 +49,13 @@ Just hit the **Okay** button to save the token to the Foundry VTT server.
 
 You need to have the right permission to upload things onto the Foundry VTT server. GMs and Assistants do have the required permission by default, but regular Players don't.
 
-So ask your GM to check the player settings (hit `ESC`, then select `Configure Players` from the appearing menu). Every player that will use the Tokenizer requires the **Trusted Player** permission.
+Ask your GM to check the player settings (hit `ESC`, then select `Configure Players` from the appearing menu). Every player that will use the Tokenizer requires the **Trusted Player** permission.
 
 #### The tokens are not saving!
 
-There are two things required for Tokenizer to being able so save a token.
+Two things are required for Tokenizer to being able so save a token.
 
-1. The Foundry VTT server needs to allow the **Trusted Players** to upload images to the server. Check this setting in the `Game Settings`, you will find the setting `Allow Trusted Players Upload` at the very top, please check that.
+1. The Foundry VTT server needs to allow the **Trusted Players** to upload images to the server. Check this setting in the `Game Settings`, you will find the setting `Allow Trusted Players Upload` at the top, please check that.
 
-2. You will need to check the setting `Upload directory` in the VTTA Tokenizer section of the `Game Settings`. The entry here depicts a sub-directory of `[Foundry Directory]/ressources/app/public`, so e.g. if you inserted `public/img`, then Tokenizer would look for a directory `[Foundry Directory]/ressources/app/public/public/img` which is probably wrong. So, please check this setting throurougly if you change it from the default.
+2. You will need to check the setting `Upload directory` in the Tokenizer section of the `Game Settings`. The entry here depicts a sub-directory of `[Foundry Directory]/resources/app/public`, so e.g. if you inserted `public/img`, then Tokenizer would look for a directory `[Foundry Directory]/resources/app/public/public/img` which is probably wrong
+ Please check this setting if you change it from the default.
