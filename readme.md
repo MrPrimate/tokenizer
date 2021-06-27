@@ -32,7 +32,7 @@ You added a tint that is overlaying the token frame, too? Don't worry, re-order 
 Once you're done layering your token, you will probably want to have a mask. This is usually a round token border frame and you want everything overflowing this frame to be transparent/removed.
 
 
-![Layer masking](/docs/masks.gif)
+![Layer masking](/docs/mask.gif)
 
 Hit the mask button on the layer that should define the contour of your image apply this mask to every layer on your token, stamping each layer according to your frame.
 
