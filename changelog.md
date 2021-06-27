@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.2.4]
+
+* Some users experienced issues with name rendering of frame drop down.
+
 # [3.2.2/3]
 
 * Frames drop down is now fixed width.

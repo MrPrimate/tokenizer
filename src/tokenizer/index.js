@@ -45,7 +45,7 @@ export default class Tokenizer extends FormApplication {
       const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
       return {
         key: file,
-        label: Utils.titleString(label),
+        label: Utils.titleString(label).split(".")[0],
         selected: false,
       }
     });

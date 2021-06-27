@@ -195,7 +195,7 @@ export default class Utils {
     const words = text.trim().split(" ");
 
     for (let i = 0; i < words.length; i++) {
-      if (i == 0 || !SKIPPING_WORDS.includes(words[i])) {
+      if (words[i][0] && (i == 0 || !SKIPPING_WORDS.includes(words[i]))) {
         words[i] = words[i][0].toUpperCase() + words[i].substr(1);
       }
     }
