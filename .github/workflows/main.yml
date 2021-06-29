@@ -40,3 +40,10 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: './module.json,./vtta-tokenizer.zip'  # don't forget to rename module zip thing
         tag: latest
+    - name: Discord notification
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_HOOK }}
+        DISCORD_USERNAME: "Squint - Intern"
+      uses: Ilshidur/action-discord@0.3.2
+      with:
+        args: "Squint (Intern) has released Tokenizer ${{ steps.get-version.outputs.version }}."
