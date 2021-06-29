@@ -1,5 +1,8 @@
 # Changelog
 
+# [3.2.5]
+
+* Unable to add layers if "add frame to the token when opened" option was unchecked.
 # [3.2.4]
 
 * Some users experienced issues with name rendering of frame drop down.

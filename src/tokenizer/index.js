@@ -267,7 +267,10 @@ export default class Tokenizer extends FormApplication {
     let imgSrc = src ?? CONST.DEFAULT_TOKEN
     try {
       const img = await Utils.download(imgSrc)
-      await this._setTokenImgAndFrame(img);
+      this.Token.addImageLayer(img);
+      if (game.settings.get("vtta-tokenizer", "add-frame-default")) {
+        await this._setTokenFrame();
+      } 
     } catch (error) {
       if (!src || src === CONST.DEFAULT_TOKEN) {
         console.error(`Failed to load fallback token: "${imgSrc}"`)
@@ -281,7 +284,6 @@ export default class Tokenizer extends FormApplication {
   }
 
   async _setTokenFrame(fileName) {
-    if (!game.settings.get("vtta-tokenizer", "add-frame-default")) return;
     // load the default frame, if there is one set
     const type = this.actor.data.type === "character" ? "pc" : "npc";
     const isDefault = game.settings.get("vtta-tokenizer", `default-frame-pc`).replace(/^\/|\/$/g, "") ||
@@ -303,8 +305,4 @@ export default class Tokenizer extends FormApplication {
     }
   }
 
-  async _setTokenImgAndFrame(img) {
-    this.Token.addImageLayer(img);
-    await this._setTokenFrame();
-  }
 }
