@@ -59,3 +59,9 @@ Two things are required for Tokenizer to being able so save a token.
 
 2. You will need to check the setting `Upload directory` in the Tokenizer section of the `Game Settings`. The entry here depicts a sub-directory of `[Foundry Directory]/resources/app/public`, so e.g. if you inserted `public/img`, then Tokenizer would look for a directory `[Foundry Directory]/resources/app/public/public/img` which is probably wrong
  Please check this setting if you change it from the default.
+
+#### Where can I get more frames?
+
+* [This is a good starter pack](https://www.dmsguild.com/product/268503/ADs-Starter-Token-Frame-Set)
+* There are some different colour variations [here](https://drive.google.com/file/d/1VQvl2GA6SXuGMTY8hgsb1A2De4fSVRIT/view)
+* You could convert some of the [frames](https://github.com/RPTools/TokenTool/tree/main/other-resources/Overlay%20Templates) from TokenTool using [GIMP](https://www.gimp.org/)
