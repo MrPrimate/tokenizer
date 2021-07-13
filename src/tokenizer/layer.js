@@ -106,7 +106,7 @@ export default class Layer {
     };
 
     // re-use the intermediate canvas
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = game.settings.get("vtta-tokenizer", "default-color");
     ctx.strokeStyle = '#000000AA';
     ctx.lineWidth = 1;
 
