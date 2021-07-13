@@ -1,8 +1,14 @@
 # Changelog
 
+# [3.2.6]
+
+* Default layer fill colour for transparent images is now white rather than black, and this can be changed in the settings. ( @NH23#0868 )
+* Tokenizer can now be launched using `Tokenizer.launch(actor)`.
+
 # [3.2.5]
 
 * Unable to add layers if "add frame to the token when opened" option was unchecked.
+
 # [3.2.4]
 
 * Some users experienced issues with name rendering of frame drop down.

@@ -65,3 +65,6 @@ Two things are required for Tokenizer to being able so save a token.
 * [This is a good starter pack](https://www.dmsguild.com/product/268503/ADs-Starter-Token-Frame-Set)
 * There are some different colour variations [here](https://drive.google.com/file/d/1VQvl2GA6SXuGMTY8hgsb1A2De4fSVRIT/view)
 * You could convert some of the [frames](https://github.com/RPTools/TokenTool/tree/main/other-resources/Overlay%20Templates) from TokenTool using [GIMP](https://www.gimp.org/)
+## Calling Tokenizer
+
+You can call Tokenizer by using `Tokenizer.launch(actor)`.

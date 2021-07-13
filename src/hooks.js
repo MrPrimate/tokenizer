@@ -114,12 +114,12 @@ export function init() {
   });
 }
 
-function launchTokenizer(doc) {
+function launchTokenizer(actor) {
   if (!game.user.can("FILES_UPLOAD")) {
     ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
   }
 
-  const tokenizer = new Tokenizer({}, doc);
+  const tokenizer = new Tokenizer({}, actor);
   tokenizer.render(true);
 
 }
@@ -209,4 +209,8 @@ export function ready() {
       }
     });
   });
+
+  window.Tokenizer = {
+    launch: launchTokenizer,
+  };
 }
