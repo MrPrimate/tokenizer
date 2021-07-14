@@ -3,9 +3,10 @@ import View from "./view.js";
 import DirectoryPicker from "./../libs/DirectoryPicker.js";
 
 export default class Tokenizer extends FormApplication {
-  constructor(options, actor) {
+  constructor(options, actor, callback) {
     super(options);
     this.actor = actor;
+    this.callback = callback;
   }
   /**
    * Define default options for the PartySummary application
@@ -62,7 +63,7 @@ export default class Tokenizer extends FormApplication {
   }
 
   async _getFilename(suffix = "Avatar") {
-    const isWildCard = () => this.actor.data.token.randomImg;
+    const isWildCard = () => this.actor.data && this.actor.data.token.randomImg;
     const actorName = await Utils.makeSlug(this.actor);
     const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
 
@@ -104,8 +105,13 @@ export default class Tokenizer extends FormApplication {
 
     // get the data
     Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async dataResults => {
-      avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.actor.data.type);
-      tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.actor.data.type);
+      avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.actor.data?.type ?? 'character');
+      tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.actor.data?.type ?? 'character');
+
+      if (!this.actor.data) {
+        this.callback({ avatarFilename: avatarFilename, tokenFilename: tokenFilename });
+        return;
+      }
 
       // updating the avatar filename
       const update = {
@@ -180,7 +186,7 @@ export default class Tokenizer extends FormApplication {
       $('input[name="targetTokenFilename"]').val(targetFilename);
     });
 
-    if (this.actor.data.token.randomImg) {
+    if (this.actor.data?.token.randomImg) {
       $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
       // load the default frame, if there is one set
@@ -189,7 +195,8 @@ export default class Tokenizer extends FormApplication {
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
 
       // Add the actor image to the token view
-      this._initToken(this.actor.data.token.img);
+      const initData = this.actor.data ? [this.actor.data.token.img] : [null, true];
+      this._initToken(...initData);
     }
 
     $("#vtta-tokenizer .filePickerTarget").on("change", event => {
@@ -263,7 +270,7 @@ export default class Tokenizer extends FormApplication {
     super.activateListeners(html);
   }
 
-  async _initToken(src) {
+  async _initToken(src, standalone) {
     let imgSrc = src ?? CONST.DEFAULT_TOKEN
     try {
       const img = await Utils.download(imgSrc)
@@ -272,7 +279,7 @@ export default class Tokenizer extends FormApplication {
         await this._setTokenFrame();
       } 
     } catch (error) {
-      if (!src || src === CONST.DEFAULT_TOKEN) {
+      if ((!src || src === CONST.DEFAULT_TOKEN) && !standalone) {
         console.error(`Failed to load fallback token: "${imgSrc}"`)
       }
       else {
@@ -285,7 +292,7 @@ export default class Tokenizer extends FormApplication {
 
   async _setTokenFrame(fileName) {
     // load the default frame, if there is one set
-    const type = this.actor.data.type === "character" ? "pc" : "npc";
+    const type = (!this.actor.data || this.actor.data.type === "character") ? "pc" : "npc";
     const isDefault = game.settings.get("vtta-tokenizer", `default-frame-pc`).replace(/^\/|\/$/g, "") ||
       fileName != game.settings.get("vtta-tokenizer", `default-frame-npc`).replace(/^\/|\/$/g, "");
     const framePath = fileName && !isDefault

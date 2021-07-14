@@ -114,12 +114,12 @@ export function init() {
   });
 }
 
-function launchTokenizer(actor) {
+function launchTokenizer(actor, callback) {
   if (!game.user.can("FILES_UPLOAD")) {
     ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
   }
 
-  const tokenizer = new Tokenizer({}, actor);
+  const tokenizer = new Tokenizer({}, actor, callback);
   tokenizer.render(true);
 
 }
