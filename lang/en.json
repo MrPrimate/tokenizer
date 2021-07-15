@@ -21,6 +21,6 @@
   "vtta-tokenizer.title-link.name": "Title bar link?",
   "vtta-tokenizer.title-link.hint": "Place the tokenizer link in the title bar?",
   "vtta-tokenizer.default-color.name": "Default background colour for token?",
-  "vtta-tokenizer.default-color.hint": "Defaults to white."
-  
+  "vtta-tokenizer.default-color.hint": "Defaults to white.",
+  "vtta-tokenizer.log-level.name": "Log level"
 }

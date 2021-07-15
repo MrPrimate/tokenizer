@@ -4,7 +4,7 @@ const logger = {
       return false;
     }
 
-    const setting = game.settings.get("ddb-importer", "log-level");
+    const setting = game.settings.get("vtta-tokenizer", "log-level");
     const logLevels = ["DEBUG", "INFO", "WARN", "ERR", "OFF"];
     const logLevelIndex = logLevels.indexOf(logLevel.toUpperCase());
     if (

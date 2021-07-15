@@ -1,12 +1,25 @@
 import Utils from "../utils.js";
+import logger from "../logger.js";
 import View from "./view.js";
 import DirectoryPicker from "./../libs/DirectoryPicker.js";
 
 export default class Tokenizer extends FormApplication {
-  constructor(options, actor) {
-    super(options);
-    this.actor = actor;
+
+  //  Options include
+  //  name: name to use as part of filename identifier
+  //  type: pc, npc
+  //  avatarFilename: current avatar image - defaults to null/mystery man
+  //  tokenFilename: current tokenImage - defaults to null/mystery man
+  //  targetFolder: folder to target, otherwise uses defaults, wildcard use folder derived from wildcard path
+  //  isWildCard: is wildcard token?
+  //  any other items needed in callback function, options will be passed to callback, with filenames updated to new references
+  //
+  constructor(options, callback) {
+    super({});
+    this.tokenOptions = options;
+    this.callback = callback;
   }
+
   /**
    * Define default options for the PartySummary application
    */
@@ -36,7 +49,7 @@ export default class Tokenizer extends FormApplication {
     ];
 
     const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
-    console.debug(`Checking for files in ${directoryPath}...`);
+    logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
     const fileList = await DirectoryPicker.browse(dir.activeSource, dir.current, { bucket: dir.bucket });
 
@@ -47,45 +60,64 @@ export default class Tokenizer extends FormApplication {
         key: file,
         label: Utils.titleString(label).split(".")[0],
         selected: false,
-      }
+      };
     });
 
     const frames = defaultFrames.concat(folderFrames);
 
     return {
-      data: this.actor.data,
-      canUpload: game.user && game.user.can("FILES_UPLOAD"), //game.user.isTrusted || game.user.isGM,
+      options: this.tokenOptions,
+      canUpload: game.user && game.user.can("FILES_UPLOAD"), // game.user.isTrusted || game.user.isGM,
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
       tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && Boolean(game.TokenVariants),
       frames: frames,
     };
   }
 
+  getWildCardPath() {
+    if (!this.tokenOptions.isWildCard) return undefined;
+    let wildCardPath = Utils.getBaseUploadFolder(this.tokenOptions.type);
+    if (this.tokenOptions.tokenFilename) {
+      let wildCardTokenPathArray = this.tokenOptions.tokenFilename.split("/");
+      wildCardTokenPathArray.pop();
+      wildCardPath = wildCardTokenPathArray.join("/");
+    }
+    return wildCardPath;
+  }
+
+  getOverRidePath(isToken) {
+    let path;
+    if (isToken && this.tokenOptions.isWildCard) {
+      path = this.getWildCardPath();
+    }
+    if (!path) {
+      path = this.tokenOptions.targetFolder
+        ? this.tokenOptions.targetFolder
+        : undefined;
+    }
+    return path;
+  }
+
   async _getFilename(suffix = "Avatar") {
-    const isWildCard = () => this.actor.data.token.randomImg;
-    const actorName = await Utils.makeSlug(this.actor);
+    const actorName = await Utils.makeSlug(this.tokenOptions.name);
     const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
 
-    if (suffix === "Token" && isWildCard()) {
-      const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(this.actor.data.type));
-
-      let tokenWildcard = this.actor.data.token.img;
-
-      if (tokenWildcard.indexOf("*") === -1) {
+    if (suffix === "Token" && this.tokenOptions.isWildCard) {
+      // for wildcards we respect the current path of the existing/provided tokenpath
+      const wildCardPath = this.getWildCardPath();
+      const dirOptions = DirectoryPicker.parse(wildCardPath);
+      const tokenWildcard = this.tokenOptions.tokenFilename.indexOf("*") === -1
         // set it to a wildcard we can actually use
-        tokenWildcard = `${options.current}/${actorName}.Token-*.${imageFormat}`;
-      }
-      // get the next free index
-      const browser = await FilePicker.browse(options.activeSource, tokenWildcard, {
+        ? `${dirOptions.current}/${actorName}.Token-*.${imageFormat}`
+        : this.tokenOptions.tokenFilename;
+
+      const browser = await FilePicker.browse(dirOptions.activeSource, tokenWildcard, {
         wildcard: true,
       });
-      let count = 0;
-      let targetFilename = "";
-      do {
-        count++;
-        const index = count.toString().padStart(3, "0");
-        targetFilename = tokenWildcard.replace(/\*/g, index);
-      } while (browser.files.find(filename => filename === targetFilename) !== undefined);
+
+      const newCount = browser.files.length + 1;
+      const num = newCount.toString().padStart(3, "0");
+      const targetFilename = tokenWildcard.replace(/\*/g, num).split("/").pop();
 
       return targetFilename;
     }
@@ -96,60 +128,35 @@ export default class Tokenizer extends FormApplication {
     // Update the object this ApplicationForm is based on
     // e.g. this.object.update(formData)
 
-    const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
-
     // upload token and avatar
     let avatarFilename = formData.targetAvatarFilename;
     let tokenFilename = formData.targetTokenFilename;
 
     // get the data
-    Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async dataResults => {
-      avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.actor.data.type);
-      tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.actor.data.type);
+    Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async (dataResults) => {
+      this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.tokenOptions.type, this.getOverRidePath(false));
+      this.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.tokenOptions.type, this.getOverRidePath(true));
 
-      // updating the avatar filename
-      const update = {
-        img: avatarFilename + "?" + +new Date(),
-      };
-
-      // for non-wildcard tokens, we set the token img now
-      if (this.actor.data.token.randomImg) {
-        const actorName = this.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
-        const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(this.actor.data.type));
-
-        if (this.actor.data.token.img.indexOf("*") === -1) {
-          // set it to a wildcard we can actually use
-          ui.notifications.info("Tokenizer: Wildcarding token image to " + this.actor.data.token.img);
-          update.token = {
-            img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
-          };
-        }
-      } else {
-        update.token = {
-          img: tokenFilename + "?" + +new Date(),
-        };
-      }
-
-      await this.actor.update(update);
+      this.callback(this.tokenOptions);
     });
   }
 
   /* -------------------------------------------- */
 
   async _initAvatar(html, inputUrl) {
-    const url = inputUrl ?? CONST.DEFAULT_TOKEN ?? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+    const url = inputUrl ?? CONST.DEFAULT_TOKEN ?? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
     const avatarView = document.querySelector(".avatar > .view");
     if (this.Avatar) {
-      this.Avatar.canvas.remove()
-      this.Avatar.stage.remove()
-      this.Avatar.controlsArea.remove()
-      this.Avatar.menu.remove()
+      this.Avatar.canvas.remove();
+      this.Avatar.stage.remove();
+      this.Avatar.controlsArea.remove();
+      this.Avatar.menu.remove();
     }
-    this.Avatar = null
+    this.Avatar = null;
     try {
-      const img = await Utils.download(url)
+      const img = await Utils.download(url);
       const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth, game.settings.get("vtta-tokenizer", "portrait-size"));
-      console.log("Setting Avatar dimensions to " + MAX_DIMENSION + "x" + MAX_DIMENSION);
+      logger.debug("Setting Avatar dimensions to " + MAX_DIMENSION + "x" + MAX_DIMENSION);
       this.Avatar = new View(MAX_DIMENSION, avatarView);
       this.Avatar.addImageLayer(img);
 
@@ -157,30 +164,30 @@ export default class Tokenizer extends FormApplication {
       $(html).parent().parent().css("height", "auto");
     } catch (error) {
       if (inputUrl) {
-        ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to default.`)
-        await this._initAvatar(html)
+        ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to default.`);
+        await this._initAvatar(html);
       } else {
-        ui.notifications.error('Failed to load fallback image.')
+        ui.notifications.error('Failed to load fallback image.');
       }
     }
   }
 
   activateListeners(html) {
-    this._initAvatar(html, this.actor.img)
+    this._initAvatar(html, this.tokenOptions.avatarFilename);
 
     let tokenView = document.querySelector(".token > .view");
 
     // get the target filename for the avatar
-    this._getFilename("Avatar").then(targetFilename => {
+    this._getFilename("Avatar").then((targetFilename) => {
       $('input[name="targetAvatarFilename"]').val(targetFilename);
     });
     // get the target filename for the token
-    this._getFilename("Token").then(targetFilename => {
+    this._getFilename("Token").then((targetFilename) => {
       $('span[name="targetFilename"]').text(targetFilename);
       $('input[name="targetTokenFilename"]').val(targetFilename);
     });
 
-    if (this.actor.data.token.randomImg) {
+    if (this.tokenOptions.isWildCard) {
       $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
       // load the default frame, if there is one set
@@ -189,30 +196,30 @@ export default class Tokenizer extends FormApplication {
       this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
 
       // Add the actor image to the token view
-      this._initToken(this.actor.data.token.img);
+      this._initToken(this.tokenOptions.tokenFilename);
     }
 
-    $("#vtta-tokenizer .filePickerTarget").on("change", event => {
-      let eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-      let view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
-      let type = eventTarget.dataset.type;
+    $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {
+      const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
+      const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
 
       Utils.download(eventTarget.value)
-        .then(img => view.addImageLayer(img))
-        .catch(error => ui.notifications.error(error));
+        .then((img) => view.addImageLayer(img))
+        .catch((error) => ui.notifications.error(error));
     });
 
-    $("#vtta-tokenizer button.menu-button").click(async event => {
+    $("#vtta-tokenizer button.menu-button").click(async (event) => {
       event.preventDefault();
-      let eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-      let view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token
+      const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
+      const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
 
       switch (eventTarget.dataset.type) {
-        case "upload":
-          const img = await Utils.upload()
+        case "upload": {
+          const img = await Utils.upload();
           view.addImageLayer(img);
           break;
-        case "download":
+        }
+        case "download": {
           // show dialog, then download
           let urlPrompt = new Dialog({
             title: "Download from the internet",
@@ -228,15 +235,15 @@ export default class Tokenizer extends FormApplication {
               cancel: {
                 icon: '<i class="fas fa-times"></i>',
                 label: "Cancel",
-                callback: () => console.log("Cancelled"),
+                callback: () => logger.debug("Cancelled"),
               },
               ok: {
                 icon: '<i class="fas fa-check"></i>',
                 label: "OK",
                 callback: () => {
                   Utils.download($("#url").val())
-                    .then(img => view.addImageLayer(img))
-                    .catch(error => ui.notification.error(error));
+                    .then((img) => view.addImageLayer(img))
+                    .catch((error) => ui.notification.error(error));
                 },
               },
             },
@@ -245,18 +252,23 @@ export default class Tokenizer extends FormApplication {
           urlPrompt.render(true);
 
           break;
-        case "avatar":
-          this.Avatar.get("img").then(img => view.addImageLayer(img));
+        }
+        case "avatar": {
+          this.Avatar.get("img").then((img) => view.addImageLayer(img));
           break;
-        case "tokenVariants":
-          game.TokenVariants.displayArtSelect(this.actor.name,
-            (imgSrc) => Utils.download(imgSrc).then(img => view.addImageLayer(img)),
+        }
+        case "tokenVariants": {
+          game.TokenVariants.displayArtSelect(this.tokenOptions.name,
+            (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
             eventTarget.dataset.target === "avatar" ? "portrait" : "token");
           break;
-        case "frame":
+        }
+        case "frame": {
           const frame = document.getElementById("frame-selector").value;
           this._setTokenFrame(frame);
           break;
+        }
+        // no default
       }
     });
 
@@ -264,28 +276,27 @@ export default class Tokenizer extends FormApplication {
   }
 
   async _initToken(src) {
-    let imgSrc = src ?? CONST.DEFAULT_TOKEN
+    let imgSrc = src ?? CONST.DEFAULT_TOKEN;
     try {
-      const img = await Utils.download(imgSrc)
+      const img = await Utils.download(imgSrc);
       this.Token.addImageLayer(img);
       if (game.settings.get("vtta-tokenizer", "add-frame-default")) {
         await this._setTokenFrame();
       } 
     } catch (error) {
       if (!src || src === CONST.DEFAULT_TOKEN) {
-        console.error(`Failed to load fallback token: "${imgSrc}"`)
-      }
-      else {
-        ui.notifications.error(`Failed to load token: "${imgSrc}", falling back to "${CONST.DEFAULT_TOKEN}"`)
-        console.error(error)
-        await this._initToken()
+        logger.error(`Failed to load fallback token: "${imgSrc}"`);
+      } else {
+        ui.notifications.error(`Failed to load token: "${imgSrc}", falling back to "${CONST.DEFAULT_TOKEN}"`);
+        logger.error(error);
+        await this._initToken();
       }
     }
   }
 
   async _setTokenFrame(fileName) {
     // load the default frame, if there is one set
-    const type = this.actor.data.type === "character" ? "pc" : "npc";
+    const type = this.tokenOptions.type === "pc" ? "pc" : "npc";
     const isDefault = game.settings.get("vtta-tokenizer", `default-frame-pc`).replace(/^\/|\/$/g, "") ||
       fileName != game.settings.get("vtta-tokenizer", `default-frame-npc`).replace(/^\/|\/$/g, "");
     const framePath = fileName && !isDefault

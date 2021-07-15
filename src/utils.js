@@ -1,14 +1,16 @@
 import DirectoryPicker from "./libs/DirectoryPicker.js";
+import logger from "./logger.js";
 
 const SKIPPING_WORDS = [
-  "the", "of", "at", "it", "a,"
+  "the", "of", "at", "it", "a"
 ];
 export default class Utils {
+
   static generateUUID() {
     // I generate the UID from two parts here
     // to ensure the random number provide enough bits.
-    var firstPart = (Math.random() * 46656) | 0;
-    var secondPart = (Math.random() * 46656) | 0;
+    var firstPart = (Math.random() * 46656) || 0;
+    var secondPart = (Math.random() * 46656) || 0;
     firstPart = ("000" + firstPart.toString(36)).slice(-3);
     secondPart = ("000" + secondPart.toString(36)).slice(-3);
     return firstPart + secondPart;
@@ -64,7 +66,7 @@ export default class Utils {
         let reader = new FileReader();
         reader.addEventListener("load", () => {
           let img = document.createElement("img");
-          img.addEventListener("load", (result) => {
+          img.addEventListener("load", () => {
             resolve(img);
           });
           img.src = reader.result;
@@ -102,11 +104,11 @@ export default class Utils {
     if (!url) url = "icons/mystery-man.png";
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
     const useProxy = Utils.useProxy(url);
-    console.log(`Proxy for ${url}: ${useProxy}`);
+    logger.debug(`Proxy for ${url}: ${useProxy}`);
     return new Promise((resolve, reject) => {
       let img = new Image();
-      img.crossOrigin = "Anonymous";
-      img.addEventListener("load", (event) => {
+      if (useProxy) img.crossOrigin = "Anonymous";
+      img.addEventListener("load", () => {
         resolve(img);
       });
       img.addEventListener("error", (event) => {
@@ -117,11 +119,14 @@ export default class Utils {
     });
   }
 
-  static async uploadToFoundry(data, filename, type) {
+  static async uploadToFoundry(data, filename, type, overRideFolder) {
     // create new file from the response
     let file = new File([data], filename, { type: data.type });
 
-    const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(type));
+    const options = overRideFolder
+      ? DirectoryPicker.parse(overRideFolder)
+      : DirectoryPicker.parse(Utils.getBaseUploadFolder(type));
+    
     const result = await FilePicker.upload(
       options.activeSource,
       options.current,
@@ -129,6 +134,12 @@ export default class Utils {
       { bucket: options.bucket }
     );
     return result.path;
+  }
+
+  static rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255) throw new Error('Invalid color component');
+    // eslint-disable-next-line no-bitwise
+    return ((r << 16) | (g << 8) | b).toString(16);
   }
 
   static getHash(str, algo = "SHA-256") {
@@ -149,8 +160,10 @@ export default class Utils {
     } else {
       return new Promise((resolve) => {
         resolve(
-          str.split("").reduce(function (a, b) {
+          str.split("").reduce((a, b) => {
+            // eslint-disable-next-line no-bitwise
             a = (a << 5) - a + b.charCodeAt(0);
+            // eslint-disable-next-line no-bitwise
             return a & a;
           }, 0)
         );
@@ -158,7 +171,7 @@ export default class Utils {
     }
   }
 
-  static async makeSlug(actor) {
+  static async makeSlug(name) {
     const toReplace =
       "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(
         ","
@@ -170,19 +183,18 @@ export default class Utils {
     const replaceDict = Object.fromEntries(
       toReplace.map((_, i) => [toReplace[i], replacers[i]])
     );
-    const unicodeString = actor.name
+    const unicodeString = name
       .toLowerCase()
       .split("")
-      .map((x) => (replaceDict.hasOwnProperty(x) ? replaceDict[x] : x))
+      .map((x) => (Object.prototype.hasOwnProperty.call(replaceDict, x) ? replaceDict[x] : x))
       .join("")
       .replace(/[^\w.]/gi, "_")
       .replace(/__+/g, "_");
     let asciiString = Utils.U2A(unicodeString);
     return new Promise((resolve) => {
       if (asciiString.length < 2) {
-        // asciiString = actor.id;
-        Utils.getHash(actor.name).then((hash) => {
-          console.debug("Tokenizer is having to use a hashed file name.");
+        Utils.getHash(name).then((hash) => {
+          logger.debug("Tokenizer is having to use a hashed file name.");
           resolve(hash);
         });
       } else {
@@ -200,6 +212,6 @@ export default class Utils {
       }
     }
 
-    return  words.join(" ");
+    return words.join(" ");
   }
 }

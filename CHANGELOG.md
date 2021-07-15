@@ -1,5 +1,11 @@
 # Changelog
 
+# [3.3.1]
+
+* Overhaul of code base to and implementation against by linting standard.
+* Added default token directories and auto-create
+* BREAKING: `Tokenizer.launch()` has changed to allow Tokenizer to be called without an actor. See readme.md for examples.
+
 # [3.2.6]
 
 * Default layer fill colour for transparent images is now white rather than black, and this can be changed in the settings. ( @NH23#0868 )

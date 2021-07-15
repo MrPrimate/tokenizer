@@ -66,19 +66,19 @@ export default class View {
       case 'img':
         return new Promise((resolve, reject) => {
           let img = document.createElement('img');
-          img.onload = data => {
+          img.onload = () => {
             resolve(img);
           };
-          img.onerror = error => {
+          img.onerror = (error) => {
             reject(error);
           };
           img.src = this.canvas.toDataURL();
         });
-      case 'blob':
+      case 'blob': {
         const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
         return new Promise((resolve, reject) => {
           try {
-            this.canvas.toBlob(blob => {
+            this.canvas.toBlob((blob) => {
                   resolve(blob);
                 },
                 `image/${imageFormat}`);
@@ -86,6 +86,7 @@ export default class View {
             reject(error);
           }
         });
+      }
       default:
         return Promise.resolve(this.canvas);
     }
@@ -128,6 +129,7 @@ export default class View {
    * Disables dragging
    * @param {Event} event
    */
+  // eslint-disable-next-line no-unused-vars
   onMouseUp(event) {
     if (this.activeLayer === null) return;
     this.isDragging = false;
@@ -140,7 +142,7 @@ export default class View {
    */
   onMouseMove(event) {
     if (this.isColorPicking) {
-      var eventLocation = this.getEventLocation(this.canvas, event);
+      var eventLocation = View.getEventLocation(this.canvas, event);
       // Get the data of the pixel according to the location generate by the getEventLocation function
       var pixelData = this.canvas.getContext('2d').getImageData(eventLocation.x, eventLocation.y, 1, 1).data;
       // If transparency on the pixel , array = [0,0,0,0]
@@ -148,18 +150,14 @@ export default class View {
         // Do something if the pixel is transparent
       }
       // Convert it to HEX if you want using the rgbToHex method.
-      function rgbToHex(r, g, b) {
-        if (r > 255 || g > 255 || b > 255) throw 'Invalid color component';
-        return ((r << 16) | (g << 8) | b).toString(16);
-      }
-      var hex = '#' + ('000000' + rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
+      var hex = '#' + ('000000' + Utils.rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
 
       // update the layer
-      let layer = this.layers.find(layer => layer.id === this.colorPickingForLayer);
+      // let layer = this.layers.find(layer => layer.id === this.colorPickingForLayer);
       // setting the color
       this.colorPickingForLayer.setColor(hex);
       // refreshing the control
-      let control = this.controls.find(control => control.layer.id === this.colorPickingForLayer.id);
+      let control = this.controls.find((control) => control.layer.id === this.colorPickingForLayer.id);
       control.refresh();
       this.redraw();
     }
@@ -187,7 +185,7 @@ export default class View {
    * @param {HTMLElement} element
    * @param {Event} event
    */
-  getEventLocation(element, event) {
+  static getEventLocation(element, event) {
     var pos = Utils.getElementPosition(element);
 
     return {
@@ -211,10 +209,10 @@ export default class View {
       this.activeLayer.redraw();
       this.redraw();
     } else {
-      var eventLocation = this.getEventLocation(this.canvas, event);
+      var eventLocation = View.getEventLocation(this.canvas, event);
       if (this.activeLayer.source !== null) {
         let scaleDirection = event.deltaY / 100;
-        let factor = 1 - scaleDirection * 0.05;
+        let factor = 1 - (scaleDirection * 0.05);
 
         let dx = (eventLocation.x - this.activeLayer.position.x) * (factor - 1),
           dy = (eventLocation.y - this.activeLayer.position.y) * (factor - 1);
@@ -236,7 +234,6 @@ export default class View {
   }
 
   removeImageLayer(layerId) {
-    let layerArrayId = 0;
     let index = 0;
     for (index = 0; index <= this.layers.length; index++) {
       if (this.layers[index].id === layerId) {
@@ -259,13 +256,11 @@ export default class View {
       }
     }
     // remove the control first
-    let control = this.controls.find(control => control.layer.id === layerId);
+    let control = this.controls.find((control) => control.layer.id === layerId);
     control.view.remove();
 
-    //this.controlsArea.remove(control);
-
     this.controls.splice(index, 1);
-    this.controls.forEach(control => control.refresh());
+    this.controls.forEach((control) => control.refresh());
     this.redraw();
   }
 
@@ -283,45 +278,45 @@ export default class View {
 
     // add the control at the top of the control area, too
     this.controlsArea.insertBefore(control.view, this.controlsArea.firstChild);
-    this.controls.forEach(control => control.refresh());
+    this.controls.forEach((control) => control.refresh());
 
     // Setup all listeners for this control
-    control.view.addEventListener('color', event => {
+    control.view.addEventListener('color', (event) => {
       this.setColor(event.detail.layerId, event.detail.color);
-      this.controls.forEach(control => control.refresh());
+      this.controls.forEach((control) => control.refresh());
     });
-    control.view.addEventListener('mask', event => {
+    control.view.addEventListener('mask', (event) => {
       this.activateMask(event.detail.layerId);
-      this.controls.forEach(control => control.refresh());
+      this.controls.forEach((control) => control.refresh());
     });
     // if a default mask is applied, trigger the calculation of the mask, too
     if (masked) {
       this.activateMask(layer.id);
       control.refresh();
     }
-    control.view.addEventListener('activate', event => {
+    control.view.addEventListener('activate', (event) => {
       this.activateLayer(event.detail.layerId);
-      this.controls.forEach(control => control.refresh());
+      this.controls.forEach((control) => control.refresh());
     });
-    control.view.addEventListener('deactivate', event => {
+    control.view.addEventListener('deactivate', () => {
       this.deactivateLayers();
-      this.controls.forEach(control => control.refresh());
+      this.controls.forEach((control) => control.refresh());
     });
-    control.view.addEventListener('center', event => {
+    control.view.addEventListener('center', (event) => {
       this.centerLayer(event.detail.layerId);
     });
-    control.view.addEventListener('move', event => {
+    control.view.addEventListener('move', (event) => {
       // move the control in sync
       this.moveLayer(event.detail.layerId, event.detail.direction);
-      this.controls.forEach(control => control.refresh());
+      this.controls.forEach((control) => control.refresh());
     });
-    control.view.addEventListener('pick-color-start', event => {
+    control.view.addEventListener('pick-color-start', (event) => {
       this.startColorPicking(event.detail.layerId, event.detail.color);
     });
-    control.view.addEventListener('pick-color-end', event => {
+    control.view.addEventListener('pick-color-end', () => {
       this.endColorPicking(true);
     });
-    control.view.addEventListener('delete', event => {
+    control.view.addEventListener('delete', (event) => {
       this.removeImageLayer(event.detail.layerId);
     });
   }
@@ -332,7 +327,7 @@ export default class View {
    * @param {*} currentColor The layers current color
    */
   startColorPicking(id) {
-    let layer = this.layers.find(layer => layer.id === id);
+    let layer = this.layers.find((layer) => layer.id === id);
     layer.saveColor();
     // move the control in sync
     this.isColorPicking = true;
@@ -356,7 +351,7 @@ export default class View {
     }
 
     // refreshing the control
-    let control = this.controls.find(control => control.layer.id === this.colorPickingForLayer.id);
+    let control = this.controls.find((control) => control.layer.id === this.colorPickingForLayer.id);
     control.endColorPicking();
 
     this.colorPickingForLayer = null;
@@ -408,20 +403,21 @@ export default class View {
   }
 
   centerLayer(id) {
-    let layer = this.layers.find(layer => layer.id === id);
+    let layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.reset();
       this.redraw();
     }
   }
+
   /**
    * Activates a layer for translation/scaling
    * @param Number | null id of the layer that should activate it's mask, if null: Activate the lowest layer with id = 0
    */
   activateLayer(id = 0) {
     // set all layers to inactive
-    this.layers.forEach(layer => (layer.isActive = false));
-    this.activeLayer = this.layers.find(layer => layer.id === id);
+    this.layers.forEach((layer) => (layer.isActive = false));
+    this.activeLayer = this.layers.find((layer) => layer.id === id);
     // activate the layer with given id
     if (this.activeLayer !== null) {
       this.activeLayer.isActive = true;
@@ -434,10 +430,10 @@ export default class View {
    */
   deactivateLayers() {
     this.activeLayer = null;
-    this.layers.forEach(layer => (layer.isActive = false));
-    /* for (let i = 0; i < this.layers.length; i++) {
-          this.layers[i].isActive = false;
-      }*/
+    this.layers.forEach((layer) => (layer.isActive = false));
+    // for (let i = 0; i < this.layers.length; i++) {
+    //     this.layers[i].isActive = false;
+    // }
     this.redraw();
   }
 
@@ -446,7 +442,7 @@ export default class View {
    * @param Number | null id of the layer that should activate it's mask, if null: Activate the lowest layer with id = 0
    */
   activateMask(id = 0) {
-    let layer = this.layers.find(layer => layer.id === id);
+    let layer = this.layers.find((layer) => layer.id === id);
 
     if (layer !== null) {
       // check if this layer currently provides the mask
@@ -455,7 +451,7 @@ export default class View {
         this.maskId = null;
       } else {
         this.maskId = id;
-        this.layers.forEach(layer => (layer.providesMask = false));
+        this.layers.forEach((layer) => (layer.providesMask = false));
         layer.providesMask = true;
       }
     }
@@ -463,8 +459,9 @@ export default class View {
     return true;
   }
 
+  // eslint-disable-next-line default-param-last
   setColor(id = 0, hexColorString) {
-    let layer = this.layers.find(layer => layer.id === id);
+    let layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.setColor(hexColorString);
       this.redraw();
@@ -472,13 +469,13 @@ export default class View {
   }
 
   redraw() {
-    let maskLayer = undefined
+    let maskLayer = undefined;
     let ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.width, this.height);
 
     if (this.maskId !== null) {
       // get the mask layer
-      maskLayer = this.layers.find(layer => layer.id === this.maskId);
+      maskLayer = this.layers.find((layer) => layer.id === this.maskId);
       // draw the mask at the same position and scale as the source of the layer itself
       ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(
@@ -501,7 +498,7 @@ export default class View {
     // draw the mask again on top as clipping may have happened to semi-transparent pixels
     // but only if defined as the top layer
     if (maskLayer !== undefined) {
-      if(this.layers[0].id == maskLayer.id) {
+      if (this.layers[0].id == maskLayer.id) {
         ctx.globalCompositeOperation = 'source-over';
         ctx.drawImage(maskLayer.view, 0, 0, this.width, this.height);
       }

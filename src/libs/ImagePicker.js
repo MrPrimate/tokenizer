@@ -1,7 +1,8 @@
+import DirectoryPicker from "./DirectoryPicker.js";
+
 /**
  * Game Settings: ImagePicker
  */
-
 
 class ImagePicker extends FilePicker {
   constructor(options = {}) {
@@ -28,7 +29,7 @@ class ImagePicker extends FilePicker {
 
   // returns the type "Img" for rendering the SettingsConfig
   static Img(val) {
-    return val == null ?  '' : String(val);
+    return val === null ? '' : String(val);
   }
 
   // formats the data into a string for saving it as a GameSetting
@@ -40,10 +41,10 @@ class ImagePicker extends FilePicker {
 
   // parses the string back to something the FilePicker can understand as an option
   static parse(inStr) {
-    const str = inStr ?? ''
+    const str = inStr ?? '';
     let matches = str.match(/\[(.+)\]\s*(.+)?/u);
     if (matches) {
-      let [,source, current = ''] = matches;
+      let [, source, current = ''] = matches;
       current = current.trim();
       const [s3, bucket] = source.split(":");
       if (bucket !== undefined) {
@@ -72,23 +73,26 @@ class ImagePicker extends FilePicker {
   static processHtml(html) {
     $(html)
       .find(`input[data-dtype="Img"]`)
-      .each(function () {
-        if (!$(this).next().length) {
+      .each((index, element) => {
+        $(element).prop("readonly", true);
+        
+        if (!$(element).next().length) {
           let picker = new ImagePicker({
-            field: $(this)[0],
+            field: $(element)[0],
             ...ImagePicker.parse(this.value),
           });
           // data-type="image" data-target="img"
           let pickerButton = $(
             '<button type="button" class="file-picker" title="Pick image"><i class="fas fa-file-import fa-fw"></i></button>'
           );
-          pickerButton.on("click", function () {
+          pickerButton.on("click", () => {
             picker.render(true);
           });
-          $(this).parent().append(pickerButton);
+          $(element).parent().append(pickerButton);
         }
       });
   }
+
 
   /** @override */
   activateListeners(html) {
@@ -99,6 +103,7 @@ class ImagePicker extends FilePicker {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 Hooks.on("renderSettingsConfig", (app, html, user) => {
   ImagePicker.processHtml(html);
 });

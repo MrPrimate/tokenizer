@@ -1,16 +1,18 @@
 import Tokenizer from "./tokenizer/index.js";
 import ImagePicker from "./libs/ImagePicker.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
+import Utils from "./utils.js";
+import logger from "./logger.js";
 
 
 export function init() {
-  console.log("VTTA Tokenizer | Init");
+  logger.info("Init");
 
   game.settings.register("vtta-tokenizer", "default-frame-pc", {
     name: "vtta-tokenizer.default-frame-pc.name",
     hint: "vtta-tokenizer.default-frame-pc.hint",
     type: ImagePicker.Img,
-    default: "modules/vtta-tokenizer/img/default-frame-pc.png",
+    default: "[data] modules/vtta-tokenizer/img/default-frame-pc.png",
     scope: "world",
     config: true,
   });
@@ -19,7 +21,7 @@ export function init() {
     name: "vtta-tokenizer.default-frame-npc.name",
     hint: "vtta-tokenizer.default-frame-npc.hint",
     type: ImagePicker.Img,
-    default: "modules/vtta-tokenizer/img/default-frame-npc.png",
+    default: "[data] modules/vtta-tokenizer/img/default-frame-npc.png",
     scope: "world",
     config: true,
   });
@@ -48,7 +50,7 @@ export function init() {
     scope: "world",
     config: true,
     type: DirectoryPicker.Directory,
-    default: "",
+    default: "[data] tokenizer/pc-images",
   });
 
   game.settings.register("vtta-tokenizer", "npc-image-upload-directory", {
@@ -57,7 +59,7 @@ export function init() {
     scope: "world",
     config: true,
     type: DirectoryPicker.Directory,
-    default: "",
+    default: "[data] tokenizer/npc-images",
   });
 
   game.settings.register("vtta-tokenizer", "image-save-type", {
@@ -112,58 +114,113 @@ export function init() {
     type: String,
     default: "white",
   });
+
+  game.settings.register("vtta-tokenizer", "log-level", {
+    name: "vtta-tokenizer.log-level.name",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      DEBUG: "DEBUG",
+      INFO: "INFO",
+      WARN: "WARN",
+      ERR: "ERROR ",
+      OFF: "OFF",
+    },
+    default: "INFO",
+  });
 }
 
-function launchTokenizer(actor) {
+/**
+ * Launch the tokenizer
+ * Options include
+ * name: name to use as part of filename identifier
+ * type: pc, npc - defaults to pc
+ * avatarFilename: current avatar image - defaults to null/mystery man
+ * tokenFilename: current tokenImage - defaults to null/mystery man
+ * isWildCard: is wildcard token?
+ * any other items needed in callback function, options will be passed to callback, with filenames updated to new references
+ * @param {*} options 
+ * @param {*} callback function to pass return object to 
+ */
+function launchTokenizer(options, callback) {
   if (!game.user.can("FILES_UPLOAD")) {
     ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
   }
 
-  const tokenizer = new Tokenizer({}, actor);
+  logger.debug("Tokenizer options", options);
+  const tokenizer = new Tokenizer(options, callback);
   tokenizer.render(true);
 
 }
 
+async function updateActor(tokenizerResponse) {
+  logger.debug("Updating Actor, tokenizer data", tokenizerResponse);
+
+  const dateTag = `${+new Date()}`;
+
+  // updating the avatar filename
+  const update = {
+    img: tokenizerResponse.avatarFilename + "?" + dateTag,
+  };
+
+  // for non-wildcard tokens, we set the token img now
+  if (tokenizerResponse.actor.data.token.randomImg) {
+    const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
+    const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(tokenizerResponse.actor.data.type));
+
+    if (tokenizerResponse.actor.data.token.img.indexOf("*") === -1) {
+      // set it to a wildcard we can actually use
+      const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
+      ui.notifications.info("Tokenizer: Wildcarding token image to " + tokenizerResponse.actor.data.token.img);
+      update.token = {
+        img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
+      };
+    }
+  } else {
+    update.token = {
+      img: tokenizerResponse.tokenFilename + "?" + dateTag,
+    };
+  }
+
+  await tokenizerResponse.actor.update(update);
+}
+
 export function ready() {
-  console.log("Tokenizer | Ready");
-
-  // check for failed registered settings
-  let hasErrors = false;
-
-  const titleLink = game.settings.get("vtta-tokenizer", "title-link");
+  logger.info("Ready");
 
   // Set base character upload folder.
   const characterUploads = game.settings.get("vtta-tokenizer", "image-upload-directory");
   const npcUploads = game.settings.get("vtta-tokenizer", "npc-image-upload-directory");
+
+  if (game.user.isGM) {
+    DirectoryPicker.verifyPath(DirectoryPicker.parse(characterUploads));
+    DirectoryPicker.verifyPath(DirectoryPicker.parse(npcUploads));
+  }
+
+  const titleLink = game.settings.get("vtta-tokenizer", "title-link");
+
   if (characterUploads != "" && npcUploads == "") game.settings.set("vtta-tokenizer", "npc-image-upload-directory", characterUploads);
-
-  for (let s of game.settings.settings.values()) {
-    if (s.module !== "vtta-tokenizer") continue;
-    try {
-      const setting = game.settings.get(s.module, s.key);
-      if(setting == "null" && key === 'image-upload-directory') throw new Error()
-    } catch (err) {
-      hasErrors = true;
-      ui.notifications.info(`[${s.module}] Erroneous module settings found, resetting to default.`);
-      game.settings.set(s.module, s.key, s.default);
-    }
-  }
-
-  if (hasErrors) {
-    ui.notifications.warn("Please review the module settings to re-adjust them to your desired configuration.");
-  }
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
-      return arr.concat(Object.values(classes).map(c => c.cls));
+      return arr.concat(Object.values(classes).map((c) => c.cls));
     }, [])
-    .map(cls => cls.name);
+    .map((cls) => cls.name);
 
   // register tokenizer on all character (npc and pc) sheets
-  sheetNames.forEach(sheetName => {
+  sheetNames.forEach((sheetName) => {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user) {
         const doc = isNewerVersion(game.data.version, "0.8.2") ? app.document : app.entity;
+        const options = {
+          actor: doc,
+          name: doc.name,
+          type: doc.data.type === "character" ? "pc" : "npc",
+          avatarFilename: doc.data.img,
+          tokenFilename: doc.data.token.img,
+          isWildCard: doc.data.token.randomImg,
+        };
 
         if (titleLink) {
           const button = $(`<a class="header-button vtta-tokenizer" id="vtta-tokenizer-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
@@ -173,30 +230,30 @@ export function ready() {
 
           button.click((event) => {
             event.preventDefault();
-            launchTokenizer(doc);
+            launchTokenizer(options, updateActor);
           });
         }
 
         const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
 
         $(html)
-          .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map(cls => `img.${cls}`).join(", "))
+          .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
           .each((index, element) => {
             // deactivating the original FilePicker click
             $(element).off("click");
 
             // replace it with Tokenizer OR FilePicker click
-            $(element).on("click", event => {
+            $(element).on("click", (event) => {
               if (!event.shiftKey) {
                 event.stopPropagation();
-                launchTokenizer(doc);
+                launchTokenizer(options, updateActor);
                 event.preventDefault();
               } else {
                 // showing the filepicker
                 new FilePicker({
                   type: "image",
                   current: data.actor.data.img,
-                  callback: path => {
+                  callback: (path) => {
                     event.currentTarget.src = path;
                     app._onSubmit(event);
                   },

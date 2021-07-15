@@ -19,31 +19,30 @@
 export const geom = {};
 
 // lookup tables for marching directions
-var d3_geom_contourDx = [1, 0, 1, 1, -1, 0, -1, 1, 0, 0, 0, 0, -1, 0, -1, NaN],
-  d3_geom_contourDy = [0, -1, 0, 0, 0, -1, 0, 0, 1, -1, 1, 1, 0, -1, 0, NaN];
+const d3GeomContourDx = [1, 0, 1, 1, -1, 0, -1, 1, 0, 0, 0, 0, -1, 0, -1, NaN];
+const d3GeomContourDy = [0, -1, 0, 0, 0, -1, 0, 0, 1, -1, 1, 1, 0, -1, 0, NaN];
 
-export function d3_geom_contourStart(grid) {
-  var x = 0,
+export function dGeomContourStart(grid) {
+  let x = 0,
     y = 0;
 
   // search for a starting point; begin at origin
   // and proceed along outward-expanding diagonals
-  while (true) {
-    if (grid(x, y)) {
-      return [x, y];
-    }
+  while (!grid(x, y)) {
     if (x === 0) {
       x = y + 1;
       y = 0;
     } else {
-      x = x - 1;
-      y = y + 1;
+      x -= 1;
+      y += 1;
     }
   }
+
+  return [x, y];
 }
 
 geom.contour = function(grid, start) {
-  var s = start || d3_geom_contourStart(grid), // starting point
+  let s = start || dGeomContourStart(grid), // starting point
     c = [], // contour polygon
     x = s[0], // current x position
     y = s[1], // current y position
@@ -69,8 +68,8 @@ geom.contour = function(grid, start) {
       dx = 0;
       dy = pdx === 1 ? -1 : 1;
     } else {
-      dx = d3_geom_contourDx[i];
-      dy = d3_geom_contourDy[i];
+      dx = d3GeomContourDx[i];
+      dy = d3GeomContourDy[i];
     }
 
     // update contour polygon

@@ -68,4 +68,50 @@ Two things are required for Tokenizer to being able so save a token.
 
 ## Calling Tokenizer
 
-You can call Tokenizer by using `Tokenizer.launch(actor)`.
+You can call Tokenizer by using `Tokenizer.launch(options, callback)`.
+
+Options can consist of:
+
+```javascript
+{
+  name: "Testy McTestFace",
+  type: "pc",
+  avatarFilename: "uploads/tokenspc/testy_mctestface.Avatar.webp?1626284544960",
+  tokenFilename: "uploads/tokenspc/testy_mctestface.Token.webp?1626284544960",
+  targetFolder: "[data] uploads/tokens/my-special-folder"
+}
+```
+
+Only `name` and `type` are required, the others will use Tokenizer defaults.
+
+The `targetFolder` can override the default save folder.
+
+As well as any other object you wish to be passed back to the callback function.
+
+e.g. 
+
+```javascript
+let tokenizerOptions = {
+  name: "test",
+  avatarFilename: "uploads/example/example_avatar_image.png",
+  targetFolder: "[data] uploads/tokens/special",
+  usefulString: "Useful data"
+};
+
+Tokenizer.launch(tokenizerOptions, (response) => {console.log(response)});
+```
+
+When the OK button is pressed it will return the following to the function (which in this case prints it to the console):
+
+```javascript
+{
+  name: "test",
+  avatarFilename: "uploads/tokens/special/test.Avatar.webp",
+  targetFolder: "[data] uploads/tokens/special",
+  tokenFilename: "uploads/tokens/special/test.Token.webp",
+  usefulString: "Useful data"
+}
+```
+
+This is useful if you want to generate tokens for use outside of the regular actors.
+

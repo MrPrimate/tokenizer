@@ -102,7 +102,7 @@ export default class Layer {
     };
 
     let isTransparent = (x, y) => {
-      return transparencyThreshold < pixels.data[(y * pixels.width + x) * 4 + 3];
+      return transparencyThreshold < pixels.data[(((y * pixels.width) + x) * 4) + 3];
     };
 
     // re-use the intermediate canvas
@@ -114,6 +114,7 @@ export default class Layer {
     if (completelyTransparent()) {
       ctx.clearRect(0, 0, temp.width, temp.height);
     } else {
+      // eslint-disable-next-line no-lonely-if
       if (completelyOpaque()) {
         ctx.clearRect(0, 0, temp.width, temp.height);
         ctx.fillRect(0, 0, temp.width, temp.height);
@@ -211,10 +212,10 @@ export default class Layer {
     this.rotation = 0;
 
     // set initial position: x
-    this.position.x = Math.floor(this.width / 2 - (this.source.width * this.scale) / 2);
+    this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
 
     // set initial position: y
-    this.position.y = Math.floor(this.height / 2 - (this.source.height * this.scale) / 2);
+    this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
     this.redraw();
   }
 
