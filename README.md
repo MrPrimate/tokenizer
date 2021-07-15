@@ -82,7 +82,7 @@ Options can consist of:
 }
 ```
 
-Only `name` and `type` are required, the others will use Tokenizer defaults.
+Only `name` is required, the others will use Tokenizer defaults.
 
 The `targetFolder` can override the default save folder.
 
