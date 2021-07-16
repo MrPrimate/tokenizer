@@ -104,10 +104,10 @@ export default class Utils {
     if (!url) url = "icons/mystery-man.png";
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
     const useProxy = Utils.useProxy(url);
-    logger.debug(`Proxy for ${url}: ${useProxy}`);
+    const forgeImage = url.startsWith("https://assets.forge-vtt.com/");
     return new Promise((resolve, reject) => {
       let img = new Image();
-      if (useProxy) img.crossOrigin = "Anonymous";
+      if (useProxy || forgeImage) img.crossOrigin = "Anonymous";
       img.addEventListener("load", () => {
         resolve(img);
       });
