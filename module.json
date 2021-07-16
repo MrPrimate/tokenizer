@@ -5,6 +5,7 @@
   "version": "3.3.2",
   "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/3.3.2/vtta-tokenizer.zip",
   "manifest": "https://github.com/mrprimate/vtta-tokenizer/releases/download/latest/module.json",
+  "changelog": "https://github.com/MrPrimate/vtta-tokenizer/blob/main/CHANGELOG.md",
   "minimumCoreVersion": "0.7.9",
   "compatibleCoreVersion": "0.8.8",
   "author": "MrPrimate (jack@mrprimate.co.uk), Sebastian Will (vttassets@gmail.com)",

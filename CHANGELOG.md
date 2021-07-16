@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.3.3]
+
+* Assets in your Forge library will load again.
+
 # [3.3.1]
 
 * Overhaul of code base to and implementation against by linting standard.
