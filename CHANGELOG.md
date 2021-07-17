@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.3.5]
+
+* Fix borken image load from sites with appropriate CORS policy.
+
 # [3.3.4]
 
 * Adds `Tokenizer.tokenizeActor()`.
