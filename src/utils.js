@@ -85,15 +85,33 @@ export default class Utils {
    * Should the image use the proxy?
    * @param {*} url
    */
-  static useProxy(url) {
+  static async useProxy(url) {
     if (
       url.toLowerCase().startsWith("https://www.dndbeyond.com/") ||
       url.toLowerCase().startsWith("https://dndbeyond.com/") ||
       url.toLowerCase().startsWith("https://media-waterdeep.cursecdn.com/")
     ) {
       return true;
+    } else if (
+      await game.settings.get("vtta-tokenizer", "force-proxy") &&
+      url.toLowerCase().match("^https?://")
+    ) {
+      return true;
     } else {
       return false;
+    }
+  }
+
+  /**
+   * Converts url to proxied url
+   * @param {*} url
+   * @param {*} proxy
+   */
+  static proxiedUrl(url, proxy) {
+    if (proxy.match("%URL%")) {
+      return proxy.replace("%URL%", encodeURIComponent(url));
+    } else {
+      return proxy + url;
     }
   }
 
@@ -104,7 +122,7 @@ export default class Utils {
   static async download(url) {
     if (!url) url = "icons/mystery-man.png";
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
-    const useProxy = Utils.useProxy(url);
+    const useProxy = await Utils.useProxy(url);
     // const forgeImage = url.startsWith("https://assets.forge-vtt.com/");
     const s3 = url.includes("s3") && url.includes("amazonaws.com");
     return new Promise((resolve, reject) => {
@@ -116,7 +134,7 @@ export default class Utils {
       img.addEventListener("error", (event) => {
         reject(event);
       });
-      let imgSrc = useProxy ? proxy + url : url;
+      let imgSrc = useProxy ? Utils.proxiedUrl(url, proxy) : url;
       img.src = imgSrc;
     });
   }
