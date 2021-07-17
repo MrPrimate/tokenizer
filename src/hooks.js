@@ -186,6 +186,24 @@ async function updateActor(tokenizerResponse) {
   await tokenizerResponse.actor.update(update);
 }
 
+function tokenizeActor(actor) {
+  if (!game.user.can("FILES_UPLOAD")) {
+    ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+  }
+
+  const options = {
+    actor: actor,
+    name: actor.name,
+    type: actor.data.type === "character" ? "pc" : "npc",
+    avatarFilename: actor.data.img,
+    tokenFilename: actor.data.token.img,
+    isWildCard: actor.data.token.randomImg,
+  };
+
+  launchTokenizer(options, updateActor);
+
+}
+
 export function ready() {
   logger.info("Ready");
 
@@ -213,14 +231,6 @@ export function ready() {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user) {
         const doc = isNewerVersion(game.data.version, "0.8.2") ? app.document : app.entity;
-        const options = {
-          actor: doc,
-          name: doc.name,
-          type: doc.data.type === "character" ? "pc" : "npc",
-          avatarFilename: doc.data.img,
-          tokenFilename: doc.data.token.img,
-          isWildCard: doc.data.token.randomImg,
-        };
 
         if (titleLink) {
           const button = $(`<a class="header-button vtta-tokenizer" id="vtta-tokenizer-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
@@ -230,7 +240,7 @@ export function ready() {
 
           button.click((event) => {
             event.preventDefault();
-            launchTokenizer(options, updateActor);
+            tokenizeActor(doc);
           });
         }
 
@@ -246,7 +256,7 @@ export function ready() {
             $(element).on("click", (event) => {
               if (!event.shiftKey) {
                 event.stopPropagation();
-                launchTokenizer(options, updateActor);
+                tokenizeActor(doc);
                 event.preventDefault();
               } else {
                 // showing the filepicker
@@ -269,5 +279,6 @@ export function ready() {
 
   window.Tokenizer = {
     launch: launchTokenizer,
+    tokenizeActor: tokenizeActor,
   };
 }

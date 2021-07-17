@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.3.4]
+
+* Adds `Tokenizer.tokenizeActor()`.
+
 # [3.3.3]
 
 * Assets in your Forge library will load again.

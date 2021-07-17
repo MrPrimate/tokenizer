@@ -68,7 +68,7 @@ Two things are required for Tokenizer to being able so save a token.
 
 ## Calling Tokenizer
 
-You can call Tokenizer by using `Tokenizer.launch(options, callback)`.
+You can call Tokenizer by using `Tokenizer.launch(options, callback)` or `Tokenizer.tokenizeActor(actor)`.
 
 Options can consist of:
 
