@@ -4,6 +4,10 @@ import logger from "./logger.js";
 const SKIPPING_WORDS = [
   "the", "of", "at", "it", "a"
 ];
+
+const DOM_PARSER = new DOMParser();
+const SPECIAL_URLS = ['static.wikia'].join('|');
+
 export default class Utils {
 
   static generateUUID() {
@@ -215,4 +219,35 @@ export default class Utils {
 
     return words.join(" ");
   }
+
+  static handleSpecialURL(URL) {
+    return (new RegExp(SPECIAL_URLS).test(URL)) ? null : URL;
+  }
+
+  static extractURLFromEventData(evData) {
+    const HTML = evData.getData('text/html');
+    if (!HTML) return null;
+
+    const img = DOM_PARSER.parseFromString(HTML, 'text/html').querySelector('img');
+    if (!img) return null;
+
+    return Utils.handleSpecialURL(img.src);
+  }
+
+  static extractFileFromEventData(evData) {
+    const items = evData?.items;
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item?.type?.includes('image')) return item.getAsFile();
+    }
+    return null;
+  }
+
+  static extractImage(event) {
+    const evData = event?.clipboardData || event?.dataTransfer;
+    return Utils.extractURLFromEventData(evData) || Utils.extractFileFromEventData(evData);
+  }
+
 }
+
+

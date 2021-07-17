@@ -33,6 +33,8 @@ export default class View {
     // The working stage for the View
     this.stage = document.createElement('div');
     this.stage.name = 'view';
+    if (element.id === "tokenizer-token") this.stage.setAttribute("id", "token-canvas");
+    if (element.id === "tokenizer-token") this.stage.setAttribute("contenteditable", "true");
 
     // The controls area for the View
     this.controlsArea = document.createElement('div');
