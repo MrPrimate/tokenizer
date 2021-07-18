@@ -70,7 +70,7 @@ jobs:
       with:
         username: ${{ secrets.FOUNDRY_ADMIN_USER }}
         password: ${{ secrets.FOUNDRY_ADMIN_PW }}
-        module-id: ${{ secrets.FOUNDRY_MODULE_ID }}
+        module-id: 71
         manifest-url: https://github.com/${{ github.repository }}/releases/download/${{ steps.get-version.outputs.version }} /module.json
         manifest-file: ./module.json
 

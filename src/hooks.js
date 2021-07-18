@@ -106,6 +106,13 @@ export function init() {
     default: "https://london.drop.mrprimate.co.uk/",
   });
 
+  game.settings.register("vtta-tokenizer", "paste-target", {
+    scope: "world",
+    config: false,
+    type: String,
+    default: "token",
+  });
+
   game.settings.register("vtta-tokenizer", "default-color", {
     name: "vtta-tokenizer.default-color.name",
     hint: "vtta-tokenizer.default-color.hint",

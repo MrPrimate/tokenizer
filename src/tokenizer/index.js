@@ -64,6 +64,8 @@ export default class Tokenizer extends FormApplication {
     });
 
     const frames = defaultFrames.concat(folderFrames);
+    const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
+    const pasteTargetName = Utils.titleString(pasteTarget);
 
     return {
       options: this.tokenOptions,
@@ -71,6 +73,8 @@ export default class Tokenizer extends FormApplication {
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
       tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && Boolean(game.TokenVariants),
       frames: frames,
+      pasteTarget: pasteTarget,
+      pasteTargetName: pasteTargetName,
     };
   }
 
@@ -271,6 +275,20 @@ export default class Tokenizer extends FormApplication {
           this._setTokenFrame(frame);
           break;
         }
+        case "paste-toggle-token": {
+          const toggle = document.getElementById("paste-toggle");
+          toggle.setAttribute("data-type", "paste-toggle-avatar");
+          toggle.innerHTML = '<i class="fas fa-clipboard"></i> Avatar';
+          game.settings.set("vtta-tokenizer", "paste-target", "avatar");
+          break;
+        }
+        case "paste-toggle-avatar": {
+          const toggle = document.getElementById("paste-toggle");
+          toggle.setAttribute("data-type", "paste-toggle-token");
+          toggle.innerHTML = '<i class="fas fa-clipboard"></i> Token';
+          game.settings.set("vtta-tokenizer", "paste-target", "token");
+          break;
+        }
         // no default
       }
     });
@@ -320,7 +338,9 @@ export default class Tokenizer extends FormApplication {
   }
 
   pasteImage(event) {
-    Utils.extractImage(event, this.Token);
+    const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
+    const view = pasteTarget === "token" ? this.Token : this.Avatar;
+    Utils.extractImage(event, view);
   }
 
 }
@@ -336,4 +356,24 @@ Hooks.on("renderTokenizer", (app) => {
     e.stopPropagation();
     app.pasteImage(e);
   });
+  // let toggle = $('a#toggle');
+  // let toggle = document.getElementById("paste-toggle");
+  
+  // toggle.addEventListener("click", () => {
+  //   console.warn("TOGGLE");
+  //   console.warn(toggle);
+  //   switch (toggle.className) {
+  //     case "paste-avatar":
+  //       toggle.classList.remove("paste-avatar");
+  //       toggle.classList.add("paste-token");
+  //       toggle.innerHTML = '<i class="fas fa-clipboard"></i> To Token';
+  //       break;
+  //     case "paste-token":
+  //       toggle.classList.remove("paste-token");
+  //       toggle.classList.add("paste-avatar");
+  //       toggle.innerHTML = '<i class="fas fa-clipboard"></i> To Avatar';
+  //       break;
+  //     // no default
+  //   }
+  // });
 });

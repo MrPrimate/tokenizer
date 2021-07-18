@@ -261,3 +261,8 @@
   width: 25%;
   line-height: 1px;
 }
+
+#paste-toggle {
+  width: 100% !important;
+  line-height: 1px;
+}
