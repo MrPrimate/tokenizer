@@ -347,12 +347,12 @@ export default class Tokenizer extends FormApplication {
 
 Hooks.on("renderTokenizer", (app) => {
   window.addEventListener("paste", async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     e.stopPropagation();
     app.pasteImage(e);
   });
   window.addEventListener("drop", async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     e.stopPropagation();
     app.pasteImage(e);
   });
