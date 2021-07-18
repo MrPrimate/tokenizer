@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.1]
+
+* You can now choose to paste/drag n drop to the avatar or token via button switch.
+
 # [3.4.0]
 
 * You can now drag and drop or paste images into Tokenizer. This will target the token side only.

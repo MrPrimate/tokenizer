@@ -356,24 +356,4 @@ Hooks.on("renderTokenizer", (app) => {
     e.stopPropagation();
     app.pasteImage(e);
   });
-  // let toggle = $('a#toggle');
-  // let toggle = document.getElementById("paste-toggle");
-  
-  // toggle.addEventListener("click", () => {
-  //   console.warn("TOGGLE");
-  //   console.warn(toggle);
-  //   switch (toggle.className) {
-  //     case "paste-avatar":
-  //       toggle.classList.remove("paste-avatar");
-  //       toggle.classList.add("paste-token");
-  //       toggle.innerHTML = '<i class="fas fa-clipboard"></i> To Token';
-  //       break;
-  //     case "paste-token":
-  //       toggle.classList.remove("paste-token");
-  //       toggle.classList.add("paste-avatar");
-  //       toggle.innerHTML = '<i class="fas fa-clipboard"></i> To Avatar';
-  //       break;
-  //     // no default
-  //   }
-  // });
 });
