@@ -220,9 +220,9 @@ export default class Utils {
   static extractImage(event, view) {
     const evData = event?.clipboardData || event?.dataTransfer;
 
-    if (!evData.items) return undefined;
+    if (!evData.items) return;
 
-    for(const item of evData.items) {
+    for (const item of evData.items) {
       if (item.type.startsWith('image')) {
         const blob = item.getAsFile();
         const img = new Image();
@@ -235,9 +235,8 @@ export default class Utils {
           img.src = ev.target.result;
         }; 
         reader.readAsDataURL(blob);
-        return img;
       }
-    };
+    }
   }
 
 }
