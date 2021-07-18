@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.2]
+
+* Restore regular paste functionality after tokenizer was opened.
+
 # [3.4.1]
 
 * You can now choose to paste/drag n drop to the avatar or token via button switch.
