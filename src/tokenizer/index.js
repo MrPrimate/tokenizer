@@ -320,27 +320,20 @@ export default class Tokenizer extends FormApplication {
   }
 
   pasteImage(event) {
-    console.log("PASTE IMAGE");
-    const image = Utils.extractImageFromEvent(event);
-    if (image) {
-      this.Token.addImageLayer(image);
-    }
+    Utils.extractImage(event, this.Token);
   }
 
 }
 
-Hooks.on("renderTokenizer", (app, html) => {
-  console.warn(app);
-  console.warn(html);
-
-  const tokenBox = html[0]?.querySelector("#token-canvas");
-
-  // console.warn(tokenBox);
-
-  // tokenBox.addEventListener('keydown', () => tokenBox.focus());
-  tokenBox.addEventListener('paste', (event) => app.pasteImage(event));
-  tokenBox.addEventListener('onpaste', (event) => app.pasteImage(event));
-  // tokenBox.addEventListener('drop', (event) => app.pasteImage(event));
-
-  console.warn(tokenBox);
+Hooks.on("renderTokenizer", (app) => {
+  window.addEventListener("paste", async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    app.pasteImage(e);
+  });
+  window.addEventListener("drop", async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    app.pasteImage(e);
+  });
 });

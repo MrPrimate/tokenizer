@@ -1,13 +1,14 @@
 # VTTA Tokenizer
 ## Token creation made easy
 
- You have three options:
+ You have many options:
 
 - Load an image from your local harddrive (you sure have a great collection already)
 - Load an image from any URL (which is publicly accessible, and not using CORS)
 - Load an image from D&DBeyond
-  or
-- just select an image already uploaded to the Foundry server
+- Load an image already uploaded to the Foundry server
+- Paste an image
+- Drag and drop an image
 
 Overlay this image by adding layers on top or beneath it, think of it as putting sheets of paper on top of each other, each having a different cut out, therefore showing parts of the layers beneath it and covering other areas. You can achieve this effect by using images that are transparent in certain areas and opaque on others.
 

@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.0]
+
+* You can now drag and drop or paste images into Tokenizer. This will target the token side only.
+
 # [3.3.5]
 
 * Fix borken image load from sites with appropriate CORS policy.
