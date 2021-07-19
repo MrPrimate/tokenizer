@@ -106,6 +106,13 @@ export function init() {
     default: "https://london.drop.mrprimate.co.uk/",
   });
 
+  game.settings.register("vtta-tokenizer", "force-proxy", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("vtta-tokenizer", "paste-target", {
     scope: "world",
     config: false,
