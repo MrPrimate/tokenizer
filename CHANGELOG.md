@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.3]
+
+* Improve custom CORS proxy support.
+
 # [3.4.2]
 
 * Restore regular paste functionality after tokenizer was opened.

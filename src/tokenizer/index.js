@@ -248,7 +248,7 @@ export default class Tokenizer extends FormApplication {
                   Utils.download($("#url").val())
                     .then((img) => view.addImageLayer(img))
                     .catch((error) => {
-                      logger.error(error);
+                      logger.error("Error fetching image", error);
                       ui.notification.error(error);
                     });
                 },
