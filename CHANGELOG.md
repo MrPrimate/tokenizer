@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.4]
+
+* S3 CORS access was broken.
+
 # [3.4.3]
 
 * Improve custom CORS proxy support.
