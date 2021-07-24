@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.5]
+
+* Tokenizer will now update placed scene tokens again in 0.8.x. Tokens edited on the scene canvas will remain unique for that placed token. e.g. if you update 1 of 10 placed goblins it will only update that single goblins token image.
+
 # [3.4.4]
 
 * S3 CORS access was broken.

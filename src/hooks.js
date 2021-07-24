@@ -198,6 +198,9 @@ async function updateActor(tokenizerResponse) {
   }
 
   await tokenizerResponse.actor.update(update);
+  if (tokenizerResponse.token) {
+    tokenizerResponse.token.update(update.token);
+  }
 }
 
 function tokenizeActor(actor) {
@@ -216,6 +219,33 @@ function tokenizeActor(actor) {
 
   launchTokenizer(options, updateActor);
 
+}
+
+function tokenizeSceneToken(doc) {
+  if (!game.user.can("FILES_UPLOAD")) {
+    ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+  }
+
+  const options = {
+    actor: doc.actor,
+    token: doc.token,
+    name: doc.token.name,
+    type: doc.actor.data.type === "character" ? "pc" : "npc",
+    avatarFilename: doc.actor.data.img,
+    tokenFilename: doc.token.data.img,
+    nameSuffix: `${doc.token.id}`,
+  };
+
+  launchTokenizer(options, updateActor);
+
+}
+
+function tokenizeDoc(doc) {
+  if (doc.token) {
+    tokenizeSceneToken(doc);
+  } else {  
+    tokenizeActor(doc);
+  }
 }
 
 export function ready() {
@@ -244,7 +274,10 @@ export function ready() {
   sheetNames.forEach((sheetName) => {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user) {
-        const doc = isNewerVersion(game.data.version, "0.8.2") ? app.document : app.entity;
+        const doc = isNewerVersion(game.data.version, "0.8.2") 
+        // is this token on a scene, if so we need to handle updates differently
+          ? (app.token) ? app : app.document
+          : app.entity;
 
         if (titleLink) {
           const button = $(`<a class="header-button vtta-tokenizer" id="vtta-tokenizer-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
@@ -254,7 +287,7 @@ export function ready() {
 
           button.click((event) => {
             event.preventDefault();
-            tokenizeActor(doc);
+            tokenizeDoc(doc);
           });
         }
 
@@ -270,7 +303,7 @@ export function ready() {
             $(element).on("click", (event) => {
               if (!event.shiftKey) {
                 event.stopPropagation();
-                tokenizeActor(doc);
+                tokenizeDoc(doc);
                 event.preventDefault();
               } else {
                 // showing the filepicker
@@ -294,5 +327,7 @@ export function ready() {
   window.Tokenizer = {
     launch: launchTokenizer,
     tokenizeActor: tokenizeActor,
+    tokenizeSceneToken: tokenizeSceneToken,
+    tokenizeDoc: tokenizeDoc,
   };
 }

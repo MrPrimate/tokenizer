@@ -102,7 +102,7 @@ export default class Tokenizer extends FormApplication {
     return path;
   }
 
-  async _getFilename(suffix = "Avatar") {
+  async _getFilename(suffix = "Avatar", postfix = "") {
     const actorName = await Utils.makeSlug(this.tokenOptions.name);
     const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
 
@@ -125,7 +125,7 @@ export default class Tokenizer extends FormApplication {
 
       return targetFilename;
     }
-    return `${actorName}.${suffix}.${imageFormat}`;
+    return `${actorName}.${suffix}${postfix}.${imageFormat}`;
   }
 
   _updateObject(event, formData) {
@@ -180,13 +180,14 @@ export default class Tokenizer extends FormApplication {
     this._initAvatar(html, this.tokenOptions.avatarFilename);
 
     let tokenView = document.querySelector(".token > .view");
+    const nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
 
     // get the target filename for the avatar
-    this._getFilename("Avatar").then((targetFilename) => {
+    this._getFilename("Avatar", nameSuffix).then((targetFilename) => {
       $('input[name="targetAvatarFilename"]').val(targetFilename);
     });
     // get the target filename for the token
-    this._getFilename("Token").then((targetFilename) => {
+    this._getFilename("Token", nameSuffix).then((targetFilename) => {
       $('span[name="targetFilename"]').text(targetFilename);
       $('input[name="targetTokenFilename"]').val(targetFilename);
     });

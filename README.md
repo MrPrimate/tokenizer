@@ -96,13 +96,16 @@ Options can consist of:
   type: "pc",
   avatarFilename: "uploads/tokenspc/testy_mctestface.Avatar.webp?1626284544960",
   tokenFilename: "uploads/tokenspc/testy_mctestface.Token.webp?1626284544960",
-  targetFolder: "[data] uploads/tokens/my-special-folder"
+  targetFolder: "[data] uploads/tokens/my-special-folder",
+  nameSuffix: "any-string",
 }
 ```
 
 Only `name` is required, the others will use Tokenizer defaults.
 
 The `targetFolder` can override the default save folder.
+
+The `nameSuffix` will add this to the token name as a suffix.
 
 As well as any other object you wish to be passed back to the callback function.
 
