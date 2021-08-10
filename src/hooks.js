@@ -99,6 +99,15 @@ export function init() {
     default: false,
   });
 
+  game.settings.register("vtta-tokenizer", "disable-avatar-click", {
+    name: "vtta-tokenizer.disable-avatar-click.name",
+    hint: "vtta-tokenizer.disable-avatar-click.hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("vtta-tokenizer", "proxy", {
     scope: "world",
     config: false,
@@ -292,34 +301,36 @@ export function ready() {
         }
 
         const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
+        const disableAvatarClick = game.settings.get("vtta-tokenizer", "disable-avatar-click");
 
         $(html)
-          .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
-          .each((index, element) => {
-            // deactivating the original FilePicker click
-            $(element).off("click");
+        .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
+        .each((index, element) => {
+          // deactivating the original FilePicker click
+          $(element).off("click");
 
-            // replace it with Tokenizer OR FilePicker click
-            $(element).on("click", (event) => {
-              if (!event.shiftKey) {
-                event.stopPropagation();
-                tokenizeDoc(doc);
-                event.preventDefault();
-              } else {
-                // showing the filepicker
-                new FilePicker({
-                  type: "image",
-                  current: data.actor.data.img,
-                  callback: (path) => {
-                    event.currentTarget.src = path;
-                    app._onSubmit(event);
-                  },
-                  top: app.position.top + 40,
-                  left: app.position.left + 10,
-                }).browse(data.actor.data.img);
-              }
-            });
+          // replace it with Tokenizer OR FilePicker click
+          $(element).on("click", (event) => {
+            if (!disableAvatarClick && !event.shiftKey) {
+              event.stopPropagation();
+              tokenizeDoc(doc);
+              event.preventDefault();
+            } else {
+              // showing the filepicker
+              new FilePicker({
+                type: "image",
+                current: data.actor.data.img,
+                callback: (path) => {
+                  event.currentTarget.src = path;
+                  app._onSubmit(event);
+                },
+                top: app.position.top + 40,
+                left: app.position.left + 10,
+              }).browse(data.actor.data.img);
+            }
           });
+        });
+        
       }
     });
   });
