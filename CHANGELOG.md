@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.7]
+
+* Add shift click for avatar if you disable open on click for avatar.
+
 # [3.4.6]
 
 * You can disable Tokenizer opening when clicking the avatar in the modules settings. If this is selected it will fall back to the default file picker.
