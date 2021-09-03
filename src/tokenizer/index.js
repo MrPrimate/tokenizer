@@ -177,32 +177,7 @@ export default class Tokenizer extends FormApplication {
   }
 
   activateListeners(html) {
-    this._initAvatar(html, this.tokenOptions.avatarFilename);
-
-    let tokenView = document.querySelector(".token > .view");
-    const nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
-
-    // get the target filename for the avatar
-    this._getFilename("Avatar", nameSuffix).then((targetFilename) => {
-      $('input[name="targetAvatarFilename"]').val(targetFilename);
-    });
-    // get the target filename for the token
-    this._getFilename("Token", nameSuffix).then((targetFilename) => {
-      $('span[name="targetFilename"]').text(targetFilename);
-      $('input[name="targetTokenFilename"]').val(targetFilename);
-    });
-
-    if (this.tokenOptions.isWildCard) {
-      $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
-      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
-      // load the default frame, if there is one set
-      this._setTokenFrame();
-    } else {
-      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
-
-      // Add the actor image to the token view
-      this._initToken(this.tokenOptions.tokenFilename);
-    }
+    this.loadImages(html);
 
     $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {
       const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
@@ -342,6 +317,35 @@ export default class Tokenizer extends FormApplication {
     const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
     const view = pasteTarget === "token" ? this.Token : this.Avatar;
     Utils.extractImage(event, view);
+  }
+
+  loadImages(html) {
+    let tokenView = document.querySelector(".token > .view");
+    const nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
+
+    // get the target filename for the avatar
+    this._getFilename("Avatar", nameSuffix).then((targetFilename) => {
+      $('input[name="targetAvatarFilename"]').val(targetFilename);
+    });
+    // get the target filename for the token
+    this._getFilename("Token", nameSuffix).then((targetFilename) => {
+      $('span[name="targetFilename"]').text(targetFilename);
+      $('input[name="targetTokenFilename"]').val(targetFilename);
+    });
+
+    if (this.tokenOptions.isWildCard) {
+      $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
+      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
+      // load the default frame, if there is one set
+      this._setTokenFrame();
+    } else {
+      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
+
+      // Add the actor image to the token view
+      this._initToken(this.tokenOptions.tokenFilename);
+    }
+
+    this._initAvatar(html, this.tokenOptions.avatarFilename);
   }
 
 }

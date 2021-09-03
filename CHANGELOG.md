@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.8]
+
+* When using S3 on some setups using Chrome, a CORS error could appear when trying to load tokens that are saved to S3 storage.
+
 # [3.4.7]
 
 * Add shift click for avatar if you disable open on click for avatar.

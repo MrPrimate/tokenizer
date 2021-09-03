@@ -123,16 +123,26 @@ export default class Utils {
     if (!url) url = "icons/mystery-man.png";
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
     const useProxy = await Utils.useProxy(url);
+    const dateTag = `${+new Date()}`;
     return new Promise((resolve, reject) => {
+      const proxyImg = useProxy ? Utils.proxiedUrl(url, proxy) : url;
+      // we remove existing data tag and add a new one
+      // this forces chrome to reload the image rather than using the cached value
+      // this can cause problems dues to https://stackoverflow.com/questions/12648809/cors-policy-on-cached-image
+      const imgSrc = `${proxyImg.split("?")[0]}?${dateTag}`;
       let img = new Image();
+      // cross origin needed for images from other domains
+      // an empty value here defaults to anonymous
       img.crossOrigin = "";
       img.addEventListener("load", () => {
+        logger.debug("Loading image:", img);
         resolve(img);
       });
       img.addEventListener("error", (event) => {
+        logger.error(event);
         reject(event);
       });
-      let imgSrc = useProxy ? Utils.proxiedUrl(url, proxy) : url;
+      // add image source after adding handlers
       img.src = imgSrc;
     });
   }
