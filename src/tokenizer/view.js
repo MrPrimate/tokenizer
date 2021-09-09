@@ -308,6 +308,9 @@ export default class View {
     control.view.addEventListener('center', (event) => {
       this.centerLayer(event.detail.layerId);
     });
+    control.view.addEventListener('reset', (event) => {
+      this.resetLayer(event.detail.layerId);
+    });
     control.view.addEventListener('move', (event) => {
       // move the control in sync
       this.moveLayer(event.detail.layerId, event.detail.direction);
@@ -406,6 +409,10 @@ export default class View {
   }
 
   centerLayer(id) {
+    this.resetLayer(id);
+  }
+
+  resetLayer(id) {
     let layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.reset();

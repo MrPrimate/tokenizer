@@ -112,7 +112,7 @@ export function init() {
     scope: "world",
     config: false,
     type: String,
-    default: "https://london.drop.mrprimate.co.uk/",
+    default: "https://images.ddb.mrprimate.co.uk/",
   });
 
   game.settings.register("vtta-tokenizer", "force-proxy", {
@@ -267,6 +267,11 @@ export function ready() {
   if (game.user.isGM) {
     DirectoryPicker.verifyPath(DirectoryPicker.parse(characterUploads));
     DirectoryPicker.verifyPath(DirectoryPicker.parse(npcUploads));
+    // Update proxy if needed
+    const corsProxy = game.settings.get("vtta-tokenizer", "proxy");
+    if (corsProxy === "https://london.drop.mrprimate.co.uk/") {
+      game.settings.set("vtta-tokenizer", "proxy", "https://images.ddb.mrprimate.co.uk/");
+    }
   }
 
   const titleLink = game.settings.get("vtta-tokenizer", "title-link");

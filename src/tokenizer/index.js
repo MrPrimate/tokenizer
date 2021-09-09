@@ -236,6 +236,10 @@ export default class Tokenizer extends FormApplication {
 
           break;
         }
+        case "token": {
+          this.Token.get("img").then((img) => view.addImageLayer(img));
+          break;
+        }
         case "avatar": {
           this.Avatar.get("img").then((img) => view.addImageLayer(img));
           break;

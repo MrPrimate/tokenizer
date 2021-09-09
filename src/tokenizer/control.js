@@ -133,10 +133,10 @@ export default class Control {
       }
     });
 
-    // centers the layer on the view
+    // resets the layer on the view
     this.centerControl = document.createElement('button');
-    this.centerControl.classList.add('center-control');
-    this.centerControl.title = "Center layer";
+    this.centerControl.classList.add('reset-control');
+    this.centerControl.title = "Reset layer";
     let centerButtonText = document.createElement('i');
     centerButtonText.classList.add('fas', 'fa-compress-arrows-alt');
     this.centerControl.appendChild(centerButtonText);
@@ -144,7 +144,7 @@ export default class Control {
     // send an activate event when clicked
     this.centerControl.addEventListener('click', (event) => {
       event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('center', { detail: { layerId: this.layer.id } }));
+      this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
 
     // the move up/down order section
