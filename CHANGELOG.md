@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.10]
+
+* Load from URL failed on Avatar (typo)
+
 # [3.4.9]
 
 * Copy from Token to Avatar available.
