@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.11]
+
+* If token on the canvas had been copied to the clip-board a paste of an image would also paste the token.
+
 # [3.4.10]
 
 * Load from URL failed on Avatar (typo)

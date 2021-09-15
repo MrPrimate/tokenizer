@@ -171,6 +171,10 @@ function launchTokenizer(options, callback) {
     ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
   }
 
+  game.canvas.layers.forEach((layer) => {
+    layer._copy = [];
+  });
+
   logger.debug("Tokenizer options", options);
   const tokenizer = new Tokenizer(options, callback);
   tokenizer.render(true);

@@ -357,6 +357,9 @@ export default class Tokenizer extends FormApplication {
 Hooks.on("renderTokenizer", (app) => {
   window.addEventListener("paste", async (e) => {
     // e.preventDefault();
+    game.canvas.layers.forEach((layer) => {
+      layer._copy = [];
+    });
     e.stopPropagation();
     app.pasteImage(e);
   });
