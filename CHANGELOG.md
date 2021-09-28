@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.12]
+
+* Moulinette filepicker on the forge did not work.
+
 # [3.4.11]
 
 * If token on the canvas had been copied to the clip-board a paste of an image would also paste the token.

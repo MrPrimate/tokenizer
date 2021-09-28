@@ -124,12 +124,16 @@ export default class Utils {
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
     const useProxy = await Utils.useProxy(url);
     const dateTag = `${+new Date()}`;
+    const forge = (typeof ForgeVTT !== "undefined" && ForgeVTT?.usingTheForge);
     return new Promise((resolve, reject) => {
       const proxyImg = useProxy ? Utils.proxiedUrl(url, proxy) : url;
       // we remove existing data tag and add a new one
       // this forces chrome to reload the image rather than using the cached value
       // this can cause problems dues to https://stackoverflow.com/questions/12648809/cors-policy-on-cached-image
-      const imgSrc = `${proxyImg.split("?")[0]}?${dateTag}`;
+      // an exception for using moulinette on the forge because of _reasons_
+      const imgSrc = forge && proxyImg.startsWith("moulinette")
+        ? proxyImg
+        : `${proxyImg.split("?")[0]}?${dateTag}`;
       let img = new Image();
       // cross origin needed for images from other domains
       // an empty value here defaults to anonymous
