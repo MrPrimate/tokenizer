@@ -351,6 +351,7 @@ export function ready() {
 
   window.Tokenizer = {
     launch: launchTokenizer,
+    launchTokenizer,
     tokenizeActor: tokenizeActor,
     tokenizeSceneToken: tokenizeSceneToken,
     tokenizeDoc: tokenizeDoc,
