@@ -261,6 +261,17 @@ function tokenizeDoc(doc) {
   }
 }
 
+function updateSceneTokenImg(actor) {
+  const updates = actor.getActiveTokens().map((t) => {
+    const tokenUpdate = {
+        id: t.id,
+        img: actor.data.token.img,
+    };
+    return tokenUpdate;
+  });
+  if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
+}
+
 export function ready() {
   logger.info("Ready");
 
@@ -355,5 +366,6 @@ export function ready() {
     tokenizeActor: tokenizeActor,
     tokenizeSceneToken: tokenizeSceneToken,
     tokenizeDoc: tokenizeDoc,
+    updateSceneTokenImg,
   };
 }

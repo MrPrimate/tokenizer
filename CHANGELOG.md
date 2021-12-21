@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.4.13/14]
+
+* v9 support
+
 # [3.4.12]
 
 * Moulinette filepicker on the forge did not work.
