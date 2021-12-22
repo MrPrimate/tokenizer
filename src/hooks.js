@@ -261,14 +261,15 @@ function tokenizeDoc(doc) {
   }
 }
 
-function updateSceneTokenImg(actor) {
-  const updates = actor.getActiveTokens().map((t) => {
+async function updateSceneTokenImg(actor) {
+  const updates = await Promise.all(actor.getActiveTokens().map(async (t) => {
+    const newToken = await actor.getTokenData();
     const tokenUpdate = {
-        id: t.id,
-        img: actor.data.token.img,
+        _id: t.id,
+        img: newToken.img,
     };
     return tokenUpdate;
-  });
+  }));
   if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
 }
 
@@ -368,4 +369,47 @@ export function ready() {
     tokenizeDoc: tokenizeDoc,
     updateSceneTokenImg,
   };
+  
 }
+
+Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
+  entryOptions.push({
+    name: "Tokenizer",
+    callback: (li) => {
+      const docId = $(li).attr("data-document-id")
+        ? $(li).attr("data-document-id")
+        : $(li).attr("data-actor-id")
+          ? $(li).attr("data-actor-id")
+          : $(li).attr("data-entity-id");
+      if (docId) {
+        const doc = game.actors.get(docId);
+        logger.debug(`Tokenizing ${doc.name}`);
+        tokenizeActor(doc);
+      }
+    },
+    icon: '<i class="fas fa-user-circle"></i>',
+    condition: () => {
+      return game.user.can("FILES_UPLOAD");
+    }
+  });
+
+  entryOptions.push({
+    name: "Apply Prototype Token to Scene Tokens",
+    callback: (li) => {
+      const docId = $(li).attr("data-document-id")
+        ? $(li).attr("data-document-id")
+        : $(li).attr("data-actor-id")
+          ? $(li).attr("data-actor-id")
+          : $(li).attr("data-entity-id");
+      if (docId) {
+        const doc = game.actors.get(docId);
+        logger.debug(`Tokenizing ${doc.name} scene tokens`);
+        updateSceneTokenImg(doc);
+      }
+    },
+    icon: '<i class="fas fa-user-circle"></i>',
+    condition: () => {
+      return game.user.can("FILES_UPLOAD");
+    }
+  });
+});

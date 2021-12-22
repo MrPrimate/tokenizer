@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.5.0]
+
+* Tokenizer now has context menu items for calling tokenizer and updating all actor tokens on the current scene.
+
 # [3.4.13/14]
 
 * v9 support
