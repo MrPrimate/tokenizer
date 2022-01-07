@@ -7,7 +7,7 @@
   "manifest": "https://github.com/mrprimate/vtta-tokenizer/releases/download/latest/module.json",
   "changelog": "https://github.com/MrPrimate/vtta-tokenizer/blob/main/CHANGELOG.md",
   "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "9.238",
+  "compatibleCoreVersion": "9.241",
   "author": "MrPrimate (jack@mrprimate.co.uk), Sebastian Will (vttassets@gmail.com)",
   "languages": [
     {
