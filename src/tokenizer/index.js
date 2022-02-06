@@ -141,7 +141,7 @@ export default class Tokenizer extends FormApplication {
 
     // get the data
     Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async (dataResults) => {
-      if(!game.settings.get("vtta-tokenizer", "token-only-toggle")) {
+      if (!game.settings.get("vtta-tokenizer", "token-only-toggle")) {
         this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.tokenOptions.type, this.getOverRidePath(false));
       }
       
@@ -284,9 +284,8 @@ export default class Tokenizer extends FormApplication {
           await game.settings.set("vtta-tokenizer", "token-only-toggle", value);
           
           const toggle = document.getElementById("token-only");
-          if(value) {
+          if (value) {
             toggle.innerHTML = '<i class="fas fa-toggle-on"></i>';
-            // TODO: Make this smarter and turn off currently activated options
             $("#avatar-options :input").attr("disabled", true);
             $("#tokenizer-avatar :input").attr("disabled", true);
           } else {
