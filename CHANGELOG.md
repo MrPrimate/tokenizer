@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.5.1]
+
+* Tokenizer now will only generate token instead of a token and a duplicate avatar pic (togglable).
+
 # [3.5.0]
 
 * Tokenizer now has context menu items for calling tokenizer and updating all actor tokens on the current scene.
