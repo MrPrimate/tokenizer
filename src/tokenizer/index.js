@@ -178,6 +178,10 @@ export default class Tokenizer extends FormApplication {
         ui.notifications.error('Failed to load fallback image.');
       }
     }
+
+    // By default, token-only-toggle is selected, so these should be disabled
+    $("#avatar-options :input").attr("disabled", true);
+    $("#tokenizer-avatar :input").attr("disabled", true);
   }
 
   activateListeners(html) {
@@ -278,10 +282,16 @@ export default class Tokenizer extends FormApplication {
           await game.settings.set("vtta-tokenizer", "token-only-toggle", value);
           
           const toggle = document.getElementById("token-only");
-          if(value)
+          if(value) {
             toggle.innerHTML = '<i class="fas fa-toggle-on"></i>';
-          else 
+            // TODO: Make this smarter and turn off currently activated options
+            $("#avatar-options :input").attr("disabled", true);
+            $("#tokenizer-avatar :input").attr("disabled", true);
+          } else {
             toggle.innerHTML = '<i class="fas fa-toggle-off"></i>';
+            $("#avatar-options :input").attr("disabled", false);
+            $("#tokenizer-avatar :input").attr("disabled", false);
+          }
 
           break;
         }
