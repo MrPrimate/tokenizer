@@ -141,8 +141,10 @@ export default class Tokenizer extends FormApplication {
 
     // get the data
     Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async (dataResults) => {
-      if(!game.settings.get("vtta-tokenizer", "token-only-toggle"))
+      if(!game.settings.get("vtta-tokenizer", "token-only-toggle")) {
         this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.tokenOptions.type, this.getOverRidePath(false));
+      }
+      
       this.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.tokenOptions.type, this.getOverRidePath(true));
 
       this.callback(this.tokenOptions);
