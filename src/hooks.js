@@ -129,6 +129,13 @@ export function init() {
     default: "token",
   });
 
+  game.settings.register("vtta-tokenizer", "token-only-toggle", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+  });
+
   game.settings.register("vtta-tokenizer", "default-color", {
     name: "vtta-tokenizer.default-color.name",
     hint: "vtta-tokenizer.default-color.hint",
