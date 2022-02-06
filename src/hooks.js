@@ -311,7 +311,8 @@ export function ready() {
   sheetNames.forEach((sheetName) => {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user) {
-        const doc = isNewerVersion(game.data.version, "0.8.2") 
+        const version = game.version ?? game.data.version;
+        const doc = isNewerVersion(version, "0.8.2") 
         // is this token on a scene, if so we need to handle updates differently
           ? (app.token) ? app : app.document
           : app.entity;
