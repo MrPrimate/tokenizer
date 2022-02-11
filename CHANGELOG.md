@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.5.3]
+
+* Tokenizer would not open for players with the new generate token only option.
+
 # [3.5.1]
 
 * Tokenizer now will only generate token instead of a token and a duplicate avatar pic (togglable).

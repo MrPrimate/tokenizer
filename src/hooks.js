@@ -123,14 +123,14 @@ export function init() {
   });
 
   game.settings.register("vtta-tokenizer", "paste-target", {
-    scope: "world",
+    scope: "player",
     config: false,
     type: String,
     default: "token",
   });
 
   game.settings.register("vtta-tokenizer", "token-only-toggle", {
-    scope: "world",
+    scope: "player",
     config: false,
     type: Boolean,
     default: true,
