@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.5.4]
+
+* Tokenizer token-only mode default is a now a per player setting you can change in the Tokenizer module settings.
+
 # [3.5.3]
 
 * Tokenizer would not open for players with the new generate token only option.
