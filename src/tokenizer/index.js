@@ -18,6 +18,7 @@ export default class Tokenizer extends FormApplication {
     super({});
     this.tokenOptions = options;
     this.callback = callback;
+    this.tokenToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
   }
 
   /**
@@ -25,7 +26,7 @@ export default class Tokenizer extends FormApplication {
    */
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.template = "modules/vtta-tokenizer/src/tokenizer/tokenizer.html";
+    options.template = "modules/vtta-tokenizer/src/tokenizer/tokenizer.hbs";
     options.width = 900;
     options.height = "auto";
     options.classes = ["tokenizer"];
@@ -67,8 +68,6 @@ export default class Tokenizer extends FormApplication {
     const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
     const pasteTargetName = Utils.titleString(pasteTarget);
 
-    const tokenOnlyToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
-
     return {
       options: this.tokenOptions,
       canUpload: game.user && game.user.can("FILES_UPLOAD"), // game.user.isTrusted || game.user.isGM,
@@ -77,7 +76,7 @@ export default class Tokenizer extends FormApplication {
       frames: frames,
       pasteTarget: pasteTarget,
       pasteTargetName: pasteTargetName,
-      tokenOnlyToggle: tokenOnlyToggle
+      tokenOnlyToggle: this.tokenToggle,
     };
   }
 
@@ -141,10 +140,9 @@ export default class Tokenizer extends FormApplication {
 
     // get the data
     Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async (dataResults) => {
-      if (!game.settings.get("vtta-tokenizer", "token-only-toggle")) {
+      if (!this.tokenToggle) {
         this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.tokenOptions.type, this.getOverRidePath(false));
       }
-      
       this.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.tokenOptions.type, this.getOverRidePath(true));
 
       this.callback(this.tokenOptions);
@@ -181,9 +179,8 @@ export default class Tokenizer extends FormApplication {
       }
     }
 
-    // By default, token-only-toggle is selected, so these should be disabled
-    $("#avatar-options :input").attr("disabled", true);
-    $("#tokenizer-avatar :input").attr("disabled", true);
+    $("#avatar-options :input").attr("disabled", this.tokenToggle);
+    $("#tokenizer-avatar :input").attr("disabled", this.tokenToggle);
   }
 
   activateListeners(html) {
@@ -280,11 +277,11 @@ export default class Tokenizer extends FormApplication {
           break;
         }
         case "token-only-toggle": {
-          const value = !(await game.settings.get("vtta-tokenizer", "token-only-toggle"));
-          await game.settings.set("vtta-tokenizer", "token-only-toggle", value);
+          const newTokenOnlyState = !(this.tokenToggle);
+          this.tokenToggle = newTokenOnlyState;
           
           const toggle = document.getElementById("token-only");
-          if (value) {
+          if (newTokenOnlyState) {
             toggle.innerHTML = '<i class="fas fa-toggle-on"></i>';
             $("#avatar-options :input").attr("disabled", true);
             $("#tokenizer-avatar :input").attr("disabled", true);

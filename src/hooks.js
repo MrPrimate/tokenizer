@@ -130,10 +130,12 @@ export function init() {
   });
 
   game.settings.register("vtta-tokenizer", "token-only-toggle", {
+    name: "vtta-tokenizer.token-only-toggle.name",
+    hint: "vtta-tokenizer.token-only-toggle.hint",
     scope: "player",
-    config: false,
+    config: true,
     type: Boolean,
-    default: true,
+    default: false,
   });
 
   game.settings.register("vtta-tokenizer", "default-color", {

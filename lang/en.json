@@ -24,5 +24,7 @@
   "vtta-tokenizer.default-color.hint": "Defaults to white.",
   "vtta-tokenizer.log-level.name": "Log level",
   "vtta-tokenizer.disable-avatar-click.name": "Disable avatar click",
-  "vtta-tokenizer.disable-avatar-click.hint": "Don't open Tokenizer when avatar picture is clicked. (Shift click will still open Tokenizer)."
+  "vtta-tokenizer.disable-avatar-click.hint": "Don't open Tokenizer when avatar picture is clicked. (Shift click will still open Tokenizer).",
+  "vtta-tokenizer.token-only-toggle.name": "Token only default",
+  "vtta-tokenizer.token-only-toggle.hint": "If selected defaults to true, can be toggled in tokenizer, per player setting"
 }
