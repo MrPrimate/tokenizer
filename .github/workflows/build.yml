@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'module.json'
+      - 'package.json'
 
 jobs:
   test:
@@ -29,10 +29,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Get Version                                   # Run the script that returns the version from `module.json`
+    - name: Get Version              # Run the script that returns the version from `module.json`
       shell: bash
       id: get-version
       run: echo "::set-output name=version::$(node ./.github/workflows/get-version.js)"
+    - name: Build module.json
+      run: node ./.github/workflows/build-module-json.js | jq . > module.json
     - run: zip -r ./vtta-tokenizer.zip module.json src css img lang LICENSE.md       # Add folders/files here
     - name: Create Release                                # Create an additional release for this version
       id: create_versioned_release
@@ -65,12 +67,12 @@ jobs:
       with:
         args: "Squint (Intern) has released Tokenizer ${{ steps.get-version.outputs.version }}."
 
-    - name: FoundryVTT AutoPublish
-      uses: Varriount/fvtt-autopublish@v1.0.6
-      with:
-        username: ${{ secrets.FOUNDRY_ADMIN_USER }}
-        password: ${{ secrets.FOUNDRY_ADMIN_PW }}
-        module-id: 71
-        manifest-url: https://github.com/${{ github.repository }}/releases/download/${{ steps.get-version.outputs.version }} /module.json
-        manifest-file: ./module.json
+    # - name: FoundryVTT AutoPublish
+    #   uses: Varriount/fvtt-autopublish@v1.0.6
+    #   with:
+    #     username: ${{ secrets.FOUNDRY_ADMIN_USER }}
+    #     password: ${{ secrets.FOUNDRY_ADMIN_PW }}
+    #     module-id: 71
+    #     manifest-url: https://github.com/${{ github.repository }}/releases/download/${{ steps.get-version.outputs.version }} /module.json
+    #     manifest-file: ./module.json
 

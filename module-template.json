@@ -2,10 +2,10 @@
   "name": "vtta-tokenizer",
   "title": "Tokenizer",
   "description": "Tiny yet capable in-game token editor",
-  "version": "3.5.3",
-  "download": "https://github.com/mrprimate/vtta-tokenizer/releases/download/3.5.3/vtta-tokenizer.zip",
-  "manifest": "https://github.com/mrprimate/vtta-tokenizer/releases/download/latest/module.json",
-  "changelog": "https://github.com/MrPrimate/vtta-tokenizer/blob/main/CHANGELOG.md",
+  "version": "VERSION",
+  "download": "https://github.com/mrprimate/tokenizer/releases/download/VERSION/vtta-tokenizer.zip",
+  "manifest": "https://github.com/mrprimate/tokenizer/releases/download/latest/module.json",
+  "changelog": "https://github.com/MrPrimate/tokenizer/blob/main/CHANGELOG.md",
   "minimumCoreVersion": "0.7.9",
   "compatibleCoreVersion": "9",
   "author": "MrPrimate (jack@mrprimate.co.uk), Sebastian Will (vttassets@gmail.com)",
@@ -34,5 +34,5 @@
   "esmodules": ["./src/index.js"],
   "styles": ["./css/module-settings.css", "./css/default.css", "./src/tokenizer/tokenizer.css"],
   "packs": [],
-  "url": "https://github.com/mrprimate/vtta-tokenizer/"
+  "url": "https://github.com/mrprimate/tokenizer/"
 }
