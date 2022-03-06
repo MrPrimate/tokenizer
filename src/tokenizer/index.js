@@ -36,6 +36,9 @@ export default class Tokenizer extends FormApplication {
   /* -------------------------------------------- */
 
   async getData() {
+    const npcFrame = game.settings.get("vtta-tokenizer", "default-frame-npc");
+    const otherNPCFrame = game.settings.get("vtta-tokenizer", "default-frame-neutral");
+    const npcDiff = npcFrame !== otherNPCFrame;
     const defaultFrames = [
       {
         key: game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, ""),
@@ -43,11 +46,19 @@ export default class Tokenizer extends FormApplication {
         selected: false,
       },
       {
-        key: game.settings.get("vtta-tokenizer", "default-frame-npc").replace(/^\/|\/$/g, ""),
-        label: "Default NPC Frame",
+        key: npcFrame.replace(/^\/|\/$/g, ""),
+        label: npcDiff ? "Default NPC Frame (Hostile)" : "Default NPC Frame",
         selected: true,
       }
     ];
+
+    if (npcDiff) {
+      defaultFrames.push({
+        key: otherNPCFrame.replace(/^\/|\/$/g, ""),
+        label: "Default NPC Frame (Other)",
+        selected: false,
+      });
+    }
 
     const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
     logger.debug(`Checking for files in ${directoryPath}...`);
@@ -322,13 +333,21 @@ export default class Tokenizer extends FormApplication {
   async _setTokenFrame(fileName) {
     // load the default frame, if there is one set
     const type = this.tokenOptions.type === "pc" ? "pc" : "npc";
-    const isDefault = game.settings.get("vtta-tokenizer", `default-frame-pc`).replace(/^\/|\/$/g, "") ||
-      fileName != game.settings.get("vtta-tokenizer", `default-frame-npc`).replace(/^\/|\/$/g, "");
+    const nonHostile = parseInt(this.tokenOptions.disposition) !== -1;
+    const npcFrame = nonHostile
+      ? game.settings.get("vtta-tokenizer", "default-frame-neutral")
+      : game.settings.get("vtta-tokenizer", "default-frame-npc");
+    const frameTypePath = type === "pc"
+      ? game.settings.get("vtta-tokenizer", "default-frame-pc")
+      : npcFrame;
+    const isDefault = game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, "") ||
+      fileName != npcFrame.replace(/^\/|\/$/g, "");
+
     const framePath = fileName && !isDefault
       ? `${game.settings.get("vtta-tokenizer", "frame-directory")}/${fileName}`
       : fileName && isDefault
         ? fileName.replace(/^\/|\/$/g, "")
-        : game.settings.get("vtta-tokenizer", `default-frame-${type}`).replace(/^\/|\/$/g, "");
+        : frameTypePath.replace(/^\/|\/$/g, "");
 
     if (framePath && framePath.trim() !== "") {
       const options = DirectoryPicker.parse(framePath);

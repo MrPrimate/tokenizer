@@ -1,6 +1,8 @@
 {
-  "vtta-tokenizer.default-frame-npc.name": "Default NPC frame",
+  "vtta-tokenizer.default-frame-npc.name": "Default NPC frame (hostile NPC's)",
   "vtta-tokenizer.default-frame-npc.hint": "A frame image stored on the Foundry server and that is used as a default frame.",
+  "vtta-tokenizer.default-frame-netural.name": "Default NPC frame (other NPC's)",
+  "vtta-tokenizer.default-frame-neutral.hint": "A frame image stored on the Foundry server and that is used as a default frame.",
   "vtta-tokenizer.default-frame-pc.name": "Default Character frame",
   "vtta-tokenizer.default-frame-pc.hint": "A frame image stored on the Foundry server and that is used as a default frame.",
   "vtta-tokenizer.image-upload-directory.name": "Player image upload directory",

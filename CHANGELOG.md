@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.5.5]
+
+* Tokenizer can now take a default frame for non hostile NPCs.
+
 # [3.5.4]
 
 * Tokenizer token-only mode default is a now a per player setting you can change in the Tokenizer module settings.

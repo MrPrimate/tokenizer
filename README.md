@@ -114,6 +114,7 @@ Options can consist of:
   avatarFilename: "uploads/tokenspc/testy_mctestface.Avatar.webp?1626284544960",
   tokenFilename: "uploads/tokenspc/testy_mctestface.Token.webp?1626284544960",
   targetFolder: "[data] uploads/tokens/my-special-folder",
+  disposition: 1,
   nameSuffix: "any-string",
 }
 ```

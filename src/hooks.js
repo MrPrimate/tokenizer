@@ -26,6 +26,15 @@ export function init() {
     config: true,
   });
 
+  game.settings.register("vtta-tokenizer", "default-frame-neutral", {
+    name: "vtta-tokenizer.default-frame-neutral.name",
+    hint: "vtta-tokenizer.default-frame-neutral.hint",
+    type: ImagePicker.Img,
+    default: "[data] modules/vtta-tokenizer/img/default-frame-npc.png",
+    scope: "world",
+    config: true,
+  });
+
   game.settings.register("vtta-tokenizer", "frame-directory", {
     name: "vtta-tokenizer.frame-directory.name",
     hint: "vtta-tokenizer.frame-directory.hint",
@@ -234,6 +243,7 @@ function tokenizeActor(actor) {
     actor: actor,
     name: actor.name,
     type: actor.data.type === "character" ? "pc" : "npc",
+    disposition: actor.data.token.disposition,
     avatarFilename: actor.data.img,
     tokenFilename: actor.data.token.img,
     isWildCard: actor.data.token.randomImg,
@@ -253,6 +263,7 @@ function tokenizeSceneToken(doc) {
     token: doc.token,
     name: doc.token.name,
     type: doc.actor.data.type === "character" ? "pc" : "npc",
+    disposition: doc.token.data.disposition,
     avatarFilename: doc.actor.data.img,
     tokenFilename: doc.token.data.img,
     nameSuffix: `${doc.token.id}`,
