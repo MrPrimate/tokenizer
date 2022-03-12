@@ -8,6 +8,7 @@ export default class Tokenizer extends FormApplication {
   //  Options include
   //  name: name to use as part of filename identifier
   //  type: pc, npc
+  //  disposition: token disposition = -1, 0, 1
   //  avatarFilename: current avatar image - defaults to null/mystery man
   //  tokenFilename: current tokenImage - defaults to null/mystery man
   //  targetFolder: folder to target, otherwise uses defaults, wildcard use folder derived from wildcard path
@@ -197,6 +198,42 @@ export default class Tokenizer extends FormApplication {
   activateListeners(html) {
     this.loadImages(html);
 
+    $("#vtta-tokenizer .file-picker-thumbs").click((event) => {
+        event.preventDefault();
+        const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
+        const usePath = directoryPath === ""
+          ? "[data] modules/vtta-tokenizer/img"
+          : directoryPath;
+        const dir = DirectoryPicker.parse(usePath);
+
+        // const folderFrames = fileList.files.map((file) => {
+        //   const labelSplit = file.split("/").pop().trim();
+        //   const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
+        //   return {
+        //     key: file,
+        //     label: Utils.titleString(label).split(".")[0],
+        //     selected: false,
+        //   };
+        // });
+
+        const picker = new FilePicker({
+            type: 'image',
+            displayMode: 'tiles',
+            source: dir.activeSource,
+            current: dir.current,
+            options: { bucket: dir.bucket },
+            callback: (imagePath) => {
+                // to do - add the tokenframe to list if not present
+                // const frame = document.getElementById("frame-selector").value;
+                console.warn(imagePath);
+                this._setTokenFrame(imagePath, true);
+            }
+        }).render();
+
+        console.warn(picker);
+        
+    });
+
     $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {
       const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
       const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
@@ -330,7 +367,7 @@ export default class Tokenizer extends FormApplication {
     }
   }
 
-  async _setTokenFrame(fileName) {
+  async _setTokenFrame(fileName, fullPath = false) {
     // load the default frame, if there is one set
     const type = this.tokenOptions.type === "pc" ? "pc" : "npc";
     const nonHostile = parseInt(this.tokenOptions.disposition) !== -1;
@@ -350,7 +387,7 @@ export default class Tokenizer extends FormApplication {
         : frameTypePath.replace(/^\/|\/$/g, "");
 
     if (framePath && framePath.trim() !== "") {
-      const options = DirectoryPicker.parse(framePath);
+      const options = DirectoryPicker.parse(fullPath ? fileName : framePath);
       try {
         const img = await Utils.download(options.current);
         this.Token.addImageLayer(img, true);
