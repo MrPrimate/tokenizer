@@ -53,7 +53,7 @@ export default class Tokenizer extends FormApplication {
       return Tokenizer.generateFrameData(file);
     });
 
-    const frames = this.defaultFrames.concat(folderFrames, this.addedFrames);
+    const frames = this.defaultFrames.concat(folderFrames, this.customFrames);
 
     this.frames = frames;
     return this.frames;
@@ -75,8 +75,8 @@ export default class Tokenizer extends FormApplication {
     this.callback = callback;
     this.tokenToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
     this.defaultFrames = Tokenizer.getDefaultFrames();
-    this.addedFrames = [];
     this.frames = [];
+    this.customFrames = game.settings.get("vtta-tokenizer", "custom-frames");
   }
 
   /**
@@ -235,20 +235,21 @@ export default class Tokenizer extends FormApplication {
                   ? `[${fPicker.activeSource}:${fPicker.result.bucket}] ${imagePath}`
                   : `[${fPicker.activeSource}] ${imagePath}`;
 
-                const frameInList = this.frames.some((frame) => frame.key === formattedPath);
-                const optionValue = $('#frame-selector option[value="' + formattedPath + '"]');
+                // reset selected frame
                 $("#frame-selector option:selected").prop("selected", false);
-                if (optionValue) optionValue.prop('selected', true);
-
+                const frameInList = this.frames.some((frame) => frame.key === formattedPath);
                 if (!frameInList) {
-                const frame = Tokenizer.generateFrameData(formattedPath, true);
+                const frame = Tokenizer.generateFrameData(formattedPath);
                   this.frames.push(frame);
-                  this.addedFrames.push(frame);
+                  this.customFrames.push(frame);
+                  game.settings.set("vtta-tokenizer", "custom-frames", this.customFrames);
                   const frameSelector = html.find("#frame-selector");
                   const frameList = `<option value="${frame.key}" selected>${frame.label}</option>`;
                   frameSelector[0].innerHTML += frameList;
                 }
                 this._setTokenFrame(formattedPath, true);
+                const optionValue = $('#frame-selector option[value="' + formattedPath + '"]');
+                if (optionValue) optionValue.prop('selected', true);
             }
         }).render();
     });

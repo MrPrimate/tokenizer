@@ -53,6 +53,13 @@ export function init() {
     default: true,
   });
 
+  game.settings.register("vtta-tokenizer", "custom-frames", {
+    scope: "user",
+    config: false,
+    type: Array,
+    default: [],
+  });
+
   game.settings.register("vtta-tokenizer", "image-upload-directory", {
     name: "vtta-tokenizer.image-upload-directory.name",
     hint: "vtta-tokenizer.image-upload-directory.hint",
