@@ -4,6 +4,31 @@ import DirectoryPicker from "./libs/DirectoryPicker.js";
 import Utils from "./utils.js";
 import logger from "./logger.js";
 
+class ResetCustomFrames extends FormApplication {
+  static get defaultOptions () {
+      const options = super.defaultOptions;
+      options.id = "cleanup-custom-frames";
+      options.template = "modules/vtta-tokenizer/templates/cleanup.hbs";
+      return options;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get title() {
+      return "Reset Custom Frames";
+  }
+
+  /** @override */
+  // eslint-disable-next-line class-methods-use-this
+  async getData() {
+    return {};
+  }
+
+  /** @override */
+  // eslint-disable-next-line class-methods-use-this
+  async _updateObject() {
+    game.settings.set("vtta-tokenizer", "custom-frames", []);
+  }
+}
 
 export function init() {
   logger.info("Init");
@@ -51,6 +76,22 @@ export function init() {
     config: true,
     type: Boolean,
     default: true,
+  });
+
+  game.settings.register("vtta-tokenizer", "custom-frames", {
+    scope: "client",
+    config: false,
+    type: Array,
+    default: [],
+  });
+
+  game.settings.registerMenu("vtta-tokenizer", "reset-custom-frames", {
+    name: "Reset Custom Frames?",
+    label: "Reset Custom Frames?",
+    hint: "Clear Custom Frames List",
+    scope: "client",
+    config: true,
+    type: ResetCustomFrames,
   });
 
   game.settings.register("vtta-tokenizer", "image-upload-directory", {

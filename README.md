@@ -137,7 +137,7 @@ let tokenizerOptions = {
   usefulString: "Useful data"
 };
 
-Tokenizer.launch(tokenizerOptions, (response) => {console.log(response)});
+window.Tokenizer.launch(tokenizerOptions, (response) => {console.log(response)});
 ```
 
 When the OK button is pressed it will return the following to the function (which in this case prints it to the console):
