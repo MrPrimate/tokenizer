@@ -5,38 +5,7 @@ import DirectoryPicker from "./../libs/DirectoryPicker.js";
 
 export default class Tokenizer extends FormApplication {
 
-  //  Options include
-  //  name: name to use as part of filename identifier
-  //  type: pc, npc
-  //  disposition: token disposition = -1, 0, 1
-  //  avatarFilename: current avatar image - defaults to null/mystery man
-  //  tokenFilename: current tokenImage - defaults to null/mystery man
-  //  targetFolder: folder to target, otherwise uses defaults, wildcard use folder derived from wildcard path
-  //  isWildCard: is wildcard token?
-  //  any other items needed in callback function, options will be passed to callback, with filenames updated to new references
-  //
-  constructor(options, callback) {
-    super({});
-    this.tokenOptions = options;
-    this.callback = callback;
-    this.tokenToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
-  }
-
-  /**
-   * Define default options for the PartySummary application
-   */
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.template = "modules/vtta-tokenizer/src/tokenizer/tokenizer.hbs";
-    options.width = 900;
-    options.height = "auto";
-    options.classes = ["tokenizer"];
-    return options;
-  }
-
-  /* -------------------------------------------- */
-
-  async getData() {
+  static getDefaultFrames() {
     const npcFrame = game.settings.get("vtta-tokenizer", "default-frame-npc");
     const otherNPCFrame = game.settings.get("vtta-tokenizer", "default-frame-neutral");
     const npcDiff = npcFrame !== otherNPCFrame;
@@ -61,22 +30,71 @@ export default class Tokenizer extends FormApplication {
       });
     }
 
+    return defaultFrames;
+  }
+
+  static generateFrameData(file, selected = false) {
+    const labelSplit = file.split("/").pop().trim();
+    const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
+    return {
+      key: file,
+      label: Utils.titleString(label).split(".")[0],
+      selected,
+    };
+  }
+
+  async getFrames() {
     const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
     logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
     const fileList = await DirectoryPicker.browse(dir.activeSource, dir.current, { bucket: dir.bucket });
 
     const folderFrames = fileList.files.map((file) => {
-      const labelSplit = file.split("/").pop().trim();
-      const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
-      return {
-        key: file,
-        label: Utils.titleString(label).split(".")[0],
-        selected: false,
-      };
+      return Tokenizer.generateFrameData(file);
     });
 
-    const frames = defaultFrames.concat(folderFrames);
+    const frames = this.defaultFrames.concat(folderFrames, this.addedFrames);
+
+    this.frames = frames;
+    return this.frames;
+  }
+
+  //  Options include
+  //  name: name to use as part of filename identifier
+  //  type: pc, npc
+  //  disposition: token disposition = -1, 0, 1
+  //  avatarFilename: current avatar image - defaults to null/mystery man
+  //  tokenFilename: current tokenImage - defaults to null/mystery man
+  //  targetFolder: folder to target, otherwise uses defaults, wildcard use folder derived from wildcard path
+  //  isWildCard: is wildcard token?
+  //  any other items needed in callback function, options will be passed to callback, with filenames updated to new references
+  //
+  constructor(options, callback) {
+    super({});
+    this.tokenOptions = options;
+    this.callback = callback;
+    this.tokenToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
+    this.defaultFrames = Tokenizer.getDefaultFrames();
+    this.addedFrames = [];
+    this.frames = [];
+  }
+
+  /**
+   * Define default options for the PartySummary application
+   */
+  static get defaultOptions() {
+    const options = super.defaultOptions;
+    options.template = "modules/vtta-tokenizer/src/tokenizer/tokenizer.hbs";
+    options.width = 900;
+    options.height = "auto";
+    options.classes = ["tokenizer"];
+    return options;
+  }
+
+  /* -------------------------------------------- */
+
+  async getData() {
+    const frames = await this.getFrames();
     const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
     const pasteTargetName = Utils.titleString(pasteTarget);
 
@@ -206,32 +224,33 @@ export default class Tokenizer extends FormApplication {
           : directoryPath;
         const dir = DirectoryPicker.parse(usePath);
 
-        // const folderFrames = fileList.files.map((file) => {
-        //   const labelSplit = file.split("/").pop().trim();
-        //   const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
-        //   return {
-        //     key: file,
-        //     label: Utils.titleString(label).split(".")[0],
-        //     selected: false,
-        //   };
-        // });
-
-        const picker = new FilePicker({
+        new FilePicker({
             type: 'image',
             displayMode: 'tiles',
             source: dir.activeSource,
             current: dir.current,
             options: { bucket: dir.bucket },
-            callback: (imagePath) => {
-                // to do - add the tokenframe to list if not present
-                // const frame = document.getElementById("frame-selector").value;
-                console.warn(imagePath);
-                this._setTokenFrame(imagePath, true);
+            callback: (imagePath, fPicker) => {
+                const formattedPath = fPicker.result.bucket
+                  ? `[${fPicker.activeSource}:${fPicker.result.bucket}] ${imagePath}`
+                  : `[${fPicker.activeSource}] ${imagePath}`;
+
+                const frameInList = this.frames.some((frame) => frame.key === formattedPath);
+                const optionValue = $('#frame-selector option[value="' + formattedPath + '"]');
+                $("#frame-selector option:selected").prop("selected", false);
+                if (optionValue) optionValue.prop('selected', true);
+
+                if (!frameInList) {
+                const frame = Tokenizer.generateFrameData(formattedPath, true);
+                  this.frames.push(frame);
+                  this.addedFrames.push(frame);
+                  const frameSelector = html.find("#frame-selector");
+                  const frameList = `<option value="${frame.key}" selected>${frame.label}</option>`;
+                  frameSelector[0].innerHTML += frameList;
+                }
+                this._setTokenFrame(formattedPath, true);
             }
         }).render();
-
-        console.warn(picker);
-        
     });
 
     $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {
