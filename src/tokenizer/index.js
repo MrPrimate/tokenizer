@@ -84,7 +84,7 @@ export default class Tokenizer extends FormApplication {
    */
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.template = "modules/vtta-tokenizer/src/tokenizer/tokenizer.hbs";
+    options.template = "modules/vtta-tokenizer/templates/tokenizer.hbs";
     options.width = 900;
     options.height = "auto";
     options.classes = ["tokenizer"];
