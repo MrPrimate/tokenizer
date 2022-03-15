@@ -1,0 +1,14 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+  <div class="main">
+    <p>
+      <div class="list">
+        {{#each assets as |a|}}{{{a}}}{{/each}}
+      </div>
+    </p>
+    <footer>
+      <div class="actions">
+       <button class="fvtt-picker" title="Select another file"><i class="fas fa-folder-open"></i> Select another file</button>
+      </div>
+    </footer>
+  </div>  
+</form>
