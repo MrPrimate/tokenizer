@@ -2,6 +2,7 @@ import Utils from "../utils.js";
 import logger from "../logger.js";
 import View from "./view.js";
 import DirectoryPicker from "./../libs/DirectoryPicker.js";
+import ImageBrowser from "./../libs/ImageBrowser.js";
 
 export default class Tokenizer extends FormApplication {
 
@@ -57,6 +58,18 @@ export default class Tokenizer extends FormApplication {
 
     this.frames = frames;
     return this.frames;
+  }
+
+  async handleFrameSelection(framePath) {
+    console.warn(this);
+    const frameInList = this.frames.some((frame) => frame.key === framePath);
+    if (!frameInList) {
+      const frame = Tokenizer.generateFrameData(framePath);
+      this.frames.push(frame);
+      this.customFrames.push(frame);
+      game.settings.set("vtta-tokenizer", "custom-frames", this.customFrames);
+    }
+    this._setTokenFrame(framePath, true);
   }
 
   //  Options include
@@ -224,34 +237,10 @@ export default class Tokenizer extends FormApplication {
           : directoryPath;
         const dir = DirectoryPicker.parse(usePath);
 
-        new FilePicker({
-            type: 'image',
-            displayMode: 'tiles',
-            source: dir.activeSource,
-            current: dir.current,
-            options: { bucket: dir.bucket },
-            callback: (imagePath, fPicker) => {
-                const formattedPath = fPicker.result.bucket
-                  ? `[${fPicker.activeSource}:${fPicker.result.bucket}] ${imagePath}`
-                  : `[${fPicker.activeSource}] ${imagePath}`;
+        const assetList = this.frames;
 
-                // reset selected frame
-                $("#frame-selector option:selected").prop("selected", false);
-                const frameInList = this.frames.some((frame) => frame.key === formattedPath);
-                if (!frameInList) {
-                const frame = Tokenizer.generateFrameData(formattedPath);
-                  this.frames.push(frame);
-                  this.customFrames.push(frame);
-                  game.settings.set("vtta-tokenizer", "custom-frames", this.customFrames);
-                  const frameSelector = html.find("#frame-selector");
-                  const frameList = `<option value="${frame.key}" selected>${frame.label}</option>`;
-                  frameSelector[0].innerHTML += frameList;
-                }
-                this._setTokenFrame(formattedPath, true);
-                const optionValue = $('#frame-selector option[value="' + formattedPath + '"]');
-                if (optionValue) optionValue.prop('selected', true);
-            }
-        }).render();
+        const picker = new ImageBrowser(assetList, { type: "image", callback: this.handleFrameSelection.bind(this) });
+        picker.render(true);
     });
 
     $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {

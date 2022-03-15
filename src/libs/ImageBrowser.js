@@ -74,15 +74,9 @@ class ImageBrowser extends FormApplication {
 
   activateListeners(html) {
     super.activateListeners(html);
-
-    // make sure window is on top of others
     this.bringToTop();
-
-    // buttons
     html.find("button").click(this._onClickButton.bind(this));
     html.find(".imageresult").click(this._onClickImage.bind(this));
-
-    // autoload on scroll
     html.find(".list").on("scroll", this._onScroll.bind(this));
 
     this.html = html;
