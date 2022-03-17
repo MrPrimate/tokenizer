@@ -6,22 +6,65 @@ import ImageBrowser from "./../libs/ImageBrowser.js";
 
 export default class Tokenizer extends FormApplication {
 
+  getOMFGFrames() {
+    if (this.omfgFrames.length > 0) return this.omfgFrames;
+
+    ["normal", "desaturated"].forEach((version) => {
+      ["v2", "v3", "v4", "v7"].forEach((v) => {
+        for (let i = 1; i <= 8; i++) {
+          const fileName = `modules/vtta-tokenizer/img/omfg/${version}/${v}/OMFG_Tokenizer_${v}_0${i}.png`;
+          const label = `OMFG Frame ${v} 0${i}`;
+          const obj = {
+            key: fileName,
+            label,
+            selected: false,
+          };
+          if (!this.frames.some((frame) => frame.key === fileName)) {
+            this.omfgFrames.push(obj);
+          }
+        }
+      });
+    });
+    return this.omfgFrames;
+  }
+
   static getDefaultFrames() {
     const npcFrame = game.settings.get("vtta-tokenizer", "default-frame-npc");
     const otherNPCFrame = game.settings.get("vtta-tokenizer", "default-frame-neutral");
     const npcDiff = npcFrame !== otherNPCFrame;
+    const setPlayerDefaultFrame = game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, "");
+    const setNPCDefaultFrame = npcFrame.replace(/^\/|\/$/g, "");
+
     const defaultFrames = [
       {
-        key: game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, ""),
+        key: setPlayerDefaultFrame,
         label: "Default Player Frame",
         selected: false,
       },
       {
-        key: npcFrame.replace(/^\/|\/$/g, ""),
+        key: setNPCDefaultFrame,
         label: npcDiff ? "Default NPC Frame (Hostile)" : "Default NPC Frame",
         selected: true,
       }
     ];
+
+    const foundryDefaultPCFrame = game.settings.settings.get("vtta-tokenizer.default-frame-pc").default.replace(/^\/|\/$/g, "");
+    const foundryDefaultNPCFrame = game.settings.settings.get("vtta-tokenizer.default-frame-npc").default.replace(/^\/|\/$/g, "");
+
+    if (foundryDefaultPCFrame !== setPlayerDefaultFrame) {
+      defaultFrames.push({
+        key: foundryDefaultPCFrame,
+        label: "Default Player Frame (Foundry)",
+        selected: false,
+      });
+    }
+    if (foundryDefaultNPCFrame !== setNPCDefaultFrame) {
+      defaultFrames.push({
+        key: foundryDefaultNPCFrame,
+        label: npcDiff ? "Default NPC Frame (Foundry, Hostile)" : "Default NPC Frame (Foundry)",
+        selected: false,
+      });
+    }
 
     if (npcDiff) {
       defaultFrames.push({
@@ -54,7 +97,9 @@ export default class Tokenizer extends FormApplication {
       return Tokenizer.generateFrameData(file);
     });
 
-    const frames = this.defaultFrames.concat(folderFrames, this.customFrames);
+    this.getOMFGFrames();
+
+    const frames = this.defaultFrames.concat(folderFrames, this.omfgFrames, this.customFrames);
 
     this.frames = frames;
     return this.frames;
@@ -88,6 +133,7 @@ export default class Tokenizer extends FormApplication {
     this.tokenToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
     this.defaultFrames = Tokenizer.getDefaultFrames();
     this.frames = [];
+    this.omfgFrames = [];
     this.customFrames = game.settings.get("vtta-tokenizer", "custom-frames");
   }
 

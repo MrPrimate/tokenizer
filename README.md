@@ -101,6 +101,15 @@ Replace the `http://localhost:4001` with your proxy end point, and the `MY_SECRE
 * You could convert some of the [frames](https://github.com/RPTools/TokenTool/tree/main/other-resources/Overlay%20Templates) from TokenTool using [GIMP](https://www.gimp.org/)
 * There are some nice frames [here](https://github.com/jcolson/token_frames)
 
+## Old Mighty Friendly Gamer Frames
+
+This work under these folders is licensed under a [Creative Commons Attribution-NonCommercial 3.0 Unported License](http://creativecommons.org/licenses/by-nc/3.0/).
+
+This is a sample of frames available from OMFG, and plenty more are available.
+
+You can support the OMFG on [KoFi](https://ko-fi.com/oldmightyfriendlygamer) and [Patreon](https://patreon.com/omfg).
+
+
 ## Calling Tokenizer
 
 You can call Tokenizer by using `Tokenizer.launch(options, callback)` or `Tokenizer.tokenizeActor(actor)`.

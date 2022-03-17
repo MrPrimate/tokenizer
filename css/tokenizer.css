@@ -266,3 +266,18 @@
   width: 100% !important;
   line-height: 1px;
 }
+
+.imagebrowser .imageresult {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.imagebrowser .imageresult:hover {
+  opacity: 50%;
+}
+
+.imagebrowser .imageresult img {
+  object-fit: contain;
+  border: none;
+  margin: 2px;
+}

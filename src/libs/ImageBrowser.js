@@ -44,7 +44,7 @@ class ImageBrowser extends FormApplication {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: "tokenizer-image-browser",
-      classes: ["tokenizer"],
+      classes: ["imagebrowser"],
       title: "Image Browser",
       template: "modules/vtta-tokenizer/templates/imagebrowser.hbs",
       width: 880,
