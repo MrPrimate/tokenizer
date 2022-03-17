@@ -65,8 +65,11 @@ class ImageBrowser extends FormApplication {
       return div;
     }));
 
+    const canBrowse = game.user && game.user.can("FILES_BROWSE");
+
     const data = {
-      assets: assets,
+      canBrowse,
+      assets,
     };
 
     return data;
