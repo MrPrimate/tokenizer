@@ -61,7 +61,6 @@ export default class Tokenizer extends FormApplication {
   }
 
   async handleFrameSelection(framePath) {
-    console.warn(this);
     const frameInList = this.frames.some((frame) => frame.key === framePath);
     if (!frameInList) {
       const frame = Tokenizer.generateFrameData(framePath);
