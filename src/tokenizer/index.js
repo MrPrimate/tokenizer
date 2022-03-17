@@ -276,15 +276,7 @@ export default class Tokenizer extends FormApplication {
 
     $("#vtta-tokenizer .file-picker-thumbs").click((event) => {
         event.preventDefault();
-        const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
-        const usePath = directoryPath === ""
-          ? "[data] modules/vtta-tokenizer/img"
-          : directoryPath;
-        const dir = DirectoryPicker.parse(usePath);
-
-        const assetList = this.frames;
-
-        const picker = new ImageBrowser(assetList, { type: "image", callback: this.handleFrameSelection.bind(this) });
+        const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleFrameSelection.bind(this) });
         picker.render(true);
     });
 

@@ -28,7 +28,7 @@ class ImageBrowser extends FormApplication {
           dir.current;
       }
     } catch (exception) {
-      logger.warn(`Unable to determine file URL for '${foundryFilePath}'`)
+      logger.warn(`Unable to determine file URL for '${foundryFilePath}'`);
       throw new Error(`Unable to determine file URL for '${foundryFilePath}'`);
     }
     return encodeURI(uri);
