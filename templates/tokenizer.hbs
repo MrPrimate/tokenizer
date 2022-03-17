@@ -78,19 +78,9 @@
                 </div>
                 <div class="menu">
                     <div class="section">
-                        <div class="title">Add Frame</div>
+                        <div class="title">Add frame</div>
                         <div class="content">
-                            {{#if canBrowse }}
-                            <button title="Browse Frames" class="menu-button file-picker-thumbs">
-                                <i class="fas fa-server"></i>
-                            </button>
-                            {{/if}}
-                            <select name="frame-selector" id="frame-selector">
-                                {{#each this.frames}}
-                                <option value="{{this.key}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
-                                {{/each}}
-                            </select>
-                            <button title="Apply Frame" class="menu-button" data-type="frame" data-target="token"><i class="fas fa-user-circle"></i></button>
+                            <button title="Add Frame" class="menu-button file-picker-thumbs" data-type="frame" data-target="token"><i class="fas fa-user-circle"></i></button>
                         </div>
                     </div>
                 </div>
