@@ -383,11 +383,12 @@ export function ready() {
           });
         }
 
-        const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
+        // const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
         const disableAvatarClick = game.settings.get("vtta-tokenizer", "disable-avatar-click");
 
         $(html)
-        .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
+        // .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
+        .find(`[data-edit=img]`)
         .each((index, element) => {
           // deactivating the original FilePicker click
           $(element).off("click");
