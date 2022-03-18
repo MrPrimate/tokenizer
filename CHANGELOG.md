@@ -1,5 +1,11 @@
 # Changelog
 
+# [3.6.2]
+
+* Frames with spaces in name did not show in the viewer correctly.
+* Removed some dead code causing harmless console errors.
+* Tokenizer now looks for `data-edit="img"` on the character sheet, rather than a list of known classes used by avatars. This is used by the filepicker for images, so should allow Tokenizer to work on most systems without modification.
+
 # [3.6.0/3.6.1]
 
 * Tokenizer frame selection is now a GUI
