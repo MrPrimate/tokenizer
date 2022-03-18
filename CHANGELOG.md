@@ -1,6 +1,6 @@
 # Changelog
 
-# [3.6.0]
+# [3.6.0/3.6.1]
 
 * Tokenizer frame selection is now a GUI
 * A large collection of frames provided by @OldMightyFriendlyGamer#0832 - more available at https://ko-fi.com/oldmightyfriendlygamer
