@@ -351,11 +351,6 @@ export default class Tokenizer extends FormApplication {
             eventTarget.dataset.target === "avatar" ? "portrait" : "token");
           break;
         }
-        case "frame": {
-          const frame = document.getElementById("frame-selector").value;
-          this._setTokenFrame(frame);
-          break;
-        }
         case "paste-toggle-token": {
           const toggle = document.getElementById("paste-toggle");
           toggle.setAttribute("data-type", "paste-toggle-avatar");
