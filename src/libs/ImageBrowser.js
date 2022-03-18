@@ -5,7 +5,7 @@ class ImageBrowser extends FormApplication {
 
   static MAX_ASSETS = 100;
 
-  static async getFileUrl (foundryFilePath) {
+  static async getFileUrl (foundryFilePath, encode = true) {
     let uri;
     try {
       let dir = DirectoryPicker.parse(foundryFilePath);
@@ -31,7 +31,11 @@ class ImageBrowser extends FormApplication {
       logger.warn(`Unable to determine file URL for '${foundryFilePath}'`);
       throw new Error(`Unable to determine file URL for '${foundryFilePath}'`);
     }
-    return encodeURI(uri);
+    if (encode) {
+      return encodeURI(uri);
+    } else {
+      return uri;
+    }
   }
 
   constructor(assets, options) {
@@ -59,7 +63,7 @@ class ImageBrowser extends FormApplication {
     // fetch initial asset list
     let idx = 0;
     const assets = await Promise.all(this.assets.map(async (asset) => {
-      const uri = await ImageBrowser.getFileUrl(asset.key);
+      const uri = await ImageBrowser.getFileUrl(asset.key, false);
       const div = `<div class="imageresult draggable" title="${asset.label}" data-idx="${idx}"><img width="100" height="100" src="${uri}"/></div>`;
       idx++;
       return div;
