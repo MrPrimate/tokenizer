@@ -1,5 +1,10 @@
 # Changelog
 
+# [3.6.0]
+
+* Tokenizer frame selection is now a GUI
+* A large collection of frames provided by @OldMightyFriendlyGamer#0832 - more available at https://ko-fi.com/oldmightyfriendlygamer
+
 # [3.5.5]
 
 * Tokenizer can now take a default frame for non hostile NPCs.
