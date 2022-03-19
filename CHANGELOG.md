@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.6.3]
+
+* @OldMightyFriendlyGamer#0832 a thinner token ring set added.
+
 # [3.6.2]
 
 * Frames with spaces in name did not show in the viewer correctly.

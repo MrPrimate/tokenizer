@@ -10,7 +10,7 @@ export default class Tokenizer extends FormApplication {
     if (this.omfgFrames.length > 0) return this.omfgFrames;
 
     ["normal", "desaturated"].forEach((version) => {
-      ["v2", "v3", "v4", "v7"].forEach((v) => {
+      ["v2", "v3", "v4", "v7", "v12"].forEach((v) => {
         for (let i = 1; i <= 8; i++) {
           const fileName = `modules/vtta-tokenizer/img/omfg/${version}/${v}/OMFG_Tokenizer_${v}_0${i}.png`;
           const label = `OMFG Frame ${v} 0${i}`;
