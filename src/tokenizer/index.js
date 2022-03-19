@@ -87,15 +87,32 @@ export default class Tokenizer extends FormApplication {
     };
   }
 
+  async getDirectoryFrameData(activeSource, options, path) {
+    const fileList = await DirectoryPicker.browse(activeSource, path, options);
+    const folderFrames = fileList.files
+      .filter((file) => Utils.endsWithAny(["png", "jpg", "jpeg", "gif", "webp", "webm", "bmp"], file))
+      .map((file) => {
+        return Tokenizer.generateFrameData(file);
+      });
+
+    let dirFrames = [];
+    if (fileList.dirs.length > 0) {
+      for (let i = 0; i < fileList.dirs.length; i++) {
+        const dir = fileList.dirs[i];
+        // eslint-disable-next-line no-await-in-loop
+        const subDirFrames = await this.getDirectoryFrameData(activeSource, options, dir);
+        dirFrames.push(...subDirFrames);
+      }
+    }
+    const result = folderFrames.concat(dirFrames);
+    return result;
+  }
+
   async getFrames() {
     const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
     logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
-    const fileList = await DirectoryPicker.browse(dir.activeSource, dir.current, { bucket: dir.bucket });
-
-    const folderFrames = fileList.files.map((file) => {
-      return Tokenizer.generateFrameData(file);
-    });
+    const folderFrames = await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current);
 
     this.getOMFGFrames();
 

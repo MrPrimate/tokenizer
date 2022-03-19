@@ -7,6 +7,12 @@ const SKIPPING_WORDS = [
 
 export default class Utils {
 
+  static endsWithAny(suffixes, string) {
+    return suffixes.some((suffix) => {
+        return string.endsWith(suffix);
+    });
+  }
+
   static generateUUID() {
     // I generate the UID from two parts here
     // to ensure the random number provide enough bits.

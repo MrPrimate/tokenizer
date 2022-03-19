@@ -3,6 +3,8 @@
 # [3.6.3]
 
 * @OldMightyFriendlyGamer#0832 a thinner token ring set added.
+* Recursive search of folder frame directory for custom frames.
+* Filter out non images from folder frames directory.
 
 # [3.6.2]
 
