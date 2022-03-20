@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.6.4]
+
+* try and improve tokenizer opening speed.
+
 # [3.6.3]
 
 * @OldMightyFriendlyGamer#0832 a thinner token ring set added.

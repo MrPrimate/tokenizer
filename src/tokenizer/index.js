@@ -112,7 +112,9 @@ export default class Tokenizer extends FormApplication {
     const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
     logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
-    const folderFrames = await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current);
+    const folderFrames = (directoryPath.trim() !== "")
+      ? await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current)
+      : [];
 
     this.getOMFGFrames();
 
