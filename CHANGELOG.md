@@ -3,6 +3,7 @@
 # [3.6.5]
 
 * Typo in settings.
+* Log level not respected.
 
 # [3.6.4]
 
