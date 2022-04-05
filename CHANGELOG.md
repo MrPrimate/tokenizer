@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.6.5]
+
+* Typo in settings.
+
 # [3.6.4]
 
 * try and improve tokenizer opening speed.
