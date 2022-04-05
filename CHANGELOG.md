@@ -4,6 +4,7 @@
 
 * Typo in settings.
 * Log level not respected.
+* User level override for switching shift-click/default filepicker/tokenizer behaviour?
 
 # [3.6.4]
 

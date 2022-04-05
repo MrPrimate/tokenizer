@@ -156,6 +156,20 @@ export function init() {
     default: false,
   });
 
+  game.settings.register("vtta-tokenizer", "disable-avatar-click-user", {
+    name: "vtta-tokenizer.disable-avatar-click-user.name",
+    hint: "vtta-tokenizer.disable-avatar-click-user.hint",
+    scope: "player",
+    config: true,
+    type: String,
+    choices: {
+      "global": "Use global setting",
+      "tokenizer": "Tokenizer",
+      "default": "Default File Picker"
+    },
+    default: "global",
+  });
+
   game.settings.register("vtta-tokenizer", "proxy", {
     scope: "world",
     config: false,
@@ -383,7 +397,13 @@ export function ready() {
         }
 
         // const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
-        const disableAvatarClick = game.settings.get("vtta-tokenizer", "disable-avatar-click");
+        const disableAvatarClickGlobal = game.settings.get("vtta-tokenizer", "disable-avatar-click");
+        const disableAvatarClickUser = game.settings.get("vtta-tokenizer", "disable-avatar-click-user");
+        const disableAvatarClick = disableAvatarClickUser === "global"
+          ? disableAvatarClickGlobal
+          : disableAvatarClickUser === "default"
+            ? true
+            : false;
 
         $(html)
         // .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
