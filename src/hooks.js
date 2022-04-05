@@ -31,8 +31,6 @@ class ResetCustomFrames extends FormApplication {
 }
 
 export function init() {
-  logger.info("Init");
-
   game.settings.register("vtta-tokenizer", "default-frame-pc", {
     name: "vtta-tokenizer.default-frame-pc.name",
     hint: "vtta-tokenizer.default-frame-pc.hint",
@@ -210,7 +208,8 @@ export function init() {
       OFF: "OFF",
     },
     default: "INFO",
-  });
+  }); 
+  logger.debug("Init complete");
 }
 
 /**

@@ -17,7 +17,7 @@ const logger = {
     return true;
   },
   log: (logLevel, ...data) => {
-    if (!logger._showMessage) {
+    if (!logger._showMessage(logLevel, data)) {
       return;
     }
 
