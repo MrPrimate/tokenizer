@@ -401,9 +401,7 @@ export function ready() {
         const disableAvatarClickUser = game.settings.get("vtta-tokenizer", "disable-avatar-click-user");
         const disableAvatarClick = disableAvatarClickUser === "global"
           ? disableAvatarClickGlobal
-          : disableAvatarClickUser === "default"
-            ? true
-            : false;
+          : disableAvatarClickUser === "default";
 
         $(html)
         // .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
