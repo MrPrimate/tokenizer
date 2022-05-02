@@ -179,7 +179,7 @@ export default class Tokenizer extends FormApplication {
       options: this.tokenOptions,
       canUpload: game.user && game.user.can("FILES_UPLOAD"), // game.user.isTrusted || game.user.isGM,
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
-      tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && Boolean(game.TokenVariants),
+      tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && game.modules.get("token-variants")?.active,
       frames: frames,
       pasteTarget: pasteTarget,
       pasteTargetName: pasteTargetName,
@@ -365,7 +365,7 @@ export default class Tokenizer extends FormApplication {
           break;
         }
         case "tokenVariants": {
-          game.TokenVariants.displayArtSelect(this.tokenOptions.name,
+          game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name,
             (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
             eventTarget.dataset.target === "avatar" ? "portrait" : "token");
           break;

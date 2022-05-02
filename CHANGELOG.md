@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.6.6]
+
+* Support new Token Variant Art API for image select button.
+
 # [3.6.5]
 
 * Typo in settings.
