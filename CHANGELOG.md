@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.6.7]
+
+* Actually fix Token Variant Art API.
+
 # [3.6.6]
 
 * Support new Token Variant Art API for image select button.

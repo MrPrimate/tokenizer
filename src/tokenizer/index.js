@@ -365,9 +365,10 @@ export default class Tokenizer extends FormApplication {
           break;
         }
         case "tokenVariants": {
-          game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name,
-            (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
-            eventTarget.dataset.target === "avatar" ? "portrait" : "token");
+          game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
+            callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
+            searchType: eventTarget.dataset.target === "avatar" ? "portrait" : "token"
+          });
           break;
         }
         case "paste-toggle-token": {
