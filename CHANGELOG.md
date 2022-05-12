@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.6.8]
+
+* Option to disable OMFG frames appearing in the frame select dialogue.
+
 # [3.6.7]
 
 * Actually fix Token Variant Art API.
