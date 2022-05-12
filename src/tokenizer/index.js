@@ -7,6 +7,7 @@ import ImageBrowser from "./../libs/ImageBrowser.js";
 export default class Tokenizer extends FormApplication {
 
   getOMFGFrames() {
+    if (game.settings.get("vtta-tokenizer", "disable-omfg-frames")) return [];
     if (this.omfgFrames.length > 0) return this.omfgFrames;
 
     ["normal", "desaturated"].forEach((version) => {

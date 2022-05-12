@@ -200,6 +200,14 @@ export function init() {
     default: false,
   });
 
+  game.settings.register("vtta-tokenizer", "disable-omfg-frames", {
+    name: "vtta-tokenizer.disable-omfg-frames.name",
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("vtta-tokenizer", "default-color", {
     name: "vtta-tokenizer.default-color.name",
     hint: "vtta-tokenizer.default-color.hint",
