@@ -281,3 +281,70 @@
   border: none;
   margin: 2px;
 }
+
+
+.vtta-tokenizer .active::after {
+  content: "\2796";
+  /* Unicode character for "minus" sign (-) */
+}
+
+.vtta-tokenizer label {
+  display: block;
+  padding-left: 15px;
+  text-indent: -15px;
+}
+
+.vtta-tokenizer input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  vertical-align: bottom;
+  position: relative;
+  top: 2px;
+  *overflow: hidden;
+}
+
+.vtta-tokenizer .import-invalid {
+  display: none;
+}
+
+.vtta-tokenizer .import-hidden {
+  visibility: hidden;
+}
+
+.vtta-tokenizer .import-progress {
+  background-color: #f1f1f1;
+  margin: 5px 0;
+  width: 100%;
+}
+
+.vtta-tokenizer .import-progress .import-progress-bar {
+  max-width: 100%;
+  height: 24px;
+  background-color: green;
+  text-align: center;
+}
+
+.vtta-tokenizer .import-progress .import-progress-bar span {
+  white-space: nowrap;
+  line-height: 24px;
+}
+
+.vtta-tokenizer .tokenizer-overlay {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.vtta-tokenizer .tokenizer-working {
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 135px;
+  transform: translateX(-50%) translateY(-50%);
+}

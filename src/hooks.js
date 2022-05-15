@@ -4,6 +4,7 @@ import DirectoryPicker from "./libs/DirectoryPicker.js";
 import Utils from "./utils.js";
 import logger from "./logger.js";
 import View from "./tokenizer/view.js";
+import AutoTokenize from "./tokenizer/auto.js";
 
 class ResetCustomFrames extends FormApplication {
   static get defaultOptions () {
@@ -356,7 +357,7 @@ async function updateSceneTokenImg(actor) {
   if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
 }
 
-async function autoToken(actor, options) {
+export async function autoToken(actor, options) {
   // construct our 
   const defaultOptions = {
     actor: actor,
@@ -538,15 +539,6 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
   });
 });
 
-async function tokenizeCompendium(compendium) {
-
-  // TO DO:
-  // Present dialog
-  // Loop through dialog and update each token and bar
-  console.warn("TOKENIZE HERE")
-}
-
-
 Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
   contextOptions.push({
     name: "vtta-tokenizer.compendium.auto-tokenize",
@@ -554,7 +546,8 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
       const pack = $(li).attr("data-pack");
       const compendium = game.packs.get(pack);
       if (compendium) {
-        tokenizeCompendium(compendium);
+        const auto = new AutoTokenize(compendium);
+        auto.render(true);
       }
     },
     condition: (li) => {

@@ -3,6 +3,7 @@
 # [3.7.0]
 
 * Auto Tokenize function added for use by other modules.
+* You can right click on an Actors Compendium and auto-tokenize all actors in that compendium.
 
 # [3.6.8]
 
