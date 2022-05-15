@@ -176,4 +176,8 @@ await window.Tokenizer.autoToken(actor);
 
 This will apply the token, upload the image and update the actor.
 
-Other options may be added in the future.
+You can pass in override options in an `options` map as the second argument:
+
+```
+await window.Tokenizer.autoToken(actor, { nameSuffix: "-name-suffix" });
+```

@@ -356,9 +356,9 @@ async function updateSceneTokenImg(actor) {
   if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
 }
 
-async function autoToken(actor) {
+async function autoToken(actor, options) {
   // construct our 
-  const options = {
+  const defaultOptions = {
     actor: actor,
     name: actor.name,
     type: actor.data.type === "character" ? "pc" : "npc",
@@ -368,8 +368,8 @@ async function autoToken(actor) {
     isWildCard: actor.data.token.randomImg,
     auto: true,
   };
-
-  const tokenizer = new Tokenizer(options, updateActor);
+  const mergedOptions = mergeObject(defaultOptions, options);
+  const tokenizer = new Tokenizer(mergedOptions, updateActor);
 
   // create mock elements to generate images in
   const tokenizerHtml = `<div class="token" id="tokenizer-token-parent"><h1>Token</h1><div class="view" id="tokenizer-token"></div>`;
@@ -535,5 +535,34 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
     condition: () => {
       return game.user.can("FILES_UPLOAD");
     }
+  });
+});
+
+async function tokenizeCompendium(compendium) {
+
+  // TO DO:
+  // Present dialog
+  // Loop through dialog and update each token and bar
+  console.warn("TOKENIZE HERE")
+}
+
+
+Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
+  contextOptions.push({
+    name: "vtta-tokenizer.compendium.auto-tokenize",
+    callback: (li) => {
+      const pack = $(li).attr("data-pack");
+      const compendium = game.packs.get(pack);
+      if (compendium) {
+        tokenizeCompendium(compendium);
+      }
+    },
+    condition: (li) => {
+      const pack = $(li).attr("data-pack");
+      const compendium = game.packs.get(pack);
+      const isActor = compendium.metadata.type === "Actor";
+      return isActor;
+    },
+    icon: '<i class="fas fa-user-circle"></i>',
   });
 });

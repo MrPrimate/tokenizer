@@ -31,5 +31,6 @@
   "vtta-tokenizer.disable-avatar-click-user.hint": "Don't open Tokenizer when avatar picture is clicked. (Shift click will still open Tokenizer).",
   "vtta-tokenizer.token-only-toggle.name": "Token only default",
   "vtta-tokenizer.token-only-toggle.hint": "If selected defaults to true, can be toggled in tokenizer, per player setting",
-  "vtta-tokenizer.disable-omfg-frames.name": "Disable OMFG frames"
+  "vtta-tokenizer.disable-omfg-frames.name": "Disable OMFG frames",
+  "vtta-tokenizer.compendium.auto-tokenize": "Auto-Tokenize Compendium"
 }
