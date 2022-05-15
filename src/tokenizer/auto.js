@@ -63,7 +63,7 @@ export default class AutoTokenize extends FormApplication {
       logger.debug(`Tokenizing ${i.name}`);
       const actor = this.pack.getDocument(i._id);
       // eslint-disable-next-line no-await-in-loop
-      await autoToken(actor, { nameSuffix: this.pack.metadata.name.toLowerCase() });
+      await autoToken(actor, { nameSuffix: `.${this.pack.metadata.name.toLowerCase()}` });
       currentCount++;
     }
   }
