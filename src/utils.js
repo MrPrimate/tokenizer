@@ -7,6 +7,11 @@ const SKIPPING_WORDS = [
 
 export default class Utils {
 
+  static htmlToDoc (text) {
+    const parser = new DOMParser();
+    return parser.parseFromString(text, "text/html");
+  }
+
   static endsWithAny(suffixes, string) {
     return suffixes.some((suffix) => {
         return string.endsWith(suffix);
@@ -144,14 +149,22 @@ export default class Utils {
       // cross origin needed for images from other domains
       // an empty value here defaults to anonymous
       img.crossOrigin = "";
-      img.addEventListener("load", () => {
+      img.onerror = function(event) {
+        logger.error("Download listener error", event);
+        reject(event);
+      };
+      img.onload = function() {
         logger.debug("Loading image:", img);
         resolve(img);
-      });
-      img.addEventListener("error", (event) => {
-        logger.error(event);
-        reject(event);
-      });
+      };
+      // img.addEventListener("load", () => {
+      //   logger.debug("Loading image:", img);
+      //   resolve(img);
+      // });
+      // img.addEventListener("error", (event) => {
+      //   logger.error("Download listener error", event);
+      //   reject(event);
+      // });
       // add image source after adding handlers
       img.src = imgSrc;
     });

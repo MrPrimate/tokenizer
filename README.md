@@ -163,3 +163,17 @@ When the OK button is pressed it will return the following to the function (whic
 
 This is useful if you want to generate tokens for use outside of the regular actors.
 
+## How to I call auto Tokenize?
+
+This applies the default frame to the current token image.
+
+Call it using `window.Tokenizer.autoToken` passing in an `Actor` as the only variable.
+
+```
+let actor = game.actors.getName("TEST");
+await window.Tokenizer.autoToken(actor);
+```
+
+This will apply the token, upload the image and update the actor.
+
+Other options may be added in the future.

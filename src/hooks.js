@@ -3,6 +3,7 @@ import ImagePicker from "./libs/ImagePicker.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
 import Utils from "./utils.js";
 import logger from "./logger.js";
+import View from "./tokenizer/view.js";
 
 class ResetCustomFrames extends FormApplication {
   static get defaultOptions () {
@@ -355,6 +356,40 @@ async function updateSceneTokenImg(actor) {
   if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
 }
 
+async function autoToken(actor) {
+  // construct our 
+  const options = {
+    actor: actor,
+    name: actor.name,
+    type: actor.data.type === "character" ? "pc" : "npc",
+    disposition: actor.data.token.disposition,
+    avatarFilename: actor.data.img,
+    tokenFilename: actor.data.token.img,
+    isWildCard: actor.data.token.randomImg,
+    auto: true,
+  };
+
+  const tokenizer = new Tokenizer(options, updateActor);
+
+  // create mock elements to generate images in
+  const tokenizerHtml = `<div class="token" id="tokenizer-token-parent"><h1>Token</h1><div class="view" id="tokenizer-token"></div>`;
+  let doc = Utils.htmlToDoc(tokenizerHtml);
+  let tokenView = doc.querySelector(".token > .view");
+  
+  // get the target filename for the token
+  const nameSuffix = tokenizer.tokenOptions.nameSuffix ? tokenizer.tokenOptions.nameSuffix : "";
+  const targetFilename = await tokenizer._getFilename("Token", nameSuffix);
+  // create a Token View
+  tokenizer.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
+  // Add the actor image and frame to the token view
+  await tokenizer._initToken(tokenizer.tokenOptions.tokenFilename);
+  // upload result to foundry
+  const dataResult = await tokenizer.Token.get("blob");
+  tokenizer.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResult, targetFilename, tokenizer.tokenOptions.type, tokenizer.getOverRidePath(true));
+  // update actor
+  await updateActor(tokenizer.tokenOptions);
+}
+
 export function ready() {
   logger.info("Ready");
 
@@ -456,6 +491,7 @@ export function ready() {
     tokenizeSceneToken: tokenizeSceneToken,
     tokenizeDoc: tokenizeDoc,
     updateSceneTokenImg,
+    autoToken,
   };
   
 }

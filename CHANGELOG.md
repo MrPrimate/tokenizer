@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.7.0]
+
+* Auto Tokenize function added for use by other modules.
+
 # [3.6.8]
 
 * Option to disable OMFG frames appearing in the frame select dialogue.

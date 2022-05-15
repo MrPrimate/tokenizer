@@ -389,7 +389,7 @@ export default class Tokenizer extends FormApplication {
         case "token-only-toggle": {
           const newTokenOnlyState = !(this.tokenToggle);
           this.tokenToggle = newTokenOnlyState;
-          
+
           const toggle = document.getElementById("token-only");
           if (newTokenOnlyState) {
             toggle.innerHTML = '<i class="fas fa-toggle-on"></i>';
@@ -413,9 +413,12 @@ export default class Tokenizer extends FormApplication {
   async _initToken(src) {
     let imgSrc = src ?? CONST.DEFAULT_TOKEN;
     try {
+      logger.debug("Initializing Token, trying to download", imgSrc);
       const img = await Utils.download(imgSrc);
+      logger.debug("Got image", img);
       this.Token.addImageLayer(img);
-      if (game.settings.get("vtta-tokenizer", "add-frame-default")) {
+      if (game.settings.get("vtta-tokenizer", "add-frame-default") || this.tokenOptions.auto) {
+        logger.debug("Loading default token frame");
         await this._setTokenFrame();
       } 
     } catch (error) {
@@ -423,7 +426,7 @@ export default class Tokenizer extends FormApplication {
         logger.error(`Failed to load fallback token: "${imgSrc}"`);
       } else {
         ui.notifications.error(`Failed to load token: "${imgSrc}", falling back to "${CONST.DEFAULT_TOKEN}"`);
-        logger.error(error);
+        logger.error("Failed to init image", error);
         await this._initToken();
       }
     }
