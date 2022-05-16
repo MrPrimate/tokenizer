@@ -177,13 +177,11 @@ export default class Utils {
     const options = overRideFolder
       ? DirectoryPicker.parse(overRideFolder)
       : DirectoryPicker.parse(Utils.getBaseUploadFolder(type));
-    
-    const result = await FilePicker.upload(
-      options.activeSource,
-      options.current,
-      file,
-      { bucket: options.bucket }
-    );
+
+    const result = (game.version)
+      ? await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false })
+      : await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
+
     return result.path;
   }
 
