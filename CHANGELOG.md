@@ -4,6 +4,7 @@
 
 * Auto Tokenize function added for use by other modules.
 * You can right click on an Actors Compendium and auto-tokenize all actors in that compendium.
+* File upload will now hide UI notifications in v9.
 
 # [3.6.8]
 
