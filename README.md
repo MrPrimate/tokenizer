@@ -178,6 +178,6 @@ This will apply the token, upload the image and update the actor.
 
 You can pass in override options in an `options` map as the second argument:
 
-```
+```javascript
 await window.Tokenizer.autoToken(actor, { nameSuffix: "-name-suffix" });
 ```

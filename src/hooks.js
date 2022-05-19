@@ -359,15 +359,17 @@ async function updateSceneTokenImg(actor) {
 
 export async function autoToken(actor, options) {
   // construct our 
+  const actorData = actor.data.data ? actor.data : actor;
   const defaultOptions = {
     actor: actor,
-    name: actor.name,
-    type: actor.data.type === "character" ? "pc" : "npc",
-    disposition: actor.data.token.disposition,
-    avatarFilename: actor.data.img,
-    tokenFilename: actor.data.token.img,
-    isWildCard: actor.data.token.randomImg,
+    name: actorData.name,
+    type: actorData.type === "character" ? "pc" : "npc",
+    disposition: actorData.token.disposition,
+    avatarFilename: actorData.img,
+    tokenFilename: actorData.token.img,
+    isWildCard: actorData.token.randomImg,
     auto: true,
+    updateActor: true,
   };
   const mergedOptions = mergeObject(defaultOptions, options);
   const tokenizer = new Tokenizer(mergedOptions, updateActor);
@@ -388,7 +390,10 @@ export async function autoToken(actor, options) {
   const dataResult = await tokenizer.Token.get("blob");
   tokenizer.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResult, targetFilename, tokenizer.tokenOptions.type, tokenizer.getOverRidePath(true));
   // update actor
-  await updateActor(tokenizer.tokenOptions);
+  if (mergedOptions.updateActor) {
+    await updateActor(tokenizer.tokenOptions);
+  }
+  return tokenizer.tokenOptions.tokenFilename;
 }
 
 export function ready() {

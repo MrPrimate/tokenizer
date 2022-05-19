@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.7.1]
+
+* Auto tokenize will now return the path of the updated image, and actor update is optional.
+
 # [3.7.0]
 
 * Auto Tokenize function added for use by other modules.
