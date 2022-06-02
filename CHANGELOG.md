@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.7.2]
+
+* Tokenizer will load the frames provided by the [Token Frame](https://foundryvtt.com/packages/token-frames) module by default into the Tokenizer frame selector if the module is active. You can disable this in the Tokenizer settings. Thanks @blackntan#0069 for putting a great collection together.
+
 # [3.7.1]
 
 * Auto tokenize will now return the path of the updated image, and actor update is optional.

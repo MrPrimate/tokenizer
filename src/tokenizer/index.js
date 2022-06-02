@@ -9,6 +9,7 @@ export default class Tokenizer extends FormApplication {
   getOMFGFrames() {
     if (game.settings.get("vtta-tokenizer", "disable-omfg-frames")) return [];
     if (this.omfgFrames.length > 0) return this.omfgFrames;
+    logger.debug(`Checking for OMFG Token Frames files in...`);
 
     ["normal", "desaturated"].forEach((version) => {
       ["v2", "v3", "v4", "v7", "v12"].forEach((v) => {
@@ -27,6 +28,21 @@ export default class Tokenizer extends FormApplication {
       });
     });
     return this.omfgFrames;
+  }
+
+  async getJColsonFrames() {
+    if (!game.modules.get("token-frames")?.active || game.settings.get("vtta-tokenizer", "disable-jcolson-frames")) {
+      return [];
+    }
+    if (this.jColsonFrames.length > 0) return this.jColsonFrames;
+
+    const directoryPath = "[data] modules/token-frames/token_frames";
+    logger.debug(`Checking for JColson Token Frames files in ${directoryPath}...`);
+
+    const dir = DirectoryPicker.parse(directoryPath);
+    this.jColsonFrames = await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current);
+
+    return this.jColsonFrames;
   }
 
   static getDefaultFrames() {
@@ -118,8 +134,9 @@ export default class Tokenizer extends FormApplication {
       : [];
 
     this.getOMFGFrames();
+    await this.getJColsonFrames();
 
-    const frames = this.defaultFrames.concat(folderFrames, this.omfgFrames, this.customFrames);
+    const frames = this.defaultFrames.concat(folderFrames, this.omfgFrames, this.jColsonFrames, this.customFrames);
 
     this.frames = frames;
     return this.frames;
@@ -154,6 +171,7 @@ export default class Tokenizer extends FormApplication {
     this.defaultFrames = Tokenizer.getDefaultFrames();
     this.frames = [];
     this.omfgFrames = [];
+    this.jColsonFrames = [];
     this.customFrames = game.settings.get("vtta-tokenizer", "custom-frames");
   }
 
