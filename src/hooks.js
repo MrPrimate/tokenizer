@@ -1,247 +1,14 @@
 import Tokenizer from "./tokenizer/index.js";
-import ImagePicker from "./libs/ImagePicker.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
 import Utils from "./utils.js";
 import logger from "./logger.js";
 import View from "./tokenizer/view.js";
 import AutoTokenize from "./tokenizer/auto.js";
-
-class ResetCustomFrames extends FormApplication {
-  static get defaultOptions () {
-      const options = super.defaultOptions;
-      options.id = "cleanup-custom-frames";
-      options.template = "modules/vtta-tokenizer/templates/cleanup.hbs";
-      return options;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get title() {
-      return "Reset Custom Frames";
-  }
-
-  /** @override */
-  // eslint-disable-next-line class-methods-use-this
-  async getData() {
-    return {};
-  }
-
-  /** @override */
-  // eslint-disable-next-line class-methods-use-this
-  async _updateObject() {
-    game.settings.set("vtta-tokenizer", "custom-frames", []);
-  }
-}
+import CONSTANTS from "./constants.js";
+import { registerSettings } from "./settings.js";
 
 export function init() {
-  game.settings.register("vtta-tokenizer", "default-frame-pc", {
-    name: "vtta-tokenizer.default-frame-pc.name",
-    hint: "vtta-tokenizer.default-frame-pc.hint",
-    type: ImagePicker.Img,
-    default: "[data] modules/vtta-tokenizer/img/default-frame-pc.png",
-    scope: "world",
-    config: true,
-  });
-
-  game.settings.register("vtta-tokenizer", "default-frame-npc", {
-    name: "vtta-tokenizer.default-frame-npc.name",
-    hint: "vtta-tokenizer.default-frame-npc.hint",
-    type: ImagePicker.Img,
-    default: "[data] modules/vtta-tokenizer/img/default-frame-npc.png",
-    scope: "world",
-    config: true,
-  });
-
-  game.settings.register("vtta-tokenizer", "default-frame-neutral", {
-    name: "vtta-tokenizer.default-frame-neutral.name",
-    hint: "vtta-tokenizer.default-frame-neutral.hint",
-    type: ImagePicker.Img,
-    default: "[data] modules/vtta-tokenizer/img/default-frame-npc.png",
-    scope: "world",
-    config: true,
-  });
-
-  game.settings.register("vtta-tokenizer", "frame-directory", {
-    name: "vtta-tokenizer.frame-directory.name",
-    hint: "vtta-tokenizer.frame-directory.hint",
-    scope: "world",
-    config: true,
-    type: DirectoryPicker.Directory,
-    default: "",
-  });
-
-  game.settings.register("vtta-tokenizer", "add-frame-default", {
-    name: "vtta-tokenizer.add-frame-default.name",
-    hint: "vtta-tokenizer.add-frame-default.hint",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
-
-  game.settings.register("vtta-tokenizer", "custom-frames", {
-    scope: "client",
-    config: false,
-    type: Array,
-    default: [],
-  });
-
-  game.settings.registerMenu("vtta-tokenizer", "reset-custom-frames", {
-    name: "Reset Custom Frames?",
-    label: "Reset Custom Frames?",
-    hint: "Clear Custom Frames List",
-    scope: "client",
-    config: true,
-    type: ResetCustomFrames,
-  });
-
-  game.settings.register("vtta-tokenizer", "image-upload-directory", {
-    name: "vtta-tokenizer.image-upload-directory.name",
-    hint: "vtta-tokenizer.image-upload-directory.hint",
-    scope: "world",
-    config: true,
-    type: DirectoryPicker.Directory,
-    default: "[data] tokenizer/pc-images",
-  });
-
-  game.settings.register("vtta-tokenizer", "npc-image-upload-directory", {
-    name: "vtta-tokenizer.npc-image-upload-directory.name",
-    hint: "vtta-tokenizer.npc-image-upload-directory.hint",
-    scope: "world",
-    config: true,
-    type: DirectoryPicker.Directory,
-    default: "[data] tokenizer/npc-images",
-  });
-
-  game.settings.register("vtta-tokenizer", "image-save-type", {
-    name: "vtta-tokenizer.image-save-type.name",
-    hint: "vtta-tokenizer.image-save-type.hint",
-    scope: "world",
-    config: true,
-    default: "webp",
-    choices: { "webp": "*.webp", "png": "*.png" },
-    type: String,
-  });
-
-  game.settings.register("vtta-tokenizer", "token-size", {
-    name: "vtta-tokenizer.token-size.name",
-    hint: "vtta-tokenizer.token-size.hint",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 400,
-  });
-
-  game.settings.register("vtta-tokenizer", "portrait-size", {
-    name: "vtta-tokenizer.portrait-size.name",
-    hint: "vtta-tokenizer.portrait-size.hint",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 400,
-  });
-
-  game.settings.register("vtta-tokenizer", "title-link", {
-    name: "vtta-tokenizer.title-link.name",
-    hint: "vtta-tokenizer.title-link.hint",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register("vtta-tokenizer", "disable-avatar-click", {
-    name: "vtta-tokenizer.disable-avatar-click.name",
-    hint: "vtta-tokenizer.disable-avatar-click.hint",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register("vtta-tokenizer", "disable-avatar-click-user", {
-    name: "vtta-tokenizer.disable-avatar-click-user.name",
-    hint: "vtta-tokenizer.disable-avatar-click-user.hint",
-    scope: "player",
-    config: true,
-    type: String,
-    choices: {
-      "global": "Use global setting",
-      "tokenizer": "Tokenizer",
-      "default": "Default File Picker"
-    },
-    default: "global",
-  });
-
-  game.settings.register("vtta-tokenizer", "proxy", {
-    scope: "world",
-    config: false,
-    type: String,
-    default: "https://images.ddb.mrprimate.co.uk/",
-  });
-
-  game.settings.register("vtta-tokenizer", "force-proxy", {
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register("vtta-tokenizer", "paste-target", {
-    scope: "player",
-    config: false,
-    type: String,
-    default: "token",
-  });
-
-  game.settings.register("vtta-tokenizer", "token-only-toggle", {
-    name: "vtta-tokenizer.token-only-toggle.name",
-    hint: "vtta-tokenizer.token-only-toggle.hint",
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register("vtta-tokenizer", "disable-omfg-frames", {
-    name: "vtta-tokenizer.disable-omfg-frames.name",
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register("vtta-tokenizer", "disable-jcolson-frames", {
-    name: "vtta-tokenizer.disable-jcolson-frames.name",
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register("vtta-tokenizer", "default-color", {
-    name: "vtta-tokenizer.default-color.name",
-    hint: "vtta-tokenizer.default-color.hint",
-    scope: "world",
-    config: true,
-    type: String,
-    default: "white",
-  });
-
-  game.settings.register("vtta-tokenizer", "log-level", {
-    name: "vtta-tokenizer.log-level.name",
-    scope: "world",
-    config: true,
-    type: String,
-    choices: {
-      DEBUG: "DEBUG",
-      INFO: "INFO",
-      WARN: "WARN",
-      ERR: "ERROR ",
-      OFF: "OFF",
-    },
-    default: "INFO",
-  }); 
-  logger.debug("Init complete");
+  registerSettings();
 }
 
 /**
@@ -258,7 +25,7 @@ export function init() {
  */
 function launchTokenizer(options, callback) {
   if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
   }
 
   game.canvas.layers.forEach((layer) => {
@@ -288,7 +55,7 @@ async function updateActor(tokenizerResponse) {
 
     if (tokenizerResponse.actor.data.token.img.indexOf("*") === -1) {
       // set it to a wildcard we can actually use
-      const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
+      const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
       ui.notifications.info("Tokenizer: Wildcarding token image to " + tokenizerResponse.actor.data.token.img);
       update.token = {
         img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
@@ -308,7 +75,7 @@ async function updateActor(tokenizerResponse) {
 
 function tokenizeActor(actor) {
   if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
   }
 
   const options = {
@@ -327,7 +94,7 @@ function tokenizeActor(actor) {
 
 function tokenizeSceneToken(doc) {
   if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize("vtta-tokenizer.requires-upload-permission"));
+    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
   }
 
   const options = {
@@ -391,7 +158,7 @@ export async function autoToken(actor, options) {
   const nameSuffix = tokenizer.tokenOptions.nameSuffix ? tokenizer.tokenOptions.nameSuffix : "";
   const targetFilename = await tokenizer._getFilename("Token", nameSuffix);
   // create a Token View
-  tokenizer.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
+  tokenizer.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
   // Add the actor image and frame to the token view
   await tokenizer._initToken(tokenizer.tokenOptions.tokenFilename);
   // upload result to foundry
@@ -408,22 +175,22 @@ export function ready() {
   logger.info("Ready");
 
   // Set base character upload folder.
-  const characterUploads = game.settings.get("vtta-tokenizer", "image-upload-directory");
-  const npcUploads = game.settings.get("vtta-tokenizer", "npc-image-upload-directory");
+  const characterUploads = game.settings.get(CONSTANTS.MODULE_ID, "image-upload-directory");
+  const npcUploads = game.settings.get(CONSTANTS.MODULE_ID, "npc-image-upload-directory");
 
   if (game.user.isGM) {
     DirectoryPicker.verifyPath(DirectoryPicker.parse(characterUploads));
     DirectoryPicker.verifyPath(DirectoryPicker.parse(npcUploads));
     // Update proxy if needed
-    const corsProxy = game.settings.get("vtta-tokenizer", "proxy");
+    const corsProxy = game.settings.get(CONSTANTS.MODULE_ID, "proxy");
     if (corsProxy === "https://london.drop.mrprimate.co.uk/") {
-      game.settings.set("vtta-tokenizer", "proxy", "https://images.ddb.mrprimate.co.uk/");
+      game.settings.set(CONSTANTS.MODULE_ID, "proxy", "https://images.ddb.mrprimate.co.uk/");
     }
   }
 
-  const titleLink = game.settings.get("vtta-tokenizer", "title-link");
+  const titleLink = game.settings.get(CONSTANTS.MODULE_ID, "title-link");
 
-  if (characterUploads != "" && npcUploads == "") game.settings.set("vtta-tokenizer", "npc-image-upload-directory", characterUploads);
+  if (characterUploads != "" && npcUploads == "") game.settings.set(CONSTANTS.MODULE_ID, "npc-image-upload-directory", characterUploads);
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
@@ -442,8 +209,8 @@ export function ready() {
           : app.entity;
 
         if (titleLink) {
-          const button = $(`<a class="header-button vtta-tokenizer" id="vtta-tokenizer-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
-          html.closest('.app').find('#vtta-tokenizer-button').remove();
+          const button = $(`<a class="header-button ${CONSTANTS.MODULE_ID}" id="${CONSTANTS.MODULE_ID}-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
+          html.closest('.app').find(`#${CONSTANTS.MODULE_ID}-button`).remove();
           let titleElement = html.closest('.app').find('.window-title');
           if (!app._minimized) button.insertAfter(titleElement);
 
@@ -453,15 +220,13 @@ export function ready() {
           });
         }
 
-        // const SUPPORTED_PROFILE_IMAGE_CLASSES = ["sheet-profile", "profile", "profile-img", "player-image"];
-        const disableAvatarClickGlobal = game.settings.get("vtta-tokenizer", "disable-avatar-click");
-        const disableAvatarClickUser = game.settings.get("vtta-tokenizer", "disable-avatar-click-user");
+        const disableAvatarClickGlobal = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click");
+        const disableAvatarClickUser = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click-user");
         const disableAvatarClick = disableAvatarClickUser === "global"
           ? disableAvatarClickGlobal
           : disableAvatarClickUser === "default";
 
         $(html)
-        // .find(SUPPORTED_PROFILE_IMAGE_CLASSES.map((cls) => `img.${cls}`).join(", "))
         .find(`[data-edit=img]`)
         .each((index, element) => {
           // deactivating the original FilePicker click
@@ -554,7 +319,7 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
 
 Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
   contextOptions.push({
-    name: "vtta-tokenizer.compendium.auto-tokenize",
+    name: `${CONSTANTS.MODULE_ID}.compendium.auto-tokenize`,
     callback: (li) => {
       const pack = $(li).attr("data-pack");
       const compendium = game.packs.get(pack);

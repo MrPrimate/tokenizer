@@ -36,5 +36,7 @@
   "vtta-tokenizer.compendium.auto-tokenize": "Auto-Tokenize Compendium",
   "vtta-tokenizer.compendium.button": "Tokenize Compendium",
   "vtta-tokenizer.label.token": "Token",
-  "vtta-tokenizer.label.Working": "Working..."
+  "vtta-tokenizer.label.Working": "Working...",
+  "vtta-tokenizer.reset-custom-frames.name": "Reset Custom Frames?",
+  "vtta-tokenizer.reset-custom-frames.hint": "Clear Custom Frames List"
 }
