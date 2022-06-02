@@ -1,5 +1,6 @@
 import Utils from '../utils.js';
 import { geom } from '../marching-squares.js';
+import CONSTANTS from '../constants.js';
 
 export default class Layer {
   constructor(width, height, color = null) {
@@ -43,6 +44,10 @@ export default class Layer {
     this.previousColor = null;
     this.color = null;
     this.setColor(color);
+
+    this.alpha = 1.0;
+    this.compositeOperation = CONSTANTS.BLEND_MODES.DEFAULT;
+    this.visible = true;
   }
 
   /**
