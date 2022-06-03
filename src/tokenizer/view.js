@@ -1,6 +1,7 @@
 import Layer from './layer.js';
 import Control from './control.js';
 import Utils from '../utils.js';
+import CONSTANTS from '../constants.js';
 
 export default class View {
   constructor(dimension, element) {
@@ -426,11 +427,11 @@ export default class View {
    */
   activateLayer(id = 0) {
     // set all layers to inactive
-    this.layers.forEach((layer) => (layer.isActive = false));
+    this.layers.forEach((layer) => (layer.active = false));
     this.activeLayer = this.layers.find((layer) => layer.id === id);
     // activate the layer with given id
     if (this.activeLayer !== null) {
-      this.activeLayer.isActive = true;
+      this.activeLayer.active = true;
     }
     this.redraw();
   }
@@ -440,10 +441,7 @@ export default class View {
    */
   deactivateLayers() {
     this.activeLayer = null;
-    this.layers.forEach((layer) => (layer.isActive = false));
-    // for (let i = 0; i < this.layers.length; i++) {
-    //     this.layers[i].isActive = false;
-    // }
+    this.layers.forEach((layer) => (layer.active = false));
     this.redraw();
   }
 
@@ -480,15 +478,15 @@ export default class View {
 
   redraw() {
     let maskLayer = undefined;
-    let ctx = this.canvas.getContext('2d');
-    ctx.clearRect(0, 0, this.width, this.height);
+    const context = this.canvas.getContext('2d');
+    context.clearRect(0, 0, this.width, this.height);
 
     if (this.maskId !== null) {
       // get the mask layer
       maskLayer = this.layers.find((layer) => layer.id === this.maskId);
       // draw the mask at the same position and scale as the source of the layer itself
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.drawImage(
+      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+      context.drawImage(
           maskLayer.sourceMask,
           maskLayer.position.x,
           maskLayer.position.y,
@@ -496,21 +494,21 @@ export default class View {
           maskLayer.source.height * maskLayer.scale
       );
 
-      ctx.globalCompositeOperation = 'source-atop';
+      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_ATOP;
     } else {
-      ctx.globalCompositeOperation = 'source-over';
+      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
     }
     // draw all the layers on top of each other
     for (let i = this.layers.length - 1; i >= 0; i--) {
-      ctx.drawImage(this.layers[i].view, 0, 0, this.width, this.height);
+      context.drawImage(this.layers[i].view, 0, 0, this.width, this.height);
     }
 
     // draw the mask again on top as clipping may have happened to semi-transparent pixels
     // but only if defined as the top layer
     if (maskLayer !== undefined) {
       if (this.layers[0].id == maskLayer.id) {
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.drawImage(maskLayer.view, 0, 0, this.width, this.height);
+        context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+        context.drawImage(maskLayer.view, 0, 0, this.width, this.height);
       }
     }
   }

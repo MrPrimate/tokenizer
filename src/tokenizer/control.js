@@ -241,7 +241,7 @@ export default class Control {
     }
 
     // is this layer active?
-    if (this.layer.isActive) {
+    if (this.layer.active) {
       this.activeControl.classList.add('active');
       this.activeControl.firstChild.classList.remove('fa-lock');
       this.activeControl.firstChild.classList.add('fa-lock-open');
