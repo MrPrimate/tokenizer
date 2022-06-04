@@ -146,15 +146,15 @@ export default class View {
    */
   onMouseMove(event) {
     if (this.isColorPicking) {
-      var eventLocation = View.getEventLocation(this.canvas, event);
+      const eventLocation = View.getEventLocation(this.canvas, event);
       // Get the data of the pixel according to the location generate by the getEventLocation function
-      var pixelData = this.canvas.getContext('2d').getImageData(eventLocation.x, eventLocation.y, 1, 1).data;
+      const pixelData = this.canvas.getContext('2d').getImageData(eventLocation.x, eventLocation.y, 1, 1).data;
       // If transparency on the pixel , array = [0,0,0,0]
       if (pixelData[0] == 0 && pixelData[1] == 0 && pixelData[2] == 0 && pixelData[3] == 0) {
         // Do something if the pixel is transparent
       }
       // Convert it to HEX if you want using the rgbToHex method.
-      var hex = '#' + ('000000' + Utils.rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
+      const hex = '#' + ('000000' + Utils.rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
 
       // update the layer
       // let layer = this.layers.find(layer => layer.id === this.colorPickingForLayer);
@@ -168,13 +168,14 @@ export default class View {
 
     if (this.activeLayer === null) return;
     if (!this.isDragging) return;
-    let delta = {
+
+    const delta = {
       x: this.lastPosition.x - event.clientX,
       y: this.lastPosition.y - event.clientY,
     };
 
     if (this.activeLayer.source !== null) {
-      this.activeLayer.translate(delta.x, delta.y);
+      this.activeLayer.translate(this.activeLayer.flipped ? -1 * delta.x : delta.x, delta.y);
       this.activeLayer.redraw();
       this.redraw();
     }
@@ -323,6 +324,9 @@ export default class View {
     control.view.addEventListener('reset', (event) => {
       this.resetLayer(event.detail.layerId);
     });
+    control.view.addEventListener('flip', (event) => {
+      this.mirrorLayer(event.detail.layerId);
+    });
     control.view.addEventListener('move', (event) => {
       // move the control in sync
       this.moveLayer(event.detail.layerId, event.detail.direction);
@@ -425,9 +429,17 @@ export default class View {
   }
 
   resetLayer(id) {
-    let layer = this.layers.find((layer) => layer.id === id);
+    const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.reset();
+      this.redraw();
+    }
+  }
+
+  mirrorLayer(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.flip();
       this.redraw();
     }
   }

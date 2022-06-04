@@ -2,8 +2,6 @@ import Utils from '../utils.js';
 import { geom } from '../marching-squares.js';
 import CONSTANTS from '../constants.js';
 
-const TO_RADIANS = Math.PI / 180;
-
 function drawRotatedImage(canvas, image, x, y, angle) {
   const context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -14,13 +12,17 @@ function drawRotatedImage(canvas, image, x, y, angle) {
   context.translate(x, y);
 
   // rotate around that point, converting our angle from degrees to radians
-  context.rotate(angle * TO_RADIANS);
+  context.rotate(angle * CONSTANTS.TO_RADIANS);
 
   // draw it up and to the left by half the width and height of the image
   context.drawImage(image, -(image.width / 2), -(image.height / 2));
 
   // and restore the co-ords to how they were when we began
   context.restore();
+}
+
+function isTransparent(pixels, x, y) {
+  return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
 }
 
 export default class Layer {
@@ -41,6 +43,11 @@ export default class Layer {
 
     // the current degree of rotation
     this.rotation = 0;
+
+    // mirror
+    this.center = { x: this.view.width / 2, y: this.view.height / 2 };
+    this.mirror = 1;
+    this.flipped = false;
 
     // canvas referencing to the source (image) that will be displayed on the view canvas
     this.source = null;
@@ -90,6 +97,27 @@ export default class Layer {
     this.maskLayerId = id;
   }
 
+  isCompletelyTransparent() {
+    const pixels = this.source.getContext('2d').getImageData(0, 0, this.source.width, this.source.height).data;
+    for (let index = 0; index < pixels.length; index += 4) {
+      if (pixels[index + 3] > CONSTANTS.TRANSPARENCY_THRESHOLD) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  isCompletelyOpaque() {
+    const pixels = this.source.getContext('2d').getImageData(0, 0, this.source.width, this.source.height).data;
+    for (let index = 0; index < pixels.length; index += 4) {
+      if (pixels[index + 3] < CONSTANTS.TRANSPARENCY_THRESHOLD) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * Creates a mask using the marching squares algorithm by walking the edges of the non-transparent pixels to find a contour.
    * Works naturally best for token images which have a circular ring-shape. The algorithm walks the contour and fills the inner regions with black, too
@@ -108,33 +136,7 @@ export default class Layer {
 
     // get the pixel data from the source image
     let context = temp.getContext('2d');
-    let pixels = context.getImageData(0, 0, this.source.width + 2, this.source.height + 2);
-
-    const transparencyThreshold = 254;
-
-    let completelyTransparent = () => {
-      let pixels = this.source.getContext('2d').getImageData(0, 0, this.source.width, this.source.height).data;
-      for (let index = 0; index < pixels.length; index += 4) {
-        if (pixels[index + 3] > transparencyThreshold) {
-          return false;
-        }
-      }
-
-      return true;
-    };
-    let completelyOpaque = () => {
-      let pixels = this.source.getContext('2d').getImageData(0, 0, this.source.width, this.source.height).data;
-      for (let index = 0; index < pixels.length; index += 4) {
-        if (pixels[index + 3] < transparencyThreshold) {
-          return false;
-        }
-      }
-      return true;
-    };
-
-    let isTransparent = (x, y) => {
-      return transparencyThreshold < pixels.data[(((y * pixels.width) + x) * 4) + 3];
-    };
+    const pixels = context.getImageData(0, 0, this.source.width + 2, this.source.height + 2);
 
     // re-use the intermediate canvas
     context.fillStyle = game.settings.get("vtta-tokenizer", "default-color");
@@ -142,22 +144,22 @@ export default class Layer {
     context.lineWidth = 1;
 
     // the mask is totally transparent
-    if (completelyTransparent()) {
+    if (this.isCompletelyTransparent()) {
       context.clearRect(0, 0, temp.width, temp.height);
     } else {
       // eslint-disable-next-line no-lonely-if
-      if (completelyOpaque()) {
+      if (this.isCompletelyOpaque()) {
         context.clearRect(0, 0, temp.width, temp.height);
         context.fillRect(0, 0, temp.width, temp.height);
         context.fill();
       } else {
         // process the pixel data
-        var points = geom.contour(isTransparent);
+        const points = geom.contour((x, y) => isTransparent(pixels, x, y));
         context.clearRect(0, 0, temp.width, temp.height);
         context.beginPath();
         context.moveTo(points[0][0], points[0][4]);
-        for (var i = 1; i < points.length; i++) {
-          var point = points[i];
+        for (let i = 1; i < points.length; i++) {
+          const point = points[i];
           context.lineTo(point[0], point[1]);
         }
         context.closePath();
@@ -191,7 +193,7 @@ export default class Layer {
   /**
    * Removes the application of the current set mask, but does not delete said mask from the object
    */
-  unapplyMask() {
+  removeMask() {
     this.masked = false;
     this.redraw();
   }
@@ -239,13 +241,8 @@ export default class Layer {
 
   reset() {
     this.scale = this.width / Math.max(this.source.width, this.source.height);
-
     this.rotation = 0;
-
-    // set initial position: x
     this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
-
-    // set initial position: y
     this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
     this.redraw();
   }
@@ -288,6 +285,13 @@ export default class Layer {
     this.rotation += degree * 2;
   }
 
+  flip() {
+    this.mirror *= -1;
+    this.flipped = !this.flipped;
+    this.redraw();
+    this.mirror *= -1;
+  }
+
   /**
    * Refreshes the view canvas with the background color and/or the source image
    */
@@ -300,6 +304,11 @@ export default class Layer {
       context.fillStyle = this.color;
       context.fillRect(0, 0, this.width, this.height);
     }
+
+    // mirror image?
+    context.translate(this.center.x, this.center.y);
+    context.scale(this.mirror * 1, 1);
+    context.translate(-this.center.x, -this.center.y);
 
     // draw the source
     if (this.source !== null) {

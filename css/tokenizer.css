@@ -61,7 +61,6 @@
   align-items: center;
   border: thin solid rgb(149, 159, 168);
   background-color: rgb(194, 194, 194);
-  padding: 2px;
   margin-right: 5px;
 }
 
@@ -81,12 +80,11 @@
 }
 #vtta-tokenizer div.view-layer-control button,
 #vtta-tokenizer button {
-  border-radius: 8px;
   border: thin solid black;
   height: 30px;
   width: 30px;
   padding: 5px;
-  margin: 5px;
+  margin: 4px;
   -webkit-appearance: none;
   -webkit-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);

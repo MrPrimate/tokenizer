@@ -133,16 +133,30 @@ export default class Control {
       }
     });
 
-    // resets the layer on the view
-    this.centerControl = document.createElement('button');
-    this.centerControl.classList.add('reset-control');
-    this.centerControl.title = "Reset layer";
-    let centerButtonText = document.createElement('i');
-    centerButtonText.classList.add('fas', 'fa-compress-arrows-alt');
-    this.centerControl.appendChild(centerButtonText);
+    // Makes flips the layer
+    this.flipControl = document.createElement('button');
+    this.flipControl.title = "Flip/Mirror layer";
+    this.flipControl.classList.add('flip-control');
+    let flipButtonText = document.createElement('i');
+    flipButtonText.classList.add('fas', 'fa-people-arrows');
+    this.flipControl.appendChild(flipButtonText);
 
     // send an activate event when clicked
-    this.centerControl.addEventListener('click', (event) => {
+    this.flipControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('flip', { detail: { layerId: this.layer.id } }));
+    });
+
+    // resets the layer on the view
+    this.resetControl = document.createElement('button');
+    this.resetControl.classList.add('reset-control');
+    this.resetControl.title = "Reset layer";
+    let resetButtonText = document.createElement('i');
+    resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
+    this.resetControl.appendChild(resetButtonText);
+
+    // send an activate event when clicked
+    this.resetControl.addEventListener('click', (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
@@ -223,7 +237,8 @@ export default class Control {
     maskManagementSection.appendChild(this.maskControl);
     this.view.appendChild(positionManagementSection);
     positionManagementSection.appendChild(this.activeControl);
-    positionManagementSection.appendChild(this.centerControl);
+    positionManagementSection.appendChild(this.flipControl);
+    positionManagementSection.appendChild(this.resetControl);
     this.view.appendChild(moveManagementSection);
     moveManagementSection.appendChild(this.moveUpControl);
     moveManagementSection.appendChild(this.moveDownControl);
