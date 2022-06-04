@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.7.3]
+
+* When setting a default token frame Tokenizer will offset an image and scale it by a default value. You can configure this in the default settings. It's currently set to match the default rings. This allows tokenizer to fit more of your image in the ring when tokenizing, and useful for the Auto-Tokenize operations.
+
 # [3.7.2]
 
 * Tokenizer will load the frames provided by the [Token Frame](https://foundryvtt.com/packages/token-frames) module by default into the Tokenizer frame selector if the module is active. You can disable this in the Tokenizer settings. Thanks @blackntan#0069 for putting a great collection together.

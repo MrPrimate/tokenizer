@@ -145,6 +145,7 @@ export async function autoToken(actor, options) {
     isWildCard: actorData.token.randomImg,
     auto: true,
     updateActor: true,
+    tokenOffset: { position: { x: -35, y: -35 }, scale: 2.162 },
   };
   const mergedOptions = mergeObject(defaultOptions, options);
   const tokenizer = new Tokenizer(mergedOptions, updateActor);

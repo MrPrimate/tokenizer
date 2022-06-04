@@ -79,7 +79,7 @@ export default class View {
           img.src = this.canvas.toDataURL();
         });
       case 'blob': {
-        const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
+        const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
         return new Promise((resolve, reject) => {
           try {
             this.canvas.toBlob((blob) => {
@@ -268,9 +268,20 @@ export default class View {
     this.redraw();
   }
 
-  addImageLayer(img, masked = false) {
+  addImageLayer(img, options) {
+    const defaultOptions = mergeObject({ masked: false }, CONSTANTS.TOKEN_OFFSET);
+    const mergedOptions = mergeObject(defaultOptions, options);
     let layer = new Layer(this.width, this.height, null);
     layer.fromImage(img);
+
+    if (mergedOptions.scale) layer.setScale(mergedOptions.scale);
+    if (mergedOptions.position.x && mergedOptions.position.y) {
+      layer.translate(mergedOptions.position.x, mergedOptions.position.y);
+      if (!mergedOptions.scale) {
+        const newScaleFactor = (this.width - (Math.abs(mergedOptions.position.x) * 2)) / this.width;
+        layer.setScale(layer.scale * newScaleFactor);
+      }
+    }
 
     // add the new image on top
     this.layers.unshift(layer);
@@ -294,7 +305,7 @@ export default class View {
       this.controls.forEach((control) => control.refresh());
     });
     // if a default mask is applied, trigger the calculation of the mask, too
-    if (masked) {
+    if (mergedOptions.masked) {
       this.activateMask(layer.id);
       control.refresh();
     }
@@ -480,6 +491,8 @@ export default class View {
     let maskLayer = undefined;
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
+
+    // console.warn("layers", this.layers);
 
     if (this.maskId !== null) {
       // get the mask layer

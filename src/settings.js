@@ -223,6 +223,15 @@ export function registerSettings() {
     default: "white",
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "default-token-offset", {
+    name: `${CONSTANTS.MODULE_ID}.default-token-offset.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-token-offset.hint`,
+    scope: "player",
+    config: true,
+    default: -35,
+    type: Number,
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "log-level", {
     name: `${CONSTANTS.MODULE_ID}.log-level.name`,
     scope: "world",

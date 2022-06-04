@@ -3,11 +3,12 @@ import logger from "../logger.js";
 import View from "./view.js";
 import DirectoryPicker from "./../libs/DirectoryPicker.js";
 import ImageBrowser from "./../libs/ImageBrowser.js";
+import CONSTANTS from "../constants.js";
 
 export default class Tokenizer extends FormApplication {
 
   getOMFGFrames() {
-    if (game.settings.get("vtta-tokenizer", "disable-omfg-frames")) return [];
+    if (game.settings.get(CONSTANTS.MODULE_ID, "disable-omfg-frames")) return [];
     if (this.omfgFrames.length > 0) return this.omfgFrames;
     logger.debug(`Checking for OMFG Token Frames files in...`);
 
@@ -31,7 +32,7 @@ export default class Tokenizer extends FormApplication {
   }
 
   async getJColsonFrames() {
-    if (!game.modules.get("token-frames")?.active || game.settings.get("vtta-tokenizer", "disable-jcolson-frames")) {
+    if (!game.modules.get("token-frames")?.active || game.settings.get(CONSTANTS.MODULE_ID, "disable-jcolson-frames")) {
       return [];
     }
     if (this.jColsonFrames.length > 0) return this.jColsonFrames;
@@ -46,10 +47,10 @@ export default class Tokenizer extends FormApplication {
   }
 
   static getDefaultFrames() {
-    const npcFrame = game.settings.get("vtta-tokenizer", "default-frame-npc");
-    const otherNPCFrame = game.settings.get("vtta-tokenizer", "default-frame-neutral");
+    const npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-npc");
+    const otherNPCFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-neutral");
     const npcDiff = npcFrame !== otherNPCFrame;
-    const setPlayerDefaultFrame = game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, "");
+    const setPlayerDefaultFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "");
     const setNPCDefaultFrame = npcFrame.replace(/^\/|\/$/g, "");
 
     const defaultFrames = [
@@ -126,7 +127,7 @@ export default class Tokenizer extends FormApplication {
   }
 
   async getFrames() {
-    const directoryPath = game.settings.get("vtta-tokenizer", "frame-directory");
+    const directoryPath = game.settings.get(CONSTANTS.MODULE_ID, "frame-directory");
     logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
     const folderFrames = (directoryPath.trim() !== "")
@@ -161,18 +162,23 @@ export default class Tokenizer extends FormApplication {
   //  tokenFilename: current tokenImage - defaults to null/mystery man
   //  targetFolder: folder to target, otherwise uses defaults, wildcard use folder derived from wildcard path
   //  isWildCard: is wildcard token?
+  //  tokenOffset: { position: {x:0, y:0} }
   //  any other items needed in callback function, options will be passed to callback, with filenames updated to new references
   //
   constructor(options, callback) {
     super({});
     this.tokenOptions = options;
+    const defaultOffset = game.settings.get(CONSTANTS.MODULE_ID, "default-token-offset");
+    this.tokenOffset = options.tokenOffset
+      ? options.tokenOffset
+      : { position: { x: defaultOffset, y: defaultOffset } };
     this.callback = callback;
-    this.tokenToggle = game.settings.get("vtta-tokenizer", "token-only-toggle");
+    this.tokenToggle = game.settings.get(CONSTANTS.MODULE_ID, "token-only-toggle");
     this.defaultFrames = Tokenizer.getDefaultFrames();
     this.frames = [];
     this.omfgFrames = [];
     this.jColsonFrames = [];
-    this.customFrames = game.settings.get("vtta-tokenizer", "custom-frames");
+    this.customFrames = game.settings.get(CONSTANTS.MODULE_ID, "custom-frames");
   }
 
   /**
@@ -191,7 +197,7 @@ export default class Tokenizer extends FormApplication {
 
   async getData() {
     const frames = await this.getFrames();
-    const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
+    const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target");
     const pasteTargetName = Utils.titleString(pasteTarget);
 
     return {
@@ -232,7 +238,7 @@ export default class Tokenizer extends FormApplication {
 
   async _getFilename(suffix = "Avatar", postfix = "") {
     const actorName = await Utils.makeSlug(this.tokenOptions.name);
-    const imageFormat = game.settings.get("vtta-tokenizer", "image-save-type");
+    const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
 
     if (suffix === "Token" && this.tokenOptions.isWildCard) {
       // for wildcards we respect the current path of the existing/provided tokenpath
@@ -289,7 +295,7 @@ export default class Tokenizer extends FormApplication {
     this.Avatar = null;
     try {
       const img = await Utils.download(url);
-      const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth, game.settings.get("vtta-tokenizer", "portrait-size"));
+      const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth, game.settings.get(CONSTANTS.MODULE_ID, "portrait-size"));
       logger.debug("Setting Avatar dimensions to " + MAX_DIMENSION + "x" + MAX_DIMENSION);
       this.Avatar = new View(MAX_DIMENSION, avatarView);
       this.Avatar.addImageLayer(img);
@@ -430,12 +436,17 @@ export default class Tokenizer extends FormApplication {
 
   async _initToken(src) {
     let imgSrc = src ?? CONST.DEFAULT_TOKEN;
+    const addFrame = game.settings.get(CONSTANTS.MODULE_ID, "add-frame-default") || this.tokenOptions.auto;
     try {
       logger.debug("Initializing Token, trying to download", imgSrc);
       const img = await Utils.download(imgSrc);
       logger.debug("Got image", img);
-      this.Token.addImageLayer(img);
-      if (game.settings.get("vtta-tokenizer", "add-frame-default") || this.tokenOptions.auto) {
+      // if we add a frame by default offset the token image
+      const options = addFrame
+        ? this.tokenOffset
+        : {};
+      this.Token.addImageLayer(img, options);
+      if (addFrame) {
         logger.debug("Loading default token frame");
         await this._setTokenFrame();
       } 
@@ -455,16 +466,16 @@ export default class Tokenizer extends FormApplication {
     const type = this.tokenOptions.type === "pc" ? "pc" : "npc";
     const nonHostile = parseInt(this.tokenOptions.disposition) !== -1;
     const npcFrame = nonHostile
-      ? game.settings.get("vtta-tokenizer", "default-frame-neutral")
-      : game.settings.get("vtta-tokenizer", "default-frame-npc");
+      ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-neutral")
+      : game.settings.get(CONSTANTS.MODULE_ID, "default-frame-npc");
     const frameTypePath = type === "pc"
-      ? game.settings.get("vtta-tokenizer", "default-frame-pc")
+      ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc")
       : npcFrame;
-    const isDefault = game.settings.get("vtta-tokenizer", "default-frame-pc").replace(/^\/|\/$/g, "") ||
+    const isDefault = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "") ||
       fileName != npcFrame.replace(/^\/|\/$/g, "");
 
     const framePath = fileName && !isDefault
-      ? `${game.settings.get("vtta-tokenizer", "frame-directory")}/${fileName}`
+      ? `${game.settings.get(CONSTANTS.MODULE_ID, "frame-directory")}/${fileName}`
       : fileName && isDefault
         ? fileName.replace(/^\/|\/$/g, "")
         : frameTypePath.replace(/^\/|\/$/g, "");
@@ -473,7 +484,7 @@ export default class Tokenizer extends FormApplication {
       const options = DirectoryPicker.parse(fullPath ? fileName : framePath);
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, true);
+        this.Token.addImageLayer(img, { masked: true });
       } catch (error) {
         ui.notifications.error(`Failed to load frame: "${options.current}"`);
       }
@@ -481,7 +492,7 @@ export default class Tokenizer extends FormApplication {
   }
 
   pasteImage(event) {
-    const pasteTarget = game.settings.get("vtta-tokenizer", "paste-target");
+    const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target");
     const view = pasteTarget === "token" ? this.Token : this.Avatar;
     Utils.extractImage(event, view);
   }
@@ -502,11 +513,11 @@ export default class Tokenizer extends FormApplication {
 
     if (this.tokenOptions.isWildCard) {
       $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
-      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
+      this.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
       // load the default frame, if there is one set
       this._setTokenFrame();
     } else {
-      this.Token = new View(game.settings.get("vtta-tokenizer", "token-size"), tokenView);
+      this.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
 
       // Add the actor image to the token view
       this._initToken(this.tokenOptions.tokenFilename);

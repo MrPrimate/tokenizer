@@ -38,5 +38,7 @@
   "vtta-tokenizer.label.token": "Token",
   "vtta-tokenizer.label.Working": "Working...",
   "vtta-tokenizer.reset-custom-frames.name": "Reset Custom Frames?",
-  "vtta-tokenizer.reset-custom-frames.hint": "Clear Custom Frames List"
+  "vtta-tokenizer.reset-custom-frames.hint": "Clear Custom Frames List",
+  "vtta-tokenizer.default-token-offset.name": "Default Token Offset",
+  "vtta-tokenizer.default-token-offset.hint": "When auto applying a frame, how many pixels to offset image by. Will be auto scaled to match."
 }

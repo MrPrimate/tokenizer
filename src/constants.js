@@ -29,7 +29,9 @@ const CONSTANTS = {
     SATURATION: "saturation",
     COLOR: "color",
     LUMINOSITY: "luminosity",
-  }
+  },
+  // null scale results in auto scaling calculation - recommended
+  TOKEN_OFFSET: { position: { x: null, y: null }, scale: null },
 };
 
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_ID}/`;
