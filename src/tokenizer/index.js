@@ -484,7 +484,7 @@ export default class Tokenizer extends FormApplication {
       const options = DirectoryPicker.parse(fullPath ? fileName : framePath);
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true });
+        this.Token.addImageLayer(img, { masked: true, onTop: true });
       } catch (error) {
         ui.notifications.error(`Failed to load frame: "${options.current}"`);
       }
