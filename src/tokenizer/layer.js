@@ -28,6 +28,7 @@ export default class Layer {
     // canvas referencing to the source (image) that will be displayed on the view canvas
     this.source = Utils.cloneCanvas(this.canvas);
     // the image drawn on the source, kept for rotations
+    this.img = img;
     this.sourceImg = img.src;
 
     // active layers allow mouse events to be followed (scale/translate)
@@ -53,25 +54,6 @@ export default class Layer {
     this.color = color;
   }
 
-  static drawRotatedImage(canvas, image, x, y, angle) {
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    // save the current co-ordinate system before we screw with it
-    context.save();
-  
-    // move to the middle of where we want to draw our image
-    context.translate(x, y);
-  
-    // rotate around that point, converting our angle from degrees to radians
-    context.rotate(angle * CONSTANTS.TO_RADIANS);
-  
-    // draw it up and to the left by half the width and height of the image
-    context.drawImage(image, -(image.width / 2), -(image.height / 2));
-  
-    // and restore the co-ords to how they were when we began
-    context.restore();
-  }
-  
   static isTransparent(pixels, x, y) {
     return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
   }
@@ -338,12 +320,18 @@ export default class Layer {
         this.canvas.width,
         this.canvas.height
       );
-      context.globalCompositeOperation = "source-in";
+      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     }
 
     // scale image
     context.translate(0, 0);
-    context.drawImage(original, this.position.x, this.position.y, this.source.width * this.scale, this.source.height * this.scale);
+    context.drawImage(
+      original,
+      this.position.x,
+      this.position.y,
+      this.source.width * this.scale,
+      this.source.height * this.scale
+    );
     context.resetTransform();
 
   }
