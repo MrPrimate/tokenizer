@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.7.4]
+
+* Masking now applies only to lower layers.
+
 # [3.7.3]
 
 * When setting a default token frame Tokenizer will offset an image and scale it by a default value. You can configure this in the default settings. It's currently set to match the default rings. This allows tokenizer to fit more of your image in the ring when tokenizing, and useful for the Auto-Tokenize operations.
