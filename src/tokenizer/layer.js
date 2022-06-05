@@ -172,7 +172,9 @@ export default class Layer {
   }
 
 
-  static fromImage(view, img, height, width, color) {
+  static fromImage(view, img, canvasHeight, canvaseWidth, color) {
+    const height = Math.max(1000, canvasHeight, img.naturalHeight, img.naturalWidth);
+    const width = Math.max(1000, canvaseWidth, img.naturalHeight, img.naturalWidth);
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;

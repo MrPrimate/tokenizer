@@ -4,6 +4,7 @@
 
 * Masking now applies only to lower layers.
 * Token only modification now defaults to True.
+* Zooming in on images should now upscale to the provided images native resolution rather than capped at the saved images resolution.
 
 # [3.7.3]
 

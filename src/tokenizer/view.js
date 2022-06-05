@@ -37,7 +37,6 @@ export default class View {
     this.stage.name = 'view';
     if (element.id === "tokenizer-token") this.stage.setAttribute("id", "token-canvas");
     if (element.id === "tokenizer-avatar") this.stage.setAttribute("id", "avatar-canvas");
-    // if (element.id === "tokenizer-token") this.stage.setAttribute("contenteditable", "true");
 
     // The controls area for the View
     this.controlsArea = document.createElement('div');
@@ -83,10 +82,23 @@ export default class View {
         const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
         return new Promise((resolve, reject) => {
           try {
-            this.canvas.toBlob((blob) => {
-                  resolve(blob);
-                },
-                `image/${imageFormat}`);
+            const clone = Utils.cloneCanvas(this.canvas);
+            const context = clone.getContext('2d');
+            context.clearRect(0, 0, this.width, this.height);
+
+            context.drawImage(
+              this.canvas,
+              0,
+              0,
+              this.canvas.width,
+              this.canvas.height,
+              0,
+              0,
+              this.width,
+              this.height
+            );
+
+            this.canvas.toBlob((blob) => { resolve(blob) }, `image/${imageFormat}`);
           } catch (error) {
             reject(error);
           }
@@ -291,9 +303,11 @@ export default class View {
 
     if (mergedOptions.scale) layer.setScale(mergedOptions.scale);
     if (mergedOptions.position.x && mergedOptions.position.y) {
-      layer.translate(mergedOptions.position.x, mergedOptions.position.y);
+      const upScaledX = layer.canvas.width * (mergedOptions.position.x/400);
+      const upScaledY = layer.canvas.height * (mergedOptions.position.y/400);
+      layer.translate(upScaledX, upScaledY);
       if (!mergedOptions.scale) {
-        const newScaleFactor = (this.width - (Math.abs(mergedOptions.position.x) * 2)) / this.width;
+        const newScaleFactor = (layer.canvas.width - (Math.abs(upScaledX) * 2)) / layer.canvas.width;
         layer.setScale(layer.scale * newScaleFactor);
       }
     }
