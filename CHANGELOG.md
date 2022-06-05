@@ -3,6 +3,7 @@
 # [3.7.4]
 
 * Masking now applies only to lower layers.
+* Token only modification now defaults to True.
 
 # [3.7.3]
 

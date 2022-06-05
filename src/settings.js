@@ -195,7 +195,7 @@ export function registerSettings() {
     scope: "player",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "disable-omfg-frames", {
