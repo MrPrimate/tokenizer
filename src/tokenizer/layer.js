@@ -194,6 +194,17 @@ export default class Layer {
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
+    
+    const scaledWidth = img.naturalHeight > img.naturalWidth
+      ? height * (img.width / img.height)
+      : width ;
+ 
+    const scaledHeight = img.naturalWidth > img.naturalHeight
+      ? width * (img.height / img.width)
+      : height;
+
+    const yOffset = (width - scaledWidth) / 2;
+    const xOffset = (height - scaledHeight) / 2;
 
     const context = canvas.getContext("2d");
     context.drawImage(
@@ -202,10 +213,10 @@ export default class Layer {
         0,
         img.naturalWidth,
         img.naturalHeight,
-        0,
-        0,
-        width,
-        height
+        yOffset,
+        xOffset,
+        scaledWidth,
+        scaledHeight
       );
 
     const layer = new Layer(view, canvas, img, color);
