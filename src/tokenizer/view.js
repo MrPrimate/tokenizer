@@ -2,6 +2,7 @@ import Layer from './layer.js';
 import Control from './control.js';
 import Utils from '../utils.js';
 import CONSTANTS from '../constants.js';
+import logger from '../logger.js';
 
 export default class View {
   constructor(dimension, element) {
@@ -93,6 +94,18 @@ export default class View {
       }
       default:
         return Promise.resolve(this.canvas);
+    }
+  }
+
+  /**
+   * Get this mask from the layer id or default view
+   * @param {id} Number
+   */
+  getMaskLayer(id = null) {
+    if (id === null) {
+      return this.layers.find((layer) => layer.id === this.maskId);
+    } else {
+      return this.layers.find((layer) => layer.id === id);
     }
   }
 
@@ -191,7 +204,7 @@ export default class View {
    * @param {Event} event
    */
   static getEventLocation(element, event) {
-    var pos = Utils.getElementPosition(element);
+    const pos = Utils.getElementPosition(element);
 
     return {
       x: event.pageX - pos.x,
@@ -208,13 +221,13 @@ export default class View {
     event.preventDefault();
 
     if (event.shiftKey) {
-      let degree = event.deltaY / 100;
+      const degree = event.deltaY / 100;
 
       this.activeLayer.rotate(degree);
       this.activeLayer.redraw();
       this.redraw();
     } else {
-      var eventLocation = View.getEventLocation(this.canvas, event);
+      let eventLocation = View.getEventLocation(this.canvas, event);
       if (this.activeLayer.source !== null) {
         let scaleDirection = event.deltaY / 100;
         let factor = 1 - (scaleDirection * 0.05);
@@ -266,14 +279,15 @@ export default class View {
 
     this.controls.splice(index, 1);
     this.controls.forEach((control) => control.refresh());
-    this.redraw();
+    this.redraw(true);
   }
 
   addImageLayer(img, options) {
     const defaultOptions = mergeObject({ masked: false }, CONSTANTS.TOKEN_OFFSET);
     const mergedOptions = mergeObject(defaultOptions, options);
-    const layer = new Layer(this, this.width, this.height, null);
-    layer.fromImage(img);
+
+    logger.debug(`adding image layer ${img.src}`, options);
+    const layer = Layer.fromImage(this, img, this.width, this.height, null);
 
     if (mergedOptions.scale) layer.setScale(mergedOptions.scale);
     if (mergedOptions.position.x && mergedOptions.position.y) {
@@ -286,10 +300,10 @@ export default class View {
 
     // add the new image on top
     this.layers.unshift(layer);
-    this.redraw();
+    this.redraw(true);
 
     // add the control at the top of the control array
-    let control = new Control(layer, this.layers.length - 1);
+    const control = new Control(layer, this.layers.length - 1);
     this.controls.unshift(control);
 
     // add the control at the top of the control area, too
@@ -308,7 +322,7 @@ export default class View {
     // if a default mask is applied, trigger the calculation of the mask, too
     if (mergedOptions.masked) {
       this.activateMask(layer.id);
-      control.refresh();
+      this.controls.forEach((control) => control.refresh());
     }
     control.view.addEventListener('activate', (event) => {
       this.activateLayer(event.detail.layerId);
@@ -382,6 +396,13 @@ export default class View {
     this.redraw();
   }
 
+  isOriginLayerHigher(originId, targetId) {
+    if (!originId || !targetId) return undefined;
+    const originIndex = this.layers.findIndex((layer) => layer.id === originId);
+    const targetIndex = this.layers.findIndex((layer) => layer.id === targetId);
+    return targetIndex > originIndex;
+  }
+
   moveLayer(id, direction) {
     // get the index in the layers-layer for this layer;
     const sourceId = this.layers.findIndex((layer) => layer.id === id);
@@ -414,7 +435,7 @@ export default class View {
         this.controlsArea.insertBefore(sourceControl, targetControl.nextSibling);
       }
     }
-    this.redraw();
+    this.redraw(true);
   }
 
   centerLayer(id) {
@@ -466,6 +487,8 @@ export default class View {
    * @param Number | null id of the layer that should activate it's mask, if null: Activate the lowest layer with id = 0
    */
   activateMask(id = 0) {
+    logger.debug(`Toggling layer ${id} active mask`);
+    // reset existing mask provision
     const layer = this.layers.find((layer) => layer.id === id);
 
     if (layer !== null) {
@@ -479,7 +502,7 @@ export default class View {
         layer.providesMask = true;
       }
     }
-    this.redraw();
+    this.redraw(true);
     return true;
   }
 
@@ -492,43 +515,42 @@ export default class View {
     }
   }
 
-  redraw() {
+  redraw(full = false) {
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
 
-    // console.warn("layers", this.layers);
+    console.warn(this);
+    console.warn("layers", this.layers);
 
-    // get the mask layer
-    const maskLayer = this.maskId
-      ? this.layers.find((layer) => layer.id === this.maskId)
-      : null;
-
-    if (maskLayer) {
-      // draw the mask at the same position and scale as the source of the layer itself
-      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-      context.drawImage(
-          maskLayer.sourceMask,
-          maskLayer.position.x,
-          maskLayer.position.y,
-          maskLayer.source.width * maskLayer.scale,
-          maskLayer.source.height * maskLayer.scale
-      );
-
-      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_ATOP;
-    } else {
-      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-    }
-    // draw all the layers on top of each other
-    for (let i = this.layers.length - 1; i >= 0; i--) {
-      context.drawImage(this.layers[i].canvas, 0, 0, this.width, this.height);
+    if (full) {
+      logger.debug("Full redraw triggered");
+      this.layers.forEach((layer) => {
+        layer.redraw();
+      });
     }
 
-    // if defined as the top layer
-    // draw the mask again on top as clipping may have happened to semi-transparent pixels
-    
-    if (maskLayer && this.layers[0].id == maskLayer.id) {
-      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-      context.drawImage(maskLayer.canvas, 0, 0, this.width, this.height);
+    // loop through each layer, and apply the layer to the canvas
+    for (let index = this.layers.length - 1; index >= 0; index--) {
+      const layer = this.layers[index];
+      if (layer.visible) {
+        logger.debug(`Drawing layer ${layer.id} for ${layer.sourceImg}`);
+
+        context.globalCompositeOperation = layer.compositeOperation;
+        context.globalAlpha = layer.alpha;
+
+        context.drawImage(
+          layer.canvas,
+          0,
+          0,
+          layer.canvas.width,
+          layer.canvas.height,
+          0,
+          0,
+          this.width,
+          this.height
+        );
+      }
     }
+
   }
 }

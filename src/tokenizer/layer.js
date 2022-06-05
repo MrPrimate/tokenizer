@@ -2,36 +2,11 @@ import Utils from '../utils.js';
 import { geom } from '../marching-squares.js';
 import CONSTANTS from '../constants.js';
 
-function drawRotatedImage(canvas, image, x, y, angle) {
-  const context = canvas.getContext('2d');
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  // save the current co-ordinate system before we screw with it
-  context.save();
-
-  // move to the middle of where we want to draw our image
-  context.translate(x, y);
-
-  // rotate around that point, converting our angle from degrees to radians
-  context.rotate(angle * CONSTANTS.TO_RADIANS);
-
-  // draw it up and to the left by half the width and height of the image
-  context.drawImage(image, -(image.width / 2), -(image.height / 2));
-
-  // and restore the co-ords to how they were when we began
-  context.restore();
-}
-
-function isTransparent(pixels, x, y) {
-  return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
-}
-
 export default class Layer {
-  constructor(view, width, height, color = null) {
+  constructor(view, canvas, img, color = null) {
     this.view = view;
     this.id = Utils.generateUUID();
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.canvas = canvas;
 
     // the current position of the source image on the view canvas
     this.position = {
@@ -51,9 +26,9 @@ export default class Layer {
     this.flipped = false;
 
     // canvas referencing to the source (image) that will be displayed on the view canvas
-    this.source = null;
+    this.source = Utils.cloneCanvas(this.canvas);
     // the image drawn on the source, kept for rotations
-    this.sourceImg = null;
+    this.sourceImg = img.src;
 
     // active layers allow mouse events to be followed (scale/translate)
     this.active = false;
@@ -68,16 +43,37 @@ export default class Layer {
     this.masked = false;
     this.sourceMask = null;
     this.mask = null;
-    this.maskLayerId = null;
-
-    // initialize with color
-    this.previousColor = null;
-    this.color = null;
-    this.setColor(color);
 
     this.alpha = 1.0;
     this.compositeOperation = CONSTANTS.BLEND_MODES.DEFAULT;
     this.visible = true;
+
+    // initialize with color
+    this.previousColor = null;
+    this.color = color;
+  }
+
+  static drawRotatedImage(canvas, image, x, y, angle) {
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    // save the current co-ordinate system before we screw with it
+    context.save();
+  
+    // move to the middle of where we want to draw our image
+    context.translate(x, y);
+  
+    // rotate around that point, converting our angle from degrees to radians
+    context.rotate(angle * CONSTANTS.TO_RADIANS);
+  
+    // draw it up and to the left by half the width and height of the image
+    context.drawImage(image, -(image.width / 2), -(image.height / 2));
+  
+    // and restore the co-ords to how they were when we began
+    context.restore();
+  }
+  
+  static isTransparent(pixels, x, y) {
+    return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
   }
 
   /**
@@ -92,10 +88,6 @@ export default class Layer {
    */
   deactivate() {
     this.active = false;
-  }
-
-  setMaskLayerId(id) {
-    this.maskLayerId = id;
   }
 
   isCompletelyTransparent() {
@@ -155,7 +147,7 @@ export default class Layer {
         context.fill();
       } else {
         // process the pixel data
-        const points = geom.contour((x, y) => isTransparent(pixels, x, y));
+        const points = geom.contour((x, y) => Layer.isTransparent(pixels, x, y));
         context.clearRect(0, 0, temp.width, temp.height);
         context.beginPath();
         context.moveTo(points[0][0], points[0][4]);
@@ -188,7 +180,7 @@ export default class Layer {
       this.mask = mask;
     }
     this.masked = true;
-    this.redraw();
+    // this.redraw();
   }
 
   /**
@@ -196,32 +188,34 @@ export default class Layer {
    */
   removeMask() {
     this.masked = false;
-    this.redraw();
+    // this.redraw();
   }
 
-  /**
-   * Loads an image on the source canvas and centers it on the view canvas
-   */
-  fromImage(img) {
-    // create a new canvas element for the new source
-    this.sourceImg = img;
-    this.source = document.createElement('canvas');
 
-    // set dimensions to the image's natural dimensions
-    this.source.width = img.naturalWidth;
-    this.source.height = img.naturalHeight;
+  static fromImage(view, img, height, width, color) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
 
-    this.reset();
+    const context = canvas.getContext("2d");
+    context.drawImage(
+        img,
+        0,
+        0,
+        img.naturalWidth,
+        img.naturalHeight,
+        0,
+        0,
+        width,
+        height
+      );
 
-    // draw the image on the source
-    this.source.getContext('2d').drawImage(img, 0, 0, this.source.width, this.source.height);
-
-    // create a mask for it in advance
-    this.createMask();
-
-    // redraw the canvas
-    this.redraw();
+    const layer = new Layer(view, canvas, img, color);
+    layer.createMask();
+    layer.redraw();
+    return layer;
   }
+
 
   /**
    * Sets the background color for this layer. It will be masked, too
@@ -238,6 +232,7 @@ export default class Layer {
 
   restoreColor() {
     this.color = this.previousColor;
+    this.redraw();
   }
 
   reset() {
@@ -270,7 +265,7 @@ export default class Layer {
   translate(dx, dy) {
     this.position.x -= dx;
     this.position.y -= dy;
-    this.redraw();
+    // this.redraw();
   }
 
   /**
@@ -279,7 +274,6 @@ export default class Layer {
    */
   setScale(factor) {
     this.scale = factor;
-    this.redraw();
   }
 
   rotate(degree) {
@@ -290,43 +284,60 @@ export default class Layer {
     this.mirror *= -1;
     this.flipped = !this.flipped;
     this.redraw();
-    this.mirror *= -1;
+    // this.mirror *= -1;
   }
 
   /**
    * Refreshes the view canvas with the background color and/or the source image
    */
   redraw() {
-    const context = this.canvas.getContext('2d');
-    context.clearRect(0, 0, this.width, this.height);
+    console.warn(`redraw called for layer ${this.id}`);
+    console.warn(this);
+    // we take the original image and apply our scaling transformations
+    const original = Utils.cloneCanvas(this.source);
 
-    // is a background color set?
+    const computedLayer = original.getContext("2d");
+    computedLayer.resetTransform();
+    computedLayer.clearRect(0, 0, this.source.width, this.source.height);
     if (this.color !== null) {
-      context.fillStyle = this.color;
-      context.fillRect(0, 0, this.width, this.height);
+      computedLayer.fillStyle = this.color;
+      computedLayer.fillRect(0, 0, this.width, this.height);
     }
+    computedLayer.translate(this.center.x, this.center.y);
+    computedLayer.scale(this.mirror * 1, 1);
+    computedLayer.rotate(this.rotation * CONSTANTS.TO_RADIANS);
+    computedLayer.translate(-this.center.x, -this.center.y);
+    computedLayer.drawImage(this.source, 0, 0);
+    computedLayer.resetTransform();
 
-    // mirror image?
-    context.translate(this.center.x, this.center.y);
-    context.scale(this.mirror * 1, 1);
-    context.translate(-this.center.x, -this.center.y);
+    // place the computed layer on the view canvas
 
-    // draw the source
-    if (this.source !== null) {
-      drawRotatedImage(
-        this.source,
-        this.sourceImg,
-        Math.round(this.sourceImg.naturalWidth / 2),
-        Math.round(this.sourceImg.naturalHeight / 2),
-        this.rotation
-      );
+    const context = this.canvas.getContext("2d");
+    context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+    context.clearRect(0, 0, this.source.width, this.source.height);
+    context.resetTransform();
+
+    // we apply the mask if the layer is below the masking layer
+    if (this.view.isOriginLayerHigher(this.view.maskId, this.id)) {
+      const maskLayer = this.view.getMaskLayer(this.view.maskId);
       context.drawImage(
-        this.source,
-        this.position.x,
-        this.position.y,
-        this.source.width * this.scale,
-        this.source.height * this.scale
+        maskLayer.sourceMask,
+        0,
+        0,
+        maskLayer.width,
+        maskLayer.height,
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
       );
+      context.globalCompositeOperation = "source-in";
     }
+
+    // scale image
+    context.translate(0, 0);
+    context.drawImage(original, this.position.x, this.position.y, this.source.width * this.scale, this.source.height * this.scale);
+    context.resetTransform();
+
   }
 }

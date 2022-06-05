@@ -44,7 +44,7 @@ export default class Utils {
   }
 
   static getElementPosition(obj) {
-    var curleft = 0,
+    let curleft = 0,
       curtop = 0;
     if (obj.offsetParent) {
       do {
@@ -284,6 +284,14 @@ export default class Utils {
         reader.readAsDataURL(blob);
       }
     }
+  }
+
+  static cloneCanvas(sourceCanvas) {
+    const cloneCanvas = document.createElement("canvas");
+    cloneCanvas.width = sourceCanvas.width;
+    cloneCanvas.height = sourceCanvas.height;
+    cloneCanvas.getContext("2d").drawImage(sourceCanvas, 0, 0);
+    return cloneCanvas;
   }
 
 }
