@@ -519,8 +519,8 @@ export default class View {
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
 
-    console.warn(this);
-    console.warn("layers", this.layers);
+    // console.warn(this);
+    // console.warn("layers", this.layers);
 
     if (full) {
       logger.debug("Full redraw triggered");

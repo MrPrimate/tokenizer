@@ -180,7 +180,6 @@ export default class Layer {
       this.mask = mask;
     }
     this.masked = true;
-    // this.redraw();
   }
 
   /**
@@ -188,7 +187,6 @@ export default class Layer {
    */
   removeMask() {
     this.masked = false;
-    // this.redraw();
   }
 
 
@@ -291,8 +289,6 @@ export default class Layer {
    * Refreshes the view canvas with the background color and/or the source image
    */
   redraw() {
-    console.warn(`redraw called for layer ${this.id}`);
-    console.warn(this);
     // we take the original image and apply our scaling transformations
     const original = Utils.cloneCanvas(this.source);
 
