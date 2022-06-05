@@ -272,7 +272,7 @@ export default class View {
   addImageLayer(img, options) {
     const defaultOptions = mergeObject({ masked: false }, CONSTANTS.TOKEN_OFFSET);
     const mergedOptions = mergeObject(defaultOptions, options);
-    let layer = new Layer(this.width, this.height, null);
+    const layer = new Layer(this, this.width, this.height, null);
     layer.fromImage(img);
 
     if (mergedOptions.scale) layer.setScale(mergedOptions.scale);
@@ -349,7 +349,7 @@ export default class View {
    * @param {*} currentColor The layers current color
    */
   startColorPicking(id) {
-    let layer = this.layers.find((layer) => layer.id === id);
+    const layer = this.layers.find((layer) => layer.id === id);
     layer.saveColor();
     // move the control in sync
     this.isColorPicking = true;
@@ -373,7 +373,7 @@ export default class View {
     }
 
     // refreshing the control
-    let control = this.controls.find((control) => control.layer.id === this.colorPickingForLayer.id);
+    const control = this.controls.find((control) => control.layer.id === this.colorPickingForLayer.id);
     control.endColorPicking();
 
     this.colorPickingForLayer = null;
@@ -384,27 +384,20 @@ export default class View {
 
   moveLayer(id, direction) {
     // get the index in the layers-layer for this layer;
-    let index = 0;
-    for (index = 0; index < this.layers.length; index++) {
-      if (this.layers[index].id === id) {
-        break;
-      }
-    }
+    const sourceId = this.layers.findIndex((layer) => layer.id === id);
     // check for validity
-    let sourceId = index;
-    let targetId = null;
-    if (direction === 'up') {
-      targetId = sourceId - 1;
-    } else {
-      targetId = sourceId + 1;
-    }
+    const targetId = sourceId == -1 
+      ? -1
+      : (direction === 'up') 
+        ? sourceId - 1 
+        : sourceId + 1;
     // check if a valid targetID was derived
     if (this.layers[targetId] !== undefined) {
       // swap the elements
       [this.layers[sourceId], this.layers[targetId]] = [this.layers[targetId], this.layers[sourceId]];
       // swap the corresponding controls, too
-      let sourceControl = this.controlsArea.children[sourceId];
-      let targetControl = this.controlsArea.children[targetId];
+      const sourceControl = this.controlsArea.children[sourceId];
+      const targetControl = this.controlsArea.children[targetId];
 
       // swap the elements and enable/disable move controls if they are at the bottom or top
       if (direction === 'up') {
@@ -473,7 +466,7 @@ export default class View {
    * @param Number | null id of the layer that should activate it's mask, if null: Activate the lowest layer with id = 0
    */
   activateMask(id = 0) {
-    let layer = this.layers.find((layer) => layer.id === id);
+    const layer = this.layers.find((layer) => layer.id === id);
 
     if (layer !== null) {
       // check if this layer currently provides the mask
@@ -492,7 +485,7 @@ export default class View {
 
   // eslint-disable-next-line default-param-last
   setColor(id = 0, hexColorString) {
-    let layer = this.layers.find((layer) => layer.id === id);
+    const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.setColor(hexColorString);
       this.redraw();
@@ -500,15 +493,17 @@ export default class View {
   }
 
   redraw() {
-    let maskLayer = undefined;
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
 
     // console.warn("layers", this.layers);
 
-    if (this.maskId !== null) {
-      // get the mask layer
-      maskLayer = this.layers.find((layer) => layer.id === this.maskId);
+    // get the mask layer
+    const maskLayer = this.maskId
+      ? this.layers.find((layer) => layer.id === this.maskId)
+      : null;
+
+    if (maskLayer) {
       // draw the mask at the same position and scale as the source of the layer itself
       context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
       context.drawImage(
@@ -525,16 +520,15 @@ export default class View {
     }
     // draw all the layers on top of each other
     for (let i = this.layers.length - 1; i >= 0; i--) {
-      context.drawImage(this.layers[i].view, 0, 0, this.width, this.height);
+      context.drawImage(this.layers[i].canvas, 0, 0, this.width, this.height);
     }
 
+    // if defined as the top layer
     // draw the mask again on top as clipping may have happened to semi-transparent pixels
-    // but only if defined as the top layer
-    if (maskLayer !== undefined) {
-      if (this.layers[0].id == maskLayer.id) {
-        context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-        context.drawImage(maskLayer.view, 0, 0, this.width, this.height);
-      }
+    
+    if (maskLayer && this.layers[0].id == maskLayer.id) {
+      context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+      context.drawImage(maskLayer.canvas, 0, 0, this.width, this.height);
     }
   }
 }

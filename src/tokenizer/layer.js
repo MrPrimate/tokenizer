@@ -26,11 +26,12 @@ function isTransparent(pixels, x, y) {
 }
 
 export default class Layer {
-  constructor(width, height, color = null) {
+  constructor(view, width, height, color = null) {
+    this.view = view;
     this.id = Utils.generateUUID();
-    this.view = document.createElement('canvas');
-    this.view.width = width;
-    this.view.height = height;
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = width;
+    this.canvas.height = height;
 
     // the current position of the source image on the view canvas
     this.position = {
@@ -45,7 +46,7 @@ export default class Layer {
     this.rotation = 0;
 
     // mirror
-    this.center = { x: this.view.width / 2, y: this.view.height / 2 };
+    this.center = { x: this.canvas.width / 2, y: this.canvas.height / 2 };
     this.mirror = 1;
     this.flipped = false;
 
@@ -251,14 +252,14 @@ export default class Layer {
    * Gets the width of the view canvas
    */
   get width() {
-    return this.view.width;
+    return this.canvas.width;
   }
 
   /**
    * Gets the height of the view canvas
    */
   get height() {
-    return this.view.height;
+    return this.canvas.height;
   }
 
   /**
@@ -296,7 +297,7 @@ export default class Layer {
    * Refreshes the view canvas with the background color and/or the source image
    */
   redraw() {
-    const context = this.view.getContext('2d');
+    const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
 
     // is a background color set?

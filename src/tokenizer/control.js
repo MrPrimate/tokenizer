@@ -227,7 +227,7 @@ export default class Control {
 
     // push all elements to the control's view
     this.view.appendChild(previewSection);
-    previewSection.appendChild(this.layer.view);
+    previewSection.appendChild(this.layer.canvas);
     this.view.appendChild(colorManagementSection);
     colorManagementSection.appendChild(this.colorSelector);
     colorManagementSection.appendChild(this.colorSelectorProxy);
