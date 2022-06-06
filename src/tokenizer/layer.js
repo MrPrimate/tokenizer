@@ -1,7 +1,6 @@
 import Utils from '../utils.js';
 import { geom } from '../marching-squares.js';
 import CONSTANTS from '../constants.js';
-import logger from '../logger.js';
 
 export default class Layer {
   constructor(view, canvas, img = null, color = null) {
@@ -105,7 +104,6 @@ export default class Layer {
    * this.applyMask(mask | null), see above
    */
   createMask() {
-    console.warn("Create mask triggered");
     // create intermediate canvas
     const temp = document.createElement('canvas');
     // create a canvas that has at least a 1px transparent border all around

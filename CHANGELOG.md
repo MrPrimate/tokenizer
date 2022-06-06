@@ -5,7 +5,7 @@
 * Masking now applies only to lower layers.
 * Token only modification now defaults to True.
 * Zooming in on images should now upscale to the provided images native resolution rather than capped at the saved images resolution.
-* Colour tinting is now specific to "color layers", it will add a colour layer by default, using the default background color. This can be disabled in teh Tokenizer settings. This allows tokens with transparent middles.
+* Colour tinting is now specific to new "color layers", it will add a colour layer by default, using the default background color. This can be disabled in teh Tokenizer settings. This allows tokens with transparent middles.
 * If there are any CSS gurus who are begging to help fix some of the slight wonkyness on the controls, please help :)
 
 # [3.7.3]
