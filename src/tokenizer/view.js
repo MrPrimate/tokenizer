@@ -31,6 +31,7 @@ export default class View {
     // the user wants to retrieve a color from the view's layers
     this.isColorPicking = false;
     this.colorPickingForLayer = null;
+    this.colorPickingLayerId = null;
 
     // The working stage for the View
     this.stage = document.createElement('div');
@@ -98,7 +99,9 @@ export default class View {
               this.height
             );
 
-            this.canvas.toBlob((blob) => { resolve(blob) }, `image/${imageFormat}`);
+            this.canvas.toBlob((blob) => {
+              resolve(blob);
+            }, `image/${imageFormat}`);
           } catch (error) {
             reject(error);
           }
@@ -200,10 +203,12 @@ export default class View {
     };
 
     if (this.activeLayer.source !== null) {
-      this.activeLayer.translate(this.activeLayer.flipped ? -1 * delta.x : delta.x, delta.y);
-      this.activeLayer.redraw();
-      this.redraw();
+      // this.activeLayer.translate(this.activeLayer.flipped ? -1 * delta.x : delta.x, delta.y);
+      this.activeLayer.translate(delta.x, delta.y);
     }
+    if (this.activeLayer.masked) this.activeLayer.createMask();
+    this.activeLayer.redraw();
+    this.redraw(this.activeLayer.masked);
     this.lastPosition = {
       x: event.clientX,
       y: event.clientY,
@@ -239,18 +244,18 @@ export default class View {
       this.activeLayer.redraw();
       this.redraw();
     } else {
-      let eventLocation = View.getEventLocation(this.canvas, event);
+      const eventLocation = View.getEventLocation(this.canvas, event);
       if (this.activeLayer.source !== null) {
-        let scaleDirection = event.deltaY / 100;
-        let factor = 1 - (scaleDirection * 0.05);
-
-        let dx = (eventLocation.x - this.activeLayer.position.x) * (factor - 1),
+        const scaleDirection = event.deltaY / 100;
+        const factor = 1 - (scaleDirection * 0.05);
+        const dx = (eventLocation.x - this.activeLayer.position.x) * (factor - 1),
           dy = (eventLocation.y - this.activeLayer.position.y) * (factor - 1);
 
         this.activeLayer.setScale(this.activeLayer.scale * factor);
         this.activeLayer.translate(dx, dy);
+        if (this.activeLayer.masked) this.activeLayer.createMask();
         this.activeLayer.redraw();
-        this.redraw();
+        this.redraw(this.activeLayer.masked);
       }
     }
   }
@@ -295,16 +300,24 @@ export default class View {
   }
 
   addImageLayer(img, options) {
-    const defaultOptions = mergeObject({ masked: false }, CONSTANTS.TOKEN_OFFSET);
+    const defaults = { masked: false, colorLayer: false, color: null, activate: false };
+    const defaultOptions = mergeObject(defaults, CONSTANTS.TOKEN_OFFSET);
     const mergedOptions = mergeObject(defaultOptions, options);
 
-    logger.debug(`adding image layer ${img.src}`, options);
-    const layer = Layer.fromImage(this, img, this.width, this.height, null);
+    if (mergedOptions.colorLayer) {
+      logger.debug(`adding color layer`, options);
+    } else {
+      logger.debug(`adding image layer ${img.src}`, options);
+    }
+
+    const layer = mergedOptions.colorLayer
+      ? Layer.fromColor(this, mergedOptions.color, this.width, this.height)
+      : Layer.fromImage(this, img, this.width, this.height);
 
     if (mergedOptions.scale) layer.setScale(mergedOptions.scale);
     if (mergedOptions.position.x && mergedOptions.position.y) {
-      const upScaledX = layer.canvas.width * (mergedOptions.position.x/400);
-      const upScaledY = layer.canvas.height * (mergedOptions.position.y/400);
+      const upScaledX = layer.canvas.width * (mergedOptions.position.x / 400);
+      const upScaledY = layer.canvas.height * (mergedOptions.position.y / 400);
       layer.translate(upScaledX, upScaledY);
       if (!mergedOptions.scale) {
         const newScaleFactor = (layer.canvas.width - (Math.abs(upScaledX) * 2)) / layer.canvas.width;
@@ -342,6 +355,10 @@ export default class View {
       this.activateLayer(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
     });
+    if (mergedOptions.activate) {
+      this.activateLayer(layer.id);
+      this.controls.forEach((control) => control.refresh());
+    }
     control.view.addEventListener('deactivate', () => {
       this.deactivateLayers();
       this.controls.forEach((control) => control.refresh());
@@ -505,7 +522,7 @@ export default class View {
     // reset existing mask provision
     const layer = this.layers.find((layer) => layer.id === id);
 
-    if (layer !== null) {
+    if (layer) {
       // check if this layer currently provides the mask
       if (layer.providesMask === true) {
         layer.providesMask = false;
@@ -514,6 +531,7 @@ export default class View {
         this.maskId = id;
         this.layers.forEach((layer) => (layer.providesMask = false));
         layer.providesMask = true;
+        layer.applyMask();
       }
     }
     this.redraw(true);
@@ -524,6 +542,7 @@ export default class View {
   setColor(id = 0, hexColorString) {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
+      logger.debug('Setting color for layer', { layer, hexColorString });
       layer.setColor(hexColorString);
       this.redraw();
     }
@@ -539,6 +558,7 @@ export default class View {
     if (full) {
       logger.debug("Full redraw triggered");
       this.layers.forEach((layer) => {
+        if (layer.masked) layer.createMask();
         layer.redraw();
       });
     }

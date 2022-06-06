@@ -164,7 +164,7 @@ export default class Control {
     // the move up/down order section
     let moveManagementSection = document.createElement('div');
     moveManagementSection.classList.add('move-control');
-    moveManagementSection.name = 'color-management';
+    moveManagementSection.name = 'move-management';
     moveManagementSection.classList.add('section');
 
     // moving up
@@ -228,17 +228,21 @@ export default class Control {
     // push all elements to the control's view
     this.view.appendChild(previewSection);
     previewSection.appendChild(this.layer.canvas);
-    this.view.appendChild(colorManagementSection);
-    colorManagementSection.appendChild(this.colorSelector);
-    colorManagementSection.appendChild(this.colorSelectorProxy);
-    colorManagementSection.appendChild(this.clearColor);
-    colorManagementSection.appendChild(this.getColor);
     this.view.appendChild(maskManagementSection);
     maskManagementSection.appendChild(this.maskControl);
-    this.view.appendChild(positionManagementSection);
-    positionManagementSection.appendChild(this.activeControl);
-    positionManagementSection.appendChild(this.flipControl);
-    positionManagementSection.appendChild(this.resetControl);
+    if (this.layer.colorLayer) {
+      this.view.appendChild(colorManagementSection);
+      colorManagementSection.appendChild(this.colorSelector);
+      colorManagementSection.appendChild(this.colorSelectorProxy);
+      colorManagementSection.appendChild(this.clearColor);
+      colorManagementSection.appendChild(this.getColor);
+      this.maskControl.disabled = true;
+    } else {
+      this.view.appendChild(positionManagementSection);
+      positionManagementSection.appendChild(this.activeControl);
+      positionManagementSection.appendChild(this.flipControl);
+      positionManagementSection.appendChild(this.resetControl);
+    }
     this.view.appendChild(moveManagementSection);
     moveManagementSection.appendChild(this.moveUpControl);
     moveManagementSection.appendChild(this.moveDownControl);

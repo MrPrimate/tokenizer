@@ -187,7 +187,7 @@ export default class Tokenizer extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.template = "modules/vtta-tokenizer/templates/tokenizer.hbs";
-    options.width = 900;
+    options.width = "auto";
     options.height = "auto";
     options.classes = ["tokenizer"];
     return options;
@@ -386,7 +386,12 @@ export default class Tokenizer extends FormApplication {
           break;
         }
         case "avatar": {
-          this.Avatar.get("img").then((img) => view.addImageLayer(img));
+          this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true }));
+          break;
+        }
+        case "color": {
+          const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
+          view.addImageLayer(null, { colorLayer: true, color: defaultColor });
           break;
         }
         case "tokenVariants": {
@@ -441,6 +446,11 @@ export default class Tokenizer extends FormApplication {
       logger.debug("Initializing Token, trying to download", imgSrc);
       const img = await Utils.download(imgSrc);
       logger.debug("Got image", img);
+
+      if (game.settings.get(CONSTANTS.MODULE_ID, "default-color-layer")) {
+        const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
+        this.Token.addImageLayer(null, { colorLayer: true, color: defaultColor });
+      }
       // if we add a frame by default offset the token image
       const options = addFrame
         ? this.tokenOffset

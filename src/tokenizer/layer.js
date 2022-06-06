@@ -1,9 +1,10 @@
 import Utils from '../utils.js';
 import { geom } from '../marching-squares.js';
 import CONSTANTS from '../constants.js';
+import logger from '../logger.js';
 
 export default class Layer {
-  constructor(view, canvas, img, color = null) {
+  constructor(view, canvas, img = null, color = null) {
     this.view = view;
     this.id = Utils.generateUUID();
     this.canvas = canvas;
@@ -28,8 +29,10 @@ export default class Layer {
     // canvas referencing to the source (image) that will be displayed on the view canvas
     this.source = Utils.cloneCanvas(this.canvas);
     // the image drawn on the source, kept for rotations
-    this.img = img;
-    this.sourceImg = img.src;
+    if (img) {
+      this.img = img;
+      this.sourceImg = img.src;
+    }
 
     // active layers allow mouse events to be followed (scale/translate)
     this.active = false;
@@ -52,6 +55,7 @@ export default class Layer {
     // initialize with color
     this.previousColor = null;
     this.color = color;
+    this.colorLayer = color !== null;
   }
 
   static isTransparent(pixels, x, y) {
@@ -101,45 +105,44 @@ export default class Layer {
    * this.applyMask(mask | null), see above
    */
   createMask() {
+    console.warn("Create mask triggered");
     // create intermediate canvas
-    let temp = document.createElement('canvas');
+    const temp = document.createElement('canvas');
     // create a canvas that has at least a 1px transparent border all around
     // so the marching squares algorithm won't run endlessly
-    temp.width = this.source.width + 2;
-    temp.height = this.source.height + 2;
-    temp.getContext('2d').drawImage(this.source, 1, 1, this.source.width, this.source.height);
+    temp.width = this.canvas.width + 2;
+    temp.height = this.canvas.height + 2;
+    temp.getContext('2d').drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height);
 
     // get the pixel data from the source image
     let context = temp.getContext('2d');
-    const pixels = context.getImageData(0, 0, this.source.width + 2, this.source.height + 2);
+    const pixels = context.getImageData(0, 0, this.canvas.width + 2, this.canvas.height + 2);
 
     // re-use the intermediate canvas
-    context.fillStyle = game.settings.get("vtta-tokenizer", "default-color");
+    const defaultFillColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
+    if (defaultFillColor !== "") context.fillStyle = defaultFillColor;
     context.strokeStyle = '#000000AA';
     context.lineWidth = 1;
 
     // the mask is totally transparent
     if (this.isCompletelyTransparent()) {
       context.clearRect(0, 0, temp.width, temp.height);
+    } else if (this.isCompletelyOpaque()) {
+      context.clearRect(0, 0, temp.width, temp.height);
+      context.fillRect(0, 0, temp.width, temp.height);
+      context.fill();
     } else {
-      // eslint-disable-next-line no-lonely-if
-      if (this.isCompletelyOpaque()) {
-        context.clearRect(0, 0, temp.width, temp.height);
-        context.fillRect(0, 0, temp.width, temp.height);
-        context.fill();
-      } else {
-        // process the pixel data
-        const points = geom.contour((x, y) => Layer.isTransparent(pixels, x, y));
-        context.clearRect(0, 0, temp.width, temp.height);
-        context.beginPath();
-        context.moveTo(points[0][0], points[0][4]);
-        for (let i = 1; i < points.length; i++) {
-          const point = points[i];
-          context.lineTo(point[0], point[1]);
-        }
-        context.closePath();
-        context.fill();
+      // process the pixel data
+      const points = geom.contour((x, y) => Layer.isTransparent(pixels, x, y));
+      context.clearRect(0, 0, temp.width, temp.height);
+      context.beginPath();
+      context.moveTo(points[0][0], points[0][4]);
+      for (let i = 1; i < points.length; i++) {
+        const point = points[i];
+        context.lineTo(point[0], point[1]);
       }
+      context.closePath();
+      context.fill();
     }
 
     // clip the canvas
@@ -171,8 +174,7 @@ export default class Layer {
     this.masked = false;
   }
 
-
-  static fromImage(view, img, canvasHeight, canvaseWidth, color) {
+  static fromImage(view, img, canvasHeight, canvaseWidth) {
     const height = Math.max(1000, canvasHeight, img.naturalHeight, img.naturalWidth);
     const width = Math.max(1000, canvaseWidth, img.naturalHeight, img.naturalWidth);
     const canvas = document.createElement("canvas");
@@ -181,7 +183,7 @@ export default class Layer {
     
     const scaledWidth = img.naturalHeight > img.naturalWidth
       ? height * (img.width / img.height)
-      : width ;
+      : width;
  
     const scaledHeight = img.naturalWidth > img.naturalHeight
       ? width * (img.height / img.width)
@@ -203,8 +205,23 @@ export default class Layer {
         scaledHeight
       );
 
-    const layer = new Layer(view, canvas, img, color);
+    const layer = new Layer(view, canvas, img);
     layer.createMask();
+    layer.redraw();
+    return layer;
+  }
+
+  static fromColor(view, color, width, height) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+    context.fillStyle = color;
+    context.rect(0, 0, canvas.width, canvas.height);
+    context.fill();
+
+    const layer = new Layer(view, canvas, null, color);
     layer.redraw();
     return layer;
   }
@@ -216,6 +233,12 @@ export default class Layer {
    */
   setColor(hexColorString = null) {
     this.color = hexColorString;
+    const context = this.canvas.getContext("2d");
+    context.fillStyle = hexColorString;
+    context.rect(0, 0, this.width, this.height);
+    context.fill();
+    this.source = Utils.cloneCanvas(this.canvas);
+
     this.redraw();
   }
 
@@ -277,7 +300,6 @@ export default class Layer {
     this.mirror *= -1;
     this.flipped = !this.flipped;
     this.redraw();
-    // this.mirror *= -1;
   }
 
   /**
@@ -290,10 +312,6 @@ export default class Layer {
     const computedLayer = original.getContext("2d");
     computedLayer.resetTransform();
     computedLayer.clearRect(0, 0, this.source.width, this.source.height);
-    if (this.color !== null) {
-      computedLayer.fillStyle = this.color;
-      computedLayer.fillRect(0, 0, this.width, this.height);
-    }
     computedLayer.translate(this.center.x, this.center.y);
     computedLayer.scale(this.mirror * 1, 1);
     computedLayer.rotate(this.rotation * CONSTANTS.TO_RADIANS);
@@ -322,11 +340,12 @@ export default class Layer {
         this.canvas.width,
         this.canvas.height
       );
+      // context.resetTransform();
       context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     }
-
-    // scale image
     context.translate(0, 0);
+
+    // apply computed image and scale
     context.drawImage(
       original,
       this.position.x,

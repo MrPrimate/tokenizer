@@ -24,6 +24,7 @@
   "vtta-tokenizer.title-link.hint": "Place the tokenizer link in the title bar?",
   "vtta-tokenizer.default-color.name": "Default background colour for token?",
   "vtta-tokenizer.default-color.hint": "Defaults to white.",
+  "vtta-tokenizer.default-color-layer.name": "Add a color layer by default?",
   "vtta-tokenizer.log-level.name": "Log level",
   "vtta-tokenizer.disable-avatar-click.name": "Disable avatar click (global default)",
   "vtta-tokenizer.disable-avatar-click.hint": "Don't open Tokenizer when avatar picture is clicked. (Shift click will still open Tokenizer).",

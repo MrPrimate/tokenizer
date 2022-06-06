@@ -121,7 +121,7 @@ export function registerSettings() {
   game.settings.register(CONSTANTS.MODULE_ID, "token-size", {
     name: `${CONSTANTS.MODULE_ID}.token-size.name`,
     hint: `${CONSTANTS.MODULE_ID}.token-size.hint`,
-    scope: "world",
+    scope: "player",
     config: true,
     type: Number,
     default: 400,
@@ -130,7 +130,7 @@ export function registerSettings() {
   game.settings.register(CONSTANTS.MODULE_ID, "portrait-size", {
     name: `${CONSTANTS.MODULE_ID}.portrait-size.name`,
     hint: `${CONSTANTS.MODULE_ID}.portrait-size.hint`,
-    scope: "world",
+    scope: "player",
     config: true,
     type: Number,
     default: 400,
@@ -217,10 +217,18 @@ export function registerSettings() {
   game.settings.register(CONSTANTS.MODULE_ID, "default-color", {
     name: `${CONSTANTS.MODULE_ID}.default-color.name`,
     hint: `${CONSTANTS.MODULE_ID}.default-color.hint`,
-    scope: "world",
+    scope: "player",
     config: true,
     type: String,
     default: "white",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-color-layer", {
+    name: `${CONSTANTS.MODULE_ID}.default-color-layer.name`,
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: true,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "default-token-offset", {
