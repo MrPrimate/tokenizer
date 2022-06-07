@@ -85,6 +85,7 @@ export function registerSettings() {
   game.settings.registerMenu(CONSTANTS.MODULE_ID, "reset-custom-frames", {
     name: `${CONSTANTS.MODULE_ID}.reset-custom-frames.name`,
     hint: `${CONSTANTS.MODULE_ID}.reset-custom-frames.hint`,
+    label: `${CONSTANTS.MODULE_ID}.reset-custom-frames.name`,
     scope: "client",
     config: true,
     type: ResetCustomFrames,
