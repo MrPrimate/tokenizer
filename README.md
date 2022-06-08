@@ -1,24 +1,28 @@
-# VTTA Tokenizer
-## Token creation made easy
+# Tokenizer
 
- You have many options:
+![Latest Release Download Count](https://img.shields.io/badge/dynamic/json?label=Downloads%20(Latest)&query=assets%5B0%5D.download_count&url=https%3A%2F%2Fapi.github.com%2Frepos%2FMrPrimate%2Ftokenizer%2Freleases%2Flatest)
+![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fvtta-tokenizer&colorB=4aa94a)
 
-- Load an image from your local harddrive (you sure have a great collection already)
-- Load an image from any URL (which is publicly accessible, and not using CORS)
-- Load an image from D&DBeyond
-- Load an image already uploaded to the Foundry server
-- Paste an image
-- Drag and drop an image
+## Quick Token Editor
+
+Load images from:
+
+- Your local computer (you sure have a great collection already)
+- A URL (which is publicly accessible, and not using CORS)
+- From D&DBeyond
+- Already exists on Foundry server
+- Pasting
+- Drag and drop
 
 Overlay this image by adding layers on top or beneath it.
 Think of it as putting sheets of paper on top of each other, each having a different cut out, therefore showing parts of the layers beneath it and covering other areas.
 You can achieve this effect by using images that are transparent in certain areas and opaque on others.
 
-### Adjust a single layer
+### Adjust a layer
 
-Rotating the image, scaling the image, or moving the image around are common requirements.
+Rotate, flip, scale, and moving the image around!
 
-First, unlock the layer by pressing the lock symbol and the layer is ready for transformation:
+Unlock the layer by pressing the lock symbol and the layer is ready for transformation:
 
 ![Layer transformation](/docs/manipulate-layer.gif)
 
@@ -27,6 +31,7 @@ Move your mouse over the image, and
 - **drag** to translate the image to any position you like
 - **scroll your mouse wheel** to zoom in and out of the image
 - **hold shift and scroll your mouse wheel** to rotate the image to your liking
+- **flip** press the flip button to flip your image
 
 ### Changing the layer order
 
