@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.8.1]
+
+* Mask detection had broken on more complicated frames where it previously worked.
+
 # [3.8.0]
 
 * Masking now applies only to lower layers.

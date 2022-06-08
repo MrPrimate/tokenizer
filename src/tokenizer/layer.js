@@ -108,13 +108,13 @@ export default class Layer {
     const temp = document.createElement('canvas');
     // create a canvas that has at least a 1px transparent border all around
     // so the marching squares algorithm won't run endlessly
-    temp.width = this.canvas.width + 2;
-    temp.height = this.canvas.height + 2;
-    temp.getContext('2d').drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height);
+    temp.width = CONSTANTS.MASK_DENSITY + 2;
+    temp.height = CONSTANTS.MASK_DENSITY + 2;
+    temp.getContext('2d').drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height, 1, 1, CONSTANTS.MASK_DENSITY, CONSTANTS.MASK_DENSITY);
 
     // get the pixel data from the source image
     let context = temp.getContext('2d');
-    const pixels = context.getImageData(0, 0, this.canvas.width + 2, this.canvas.height + 2);
+    const pixels = context.getImageData(0, 0, CONSTANTS.MASK_DENSITY + 2, CONSTANTS.MASK_DENSITY + 2);
 
     // re-use the intermediate canvas
     const defaultFillColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
@@ -143,13 +143,14 @@ export default class Layer {
       context.fill();
     }
 
+
     // clip the canvas
     this.sourceMask = document.createElement('canvas');
     this.sourceMask.width = this.source.width;
     this.sourceMask.height = this.source.height;
     this.sourceMask
       .getContext('2d')
-      .drawImage(temp, 1, 1, this.source.width, this.source.height, 0, 0, this.source.width, this.source.height);
+      .drawImage(temp, 1, 1, CONSTANTS.MASK_DENSITY, CONSTANTS.MASK_DENSITY, 0, 0, this.source.width, this.source.height);
   }
 
   /**

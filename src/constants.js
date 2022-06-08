@@ -34,6 +34,7 @@ const CONSTANTS = {
   TOKEN_OFFSET: { position: { x: null, y: null }, scale: null },
   TO_RADIANS: Math.PI / 180,
   TRANSPARENCY_THRESHOLD: 254,
+  MASK_DENSITY: 400,
 };
 
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_ID}/`;
