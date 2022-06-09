@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.8.2]
+
+* Auto Tokenize zoomed in too much.
+
 # [3.8.1]
 
 * Mask detection had broken on more complicated frames where it previously worked.
