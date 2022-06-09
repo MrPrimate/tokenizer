@@ -241,6 +241,14 @@ export function registerSettings() {
     type: Number,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "default-algorithm", {
+    name: `${CONSTANTS.MODULE_ID}.default-algorithm.name`,
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "log-level", {
     name: `${CONSTANTS.MODULE_ID}.log-level.name`,
     scope: "world",

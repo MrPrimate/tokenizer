@@ -1,6 +1,7 @@
 import Utils from '../utils.js';
-import { geom } from '../marching-squares.js';
+import { geom } from '../libs/MarchingSquares.js';
 import CONSTANTS from '../constants.js';
+import { generateRayMask } from '../libs/RayMask.js';
 
 export default class Layer {
   constructor(view, canvas, img = null, color = null) {
@@ -103,7 +104,7 @@ export default class Layer {
    *
    * this.applyMask(mask | null), see above
    */
-  createMask() {
+  createOriginalMask() {
     // create intermediate canvas
     const temp = document.createElement('canvas');
     // create a canvas that has at least a 1px transparent border all around
@@ -151,6 +152,21 @@ export default class Layer {
     this.sourceMask
       .getContext('2d')
       .drawImage(temp, 1, 1, CONSTANTS.MASK_DENSITY, CONSTANTS.MASK_DENSITY, 0, 0, this.source.width, this.source.height);
+  }
+
+  createMask() {
+    this.sourceMask = document.createElement('canvas');
+    this.sourceMask.width = this.source.width;
+    this.sourceMask.height = this.source.height;
+    const rayMask = game.settings.get(CONSTANTS.MODULE_ID, "default-algorithm");
+    if (rayMask) {
+      const mask = generateRayMask(this.canvas);
+      this.sourceMask
+        .getContext('2d')
+        .drawImage(mask, 0, 0, this.canvas.width, this.canvas.height);
+    } else {
+      this.createOriginalMask();
+    }
   }
 
   /**

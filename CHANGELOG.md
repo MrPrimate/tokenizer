@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.8.3]
+
+* Masking now attempts to use rays and Bresenhams line algorithm to improve mask detection, you can switch back to the old algorithm in the settings if it doesn't work out for you.
+
 # [3.8.2]
 
 * Auto Tokenize zoomed in too much.
