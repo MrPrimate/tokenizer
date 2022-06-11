@@ -9,7 +9,7 @@ class ImageBrowser extends FormApplication {
     let uri;
     try {
       let dir = DirectoryPicker.parse(foundryFilePath);
-      if (dir.activeSource == "data") {
+      if (dir.activeSource == "data" || dir.current.startsWith("https://")) {
         // Local on-server file system
         uri = dir.current;
       } else if (dir.activeSource == "forgevtt") {
