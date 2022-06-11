@@ -3,6 +3,8 @@
 # [3.8.3]
 
 * Masking now attempts to use rays and Bresenhams line algorithm to improve mask detection, you can switch back to the old algorithm in the settings if it doesn't work out for you.
+* Each layer can now have an Opacity/Alpha applied to it.
+* Mask Browser did not always handle S3 URLS correctly.
 
 # [3.8.2]
 
