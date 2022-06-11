@@ -331,6 +331,7 @@ export default class Layer {
     computedLayer.scale(this.mirror * 1, 1);
     computedLayer.rotate(this.rotation * CONSTANTS.TO_RADIANS);
     computedLayer.translate(-this.center.x, -this.center.y);
+    computedLayer.globalAlpha = this.alpha;
     computedLayer.drawImage(this.source, 0, 0);
     computedLayer.resetTransform();
 

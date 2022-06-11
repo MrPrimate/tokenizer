@@ -88,7 +88,7 @@ export default class Control {
     });
 
     let maskManagementSection = document.createElement('div');
-    maskManagementSection.name = 'color-management';
+    maskManagementSection.name = 'mask-management';
     maskManagementSection.classList.add('section');
     let maskManagementTitle = document.createElement('span');
     maskManagementTitle.innerHTML = 'Mask';
@@ -160,6 +160,54 @@ export default class Control {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
+
+    // resets the layer on the view
+    let opacityManagementSection = document.createElement('div');
+
+    this.opacityControl = document.createElement('button');
+    this.opacityControl.classList.add('opacity-control');
+    this.opacityControl.title = "Opacity";
+
+    let opacityButtonText = document.createElement('i');
+    opacityButtonText.classList.add('fas', 'fa-adjust');
+    this.opacityControl.appendChild(opacityButtonText);
+
+    // this.opacitySliderSpan = document.createElement('span');
+    this.opacitySliderSpan = document.createElement('div');
+    this.opacitySliderSpan.classList.add('popup');
+    // this.opacitySliderSpan.classList.add("property-attribution");
+
+    this.opacitySliderControl = document.createElement('input');
+    this.opacitySliderControl.type = 'range';
+    this.opacitySliderControl.min = 0;
+    this.opacitySliderControl.max = 100;
+    this.opacitySliderControl.value = 100;
+    this.opacitySliderControl.title = "Opacity";
+    this.opacitySliderControl.name = "opacity";
+
+    this.opacitySliderSpan.appendChild(this.opacitySliderControl);
+
+    // send an activate event when clicked
+    this.opacityControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.opacitySliderSpan.classList.toggle("show");
+    });
+
+    this.opacitySliderSpan.addEventListener('mouseleave', () => {
+      this.opacitySliderSpan.classList.remove("show");
+    });
+
+    this.opacitySliderControl.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        opacity: event.target.value,
+      };
+      this.view.dispatchEvent(new CustomEvent('opacity', { detail }));
+    });
+
+    opacityManagementSection.appendChild(this.opacityControl);
+    opacityManagementSection.appendChild(this.opacitySliderSpan);
 
     // the move up/down order section
     let moveManagementSection = document.createElement('div');
@@ -236,12 +284,14 @@ export default class Control {
       colorManagementSection.appendChild(this.colorSelectorProxy);
       colorManagementSection.appendChild(this.clearColor);
       colorManagementSection.appendChild(this.getColor);
+      colorManagementSection.appendChild(opacityManagementSection);
       this.maskControl.disabled = true;
     } else {
       this.view.appendChild(positionManagementSection);
       positionManagementSection.appendChild(this.activeControl);
       positionManagementSection.appendChild(this.flipControl);
       positionManagementSection.appendChild(this.resetControl);
+      positionManagementSection.appendChild(opacityManagementSection);
     }
     this.view.appendChild(moveManagementSection);
     moveManagementSection.appendChild(this.moveUpControl);

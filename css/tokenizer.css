@@ -346,3 +346,41 @@
   font-size: 135px;
   transform: translateX(-50%) translateY(-50%);
 }
+
+/* The actual popup */
+#vtta-tokenizer .popup {
+  box-sizing: border-box;
+  user-select: none;
+  padding: 3px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  color: #c9c7b8;
+  text-align: left;
+  z-index: 1;
+  display: grid;
+  position: absolute;
+  visibility: hidden;
+}
+
+/* Popup arrow */
+#vtta-tokenizer .popup::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 13%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #000 transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+#vtta-tokenizer .popup .show {
+  visibility: visible;
+}
+
+#vtta-tokenizer .show {
+  visibility: visible;
+}

@@ -67,6 +67,7 @@ async function updateActor(tokenizerResponse) {
     };
   }
 
+  logger.debug("Updating with", update);
   await tokenizerResponse.actor.update(update);
   if (tokenizerResponse.token) {
     tokenizerResponse.token.update(update.token);

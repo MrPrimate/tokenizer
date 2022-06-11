@@ -386,6 +386,9 @@ export default class View {
     control.view.addEventListener('delete', (event) => {
       this.removeImageLayer(event.detail.layerId);
     });
+    control.view.addEventListener('opacity', (event) => {
+      this.setOpacity(event.detail.layerId, event.detail.opacity);
+    });
   }
 
   /**
@@ -485,6 +488,15 @@ export default class View {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.flip();
+      this.redraw();
+    }
+  }
+
+  setOpacity(id, opacity) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.alpha = parseInt(opacity) / 100;
+      layer.redraw();
       this.redraw();
     }
   }
