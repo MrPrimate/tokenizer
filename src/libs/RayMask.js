@@ -23,28 +23,28 @@ function getEnrichedPixel(imageData, point) {
 // attempts a Bresenhams line algorithm
 function getPixelLine(startPoint, endPoint) {
   const pixels = [];
-  const dx = Math.abs(endPoint.x - startPoint.x);
-  const dy = Math.abs(endPoint.y - startPoint.y);
+  const dx = Math.abs(Math.floor(endPoint.x) - Math.floor(startPoint.x));
+  const dy = Math.abs(Math.floor(endPoint.y) - Math.floor(startPoint.y));
   const sx = startPoint.x < endPoint.x ? 1 : -1;
   const sy = startPoint.y < endPoint.y ? 1 : -1;
   let err = dx - dy;
-  let x = startPoint.x;
-  let y = startPoint.y;
+  let x = Math.floor(startPoint.x);
+  let y = Math.floor(startPoint.y);
   let process = true;
 
   while (process) {
     pixels.push({ x, y });
 
-    if (x === endPoint.x && y === endPoint.y) {
+    if (x === Math.floor(endPoint.x) && y === Math.floor(endPoint.y)) {
       process = false;
       break;
     } else {
       const e2 = 2 * err;
-      if (e2 > -dy) {
+      if (e2 >= -dy) {
         err -= dy;
         x += sx;
       }
-      if (e2 < dx) {
+      if (e2 <= dx) {
         err += dx;
         y += sy;
       }

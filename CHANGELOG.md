@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.8.4]
+
+* Some very specific images sizes would cause recursive loops and run away memory useage.
+
 # [3.8.3]
 
 * Masking now attempts to use rays and Bresenhams line algorithm to improve mask detection, you can switch back to the old algorithm in the settings if it doesn't work out for you.
