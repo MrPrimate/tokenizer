@@ -189,21 +189,26 @@ export default class Layer {
     this.masked = false;
   }
 
-  static fromImage(view, img, canvasHeight, canvaseWidth) {
+  static fromImage(view, img, canvasHeight, canvasWidth) {
     const height = Math.max(1000, canvasHeight, img.naturalHeight, img.naturalWidth);
-    const width = Math.max(1000, canvaseWidth, img.naturalHeight, img.naturalWidth);
+    const width = Math.max(1000, canvasWidth, img.naturalHeight, img.naturalWidth);
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
-    
-    const scaledWidth = img.naturalHeight > img.naturalWidth
+
+    const crop = game.settings.get(CONSTANTS.MODULE_ID, "default-crop-image");
+    // if we crop the image we scale to the smallest dimension of the image
+    // otherwise we scale to the largest dimension of the image
+    const direction = crop ? img.naturalHeight > img.naturalWidth : img.naturalHeight < img.naturalWidth;
+
+    const scaledWidth = !direction
       ? height * (img.width / img.height)
       : width;
- 
-    const scaledHeight = img.naturalWidth > img.naturalHeight
+    const scaledHeight = direction
       ? width * (img.height / img.width)
       : height;
 
+    // offset the canvas for the scaled image
     const yOffset = (width - scaledWidth) / 2;
     const xOffset = (height - scaledHeight) / 2;
 

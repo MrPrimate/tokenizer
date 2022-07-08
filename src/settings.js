@@ -249,6 +249,15 @@ export function registerSettings() {
     default: true,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "default-crop-image", {
+    name: `${CONSTANTS.MODULE_ID}.default-crop-image.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-crop-image.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "log-level", {
     name: `${CONSTANTS.MODULE_ID}.log-level.name`,
     scope: "world",
@@ -263,5 +272,6 @@ export function registerSettings() {
     },
     default: "INFO",
   });
+
   logger.debug("Init complete");
 }
