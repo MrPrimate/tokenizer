@@ -8,6 +8,6 @@
   "vtta-tokenizer.token-size.name": "Tamanho do Token",
   "vtta-tokenizer.token-size.hint": "Especifique o tamanho do token (largura x altura). Um valor maior que 200 é recomendavel.",
   "vtta-tokenizer.requires-upload-permission": "Tokenizer requer permissão de Envio de arquivos. Porfavor informe ao seu Mestre.",
-  "vtta-tokenizer.full-size-images.name": "Imagens de tela cheia",
-  "vtta-tokenizer.full-size-images.hint": "As imagens são automaticamente preenchidas e cortadas"
+  "vtta-tokenizer.crop-default.name": "Cortar Imagens",
+  "vtta-tokenizer.crop-default.hint": "As imagens são automaticamente preenchidas no canvas e cortadas"
 }

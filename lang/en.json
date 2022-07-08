@@ -43,6 +43,6 @@
   "vtta-tokenizer.default-token-offset.name": "Default Token Offset",
   "vtta-tokenizer.default-token-offset.hint": "When auto applying a frame, how many pixels to offset image by. Will be auto scaled to match.",
   "vtta-tokenizer.default-algorithm.name": "Use Ray Algorithm for mask detection?",
-  "vtta-tokenizer.full-size-images.name": "Full size images",
-  "vtta-tokenizer.full-size-images.hint": "Images are automatically displayed (and cropped) full-size"
+  "vtta-tokenizer.crop-default.name": "Crop Default",
+  "vtta-tokenizer.crop-default.hint": "Images are automatically cropped and dimensioned to fit the canvas"
 }

@@ -264,9 +264,9 @@ export function registerSettings() {
     default: "INFO",
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "full-size-images", {
-    name: `${CONSTANTS.MODULE_ID}.full-size-images.name`,
-    hint: `${CONSTANTS.MODULE_ID}.full-size-images.hint`,
+  game.settings.register(CONSTANTS.MODULE_ID, "crop-default", {
+    name: `${CONSTANTS.MODULE_ID}.crop-default.name`,
+    hint: `${CONSTANTS.MODULE_ID}.crop-default.hint`,
     scope: "world",
     config: true,
     type: Boolean,

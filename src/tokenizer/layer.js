@@ -196,8 +196,8 @@ export default class Layer {
     canvas.width = width;
     canvas.height = height;
 
-    const fullSize = game.settings.get('vtta-tokenizer','full-size-images');
-    const direction = fullSize ? img.naturalHeight > img.naturalWidth : img.naturalHeight < img.naturalWidth;
+    const crop = game.settings.get('vtta-tokenizer','crop-default');
+    const direction = crop ? img.naturalHeight > img.naturalWidth : img.naturalHeight < img.naturalWidth;
     
     const scaledWidth = !direction
       ? height * (img.width / img.height)
