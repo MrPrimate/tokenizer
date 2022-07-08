@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.8.5]
+
+* An option to auto-crop images by elizeuangelo
+
 # [3.8.4]
 
 * Some very specific images sizes would cause recursive loops and run away memory usage.
