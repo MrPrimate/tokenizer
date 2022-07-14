@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.8.6]
+
+* Fix typo in settings label.
+
 # [3.8.5]
 
 * An option to auto-crop images by elizeuangelo

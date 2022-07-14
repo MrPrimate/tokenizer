@@ -58,7 +58,7 @@ export function registerSettings() {
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "frame-directory", {
-    name: `${CONSTANTS.MODULE_ID}frame-directory.name`,
+    name: `${CONSTANTS.MODULE_ID}.frame-directory.name`,
     hint: `${CONSTANTS.MODULE_ID}.frame-directory.hint`,
     scope: "world",
     config: true,
