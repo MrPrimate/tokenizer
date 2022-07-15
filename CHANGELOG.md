@@ -1,5 +1,10 @@
 # Changelog
 
+# [3.9.0]
+
+* v10 support
+* auto tokenize did not respect the offset values in settings
+
 # [3.8.6]
 
 * Fix typo in settings label.

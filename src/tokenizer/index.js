@@ -130,7 +130,7 @@ export default class Tokenizer extends FormApplication {
     const directoryPath = game.settings.get(CONSTANTS.MODULE_ID, "frame-directory");
     logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
-    const folderFrames = (directoryPath.trim() !== "")
+    const folderFrames = (directoryPath && directoryPath.trim() !== "" && directoryPath.trim() !== "[data]")
       ? await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current)
       : [];
 

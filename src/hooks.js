@@ -79,14 +79,17 @@ function tokenizeActor(actor) {
     ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
   }
 
+  const version = (game.version ?? game.data.version);
+  const v10 = Utils.versionCompare(version, "10.0") >= 0;
+
   const options = {
     actor: actor,
     name: actor.name,
     type: actor.data.type === "character" ? "pc" : "npc",
-    disposition: actor.data.token.disposition,
-    avatarFilename: actor.data.img,
-    tokenFilename: actor.data.token.img,
-    isWildCard: actor.data.token.randomImg,
+    disposition: v10 ? actor.prototypeToken.disposition : actor.data.token.disposition,
+    avatarFilename: actor.img,
+    tokenFilename: v10 ? actor.prototypeToken.texture.src : actor.data.token.img,
+    isWildCard: v10 ? actor.prototypeToken.randomImg : actor.data.token.randomImg,
   };
 
   launchTokenizer(options, updateActor);
@@ -98,14 +101,17 @@ function tokenizeSceneToken(doc) {
     ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
   }
 
+  const version = (game.version ?? game.data.version);
+  const v10 = Utils.versionCompare(version, "10.0") >= 0;
+
   const options = {
     actor: doc.actor,
     token: doc.token,
     name: doc.token.name,
     type: doc.actor.data.type === "character" ? "pc" : "npc",
-    disposition: doc.token.data.disposition,
-    avatarFilename: doc.actor.data.img,
-    tokenFilename: doc.token.data.img,
+    disposition: v10 ? doc.token.disposition : doc.token.data.disposition,
+    avatarFilename: v10 ? doc.actor.img : doc.actor.data.img,
+    tokenFilename: v10 ? doc.token.texture.src : doc.token.data.img,
     nameSuffix: `${doc.token.id}`,
   };
 
@@ -134,19 +140,24 @@ async function updateSceneTokenImg(actor) {
 }
 
 export async function autoToken(actor, options) {
+  const version = (game.version ?? game.data.version);
+  const v10 = Utils.versionCompare(version, "10.0") >= 0;
+ 
   // construct our 
-  const actorData = actor.data.data ? actor.data : actor;
+  const actorData = v10
+   ? actor
+   : actor.data.data ? actor.data : actor;
   const defaultOptions = {
     actor: actor,
     name: actorData.name,
     type: actorData.type === "character" ? "pc" : "npc",
-    disposition: actorData.token.disposition,
+    disposition: v10 ? actorData.prototypeToken.disposition : actorData.token.disposition,
     avatarFilename: actorData.img,
-    tokenFilename: actorData.token.img,
-    isWildCard: actorData.token.randomImg,
+    tokenFilename: v10 ? actorData.prototypeToken.texture.src : actorData.token.img,
+    isWildCard: v10 ? actorData.prototypeToken.randomImg : actorData.token.randomImg,
     auto: true,
     updateActor: true,
-    tokenOffset: { position: { x: -35, y: -35 } },
+    // tokenOffset: { position: { x: -35, y: -35 } },
   };
   const mergedOptions = mergeObject(defaultOptions, options);
   const tokenizer = new Tokenizer(mergedOptions, updateActor);
