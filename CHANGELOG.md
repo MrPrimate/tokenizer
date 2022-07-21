@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.9.1]
+
+* Fix for Token Variants API @dirusulixes#6754
+
 # [3.9.0]
 
 * v10 support

@@ -69,11 +69,11 @@ jobs:
         args: "Squint (Intern) has released Tokenizer ${{ steps.get-version.outputs.version }}."
 
     # - name: FoundryVTT AutoPublish
-    #   uses: Varriount/fvtt-autopublish@v1.0.6
+    #   uses: Varriount/fvtt-autopublish@latest
     #   with:
     #     username: ${{ secrets.FOUNDRY_ADMIN_USER }}
     #     password: ${{ secrets.FOUNDRY_ADMIN_PW }}
-    #     module-id: 71
-    #     manifest-url: https://github.com/${{ github.repository }}/releases/download/${{ steps.get-version.outputs.version }} /module.json
+    #     module-id: ${{ FOUNDRY_MODULE_ID }}
+    #     manifest-url: https://github.com/${{ github.repository }}/releases/download/${{ steps.get-version.outputs.version }}/module.json
     #     manifest-file: ./module.json
 
