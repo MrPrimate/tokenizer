@@ -128,12 +128,20 @@ function tokenizeDoc(doc) {
 }
 
 async function updateSceneTokenImg(actor) {
+  const version = (game.version ?? game.data.version);
+  const v10 = Utils.versionCompare(version, "10.0") >= 0;
+
   const updates = await Promise.all(actor.getActiveTokens().map(async (t) => {
     const newToken = await actor.getTokenData();
-    const tokenUpdate = {
+    const tokenUpdate = v10
+      ? {
+        _id: t.id,
+        "texture.src": newToken.texture.src,
+      }
+      : {
         _id: t.id,
         img: newToken.img,
-    };
+      };
     return tokenUpdate;
   }));
   if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
@@ -319,7 +327,7 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
           : $(li).attr("data-entity-id");
       if (docId) {
         const doc = game.actors.get(docId);
-        logger.debug(`Tokenizing ${doc.name} scene tokens`);
+        logger.debug(`Updating ${doc.name} scene tokens for:`, doc);
         updateSceneTokenImg(doc);
       }
     },

@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.9.2]
+
+* v10 bug: update tokens on scene did not work
+
 # [3.9.1]
 
 * Fix for Token Variants API @dirusulixes#6754
