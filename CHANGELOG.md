@@ -3,6 +3,7 @@
 # [3.9.2]
 
 * v10 bug: update tokens on scene did not work
+* Improve DDB support.
 
 # [3.9.1]
 
