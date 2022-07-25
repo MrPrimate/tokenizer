@@ -100,7 +100,8 @@ export default class Utils {
     if (
       url.toLowerCase().startsWith("https://www.dndbeyond.com/") ||
       url.toLowerCase().startsWith("https://dndbeyond.com/") ||
-      url.toLowerCase().startsWith("https://media-waterdeep.cursecdn.com/")
+      url.toLowerCase().startsWith("https://media-waterdeep.cursecdn.com/") ||
+      url.toLowerCase().startsWith("https://images.dndbeyond.com")
     ) {
       return true;
     } else if (
