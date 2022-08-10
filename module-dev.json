@@ -14,6 +14,19 @@
     "verified": 10
   },
   "author": "MrPrimate (jack@mrprimate.co.uk), Sebastian Will (vttassets@gmail.com)",
+  "authors": [
+    {
+      "name": "MrPrimate",
+      "email": "jack@mrprimate.co.uk",
+      "url": "https://mrprimate.co.uk",
+      "patreon": "https://www.patreon.com/MrPrimate",
+      "discord": "https://discord.gg/WzPuRuDJVP"
+    },
+    {
+      "name": "Sebastian Will",
+      "email": "vttassets@gmail.com"
+    }
+  ],
   "languages": [
     {
       "lang": "en",

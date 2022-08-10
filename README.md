@@ -168,6 +168,14 @@ When the OK button is pressed it will return the following to the function (whic
 
 This is useful if you want to generate tokens for use outside of the regular actors.
 
+If you want to tokenize just a scene token then you need to call `tokenizeSceneToken` passing in a doc with an `actor` and `token` object:
+
+```javascript
+const dragon = canvas.scene.tokens.find(t => t.name === "Adult Black Dragon");
+window.Tokenizer.tokenizeSceneToken({ token: dragon, actor: dragon.actor });
+```
+
+
 ## How to I call auto Tokenize?
 
 This applies the default frame to the current token image.
