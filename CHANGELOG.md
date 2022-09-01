@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.9.3]
+
+* Can change directory/default frames again in v10.
+
 # [3.9.2]
 
 * v10 bug: update tokens on scene did not work

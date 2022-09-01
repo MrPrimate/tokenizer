@@ -1,6 +1,6 @@
 {
   "name": "tokenizer",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "license": "MIT",
   "scripts": {
     "lint": "npx eslint src/",

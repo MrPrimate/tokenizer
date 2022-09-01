@@ -74,7 +74,7 @@ class ImagePicker extends FilePicker {
     $(html)
       .find(`input[data-dtype="Img"]`)
       .each((index, element) => {
-        $(element).prop("readonly", true);
+        // $(element).prop("readonly", true);
         
         if (!$(element).next().length) {
           let picker = new ImagePicker({

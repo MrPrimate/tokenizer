@@ -90,7 +90,7 @@ class DirectoryPicker extends FilePicker {
     $(html)
       .find(`input[data-dtype="Directory"]`)
       .each((index, element) => {
-        $(element).prop("readonly", true);
+        // $(element).prop("readonly", true);
 
         if (!$(element).next().length) {
           logger.debug("Adding Picker Button");
