@@ -187,6 +187,7 @@ export default class Tokenizer extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.template = "modules/vtta-tokenizer/templates/tokenizer.hbs";
+    options.id = "tokenizer-control";
     options.width = "auto";
     options.height = "auto";
     options.classes = ["tokenizer"];
@@ -283,7 +284,7 @@ export default class Tokenizer extends FormApplication {
 
   /* -------------------------------------------- */
 
-  async _initAvatar(html, inputUrl) {
+  async _initAvatar(inputUrl) {
     const url = inputUrl ?? CONST.DEFAULT_TOKEN ?? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
     const avatarView = document.querySelector(".avatar > .view");
     if (this.Avatar) {
@@ -301,11 +302,11 @@ export default class Tokenizer extends FormApplication {
       this.Avatar.addImageLayer(img);
 
       // Setting the height of the form to the desired auto height
-      $(html).parent().parent().css("height", "auto");
+      $("#tokenizer-control").css("height", "auto");
     } catch (error) {
       if (inputUrl) {
         ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to default.`);
-        await this._initAvatar(html);
+        await this._initAvatar();
       } else {
         ui.notifications.error('Failed to load fallback image.');
       }
@@ -316,7 +317,7 @@ export default class Tokenizer extends FormApplication {
   }
 
   activateListeners(html) {
-    this.loadImages(html);
+    this.loadImages();
 
     $("#vtta-tokenizer .file-picker-thumbs").click((event) => {
         event.preventDefault();
@@ -507,7 +508,7 @@ export default class Tokenizer extends FormApplication {
     Utils.extractImage(event, view);
   }
 
-  loadImages(html) {
+  loadImages() {
     let tokenView = document.querySelector(".token > .view");
     const nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
 
@@ -517,6 +518,7 @@ export default class Tokenizer extends FormApplication {
     });
     // get the target filename for the token
     this._getFilename("Token", nameSuffix).then((targetFilename) => {
+      // $('span[name="targetPath"]').text(targetFilename);
       $('span[name="targetFilename"]').text(targetFilename);
       $('input[name="targetTokenFilename"]').val(targetFilename);
     });
@@ -533,7 +535,7 @@ export default class Tokenizer extends FormApplication {
       this._initToken(this.tokenOptions.tokenFilename);
     }
 
-    this._initAvatar(html, this.tokenOptions.avatarFilename);
+    this._initAvatar(this.tokenOptions.avatarFilename);
   }
 
 }
