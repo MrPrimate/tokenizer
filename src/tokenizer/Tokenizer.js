@@ -1,8 +1,8 @@
-import Utils from "../utils.js";
+import Utils from "../Utils.js";
 import logger from "../logger.js";
-import View from "./view.js";
-import DirectoryPicker from "./../libs/DirectoryPicker.js";
-import ImageBrowser from "./../libs/ImageBrowser.js";
+import View from "./View.js";
+import DirectoryPicker from "../libs/DirectoryPicker.js";
+import ImageBrowser from "../libs/ImageBrowser.js";
 import CONSTANTS from "../constants.js";
 
 export default class Tokenizer extends FormApplication {

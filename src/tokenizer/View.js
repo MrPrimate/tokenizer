@@ -1,6 +1,6 @@
-import Layer from './layer.js';
-import Control from './control.js';
-import Utils from '../utils.js';
+import Layer from './Layer.js';
+import Control from './Control.js';
+import Utils from '../Utils.js';
 import CONSTANTS from '../constants.js';
 import logger from '../logger.js';
 

@@ -1,9 +1,9 @@
 import Tokenizer from "./tokenizer/index.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
-import Utils from "./utils.js";
+import Utils from "./Utils.js";
 import logger from "./logger.js";
-import View from "./tokenizer/view.js";
-import AutoTokenize from "./tokenizer/auto.js";
+import View from "./tokenizer/View.js";
+import AutoTokenize from "./tokenizer/AutoTokenize.js";
 import CONSTANTS from "./constants.js";
 import { registerSettings } from "./settings.js";
 
