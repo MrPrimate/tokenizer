@@ -1,4 +1,4 @@
-import Tokenizer from "./tokenizer/index.js";
+import Tokenizer from "./tokenizer/Tokenizer.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
 import Utils from "./Utils.js";
 import logger from "./logger.js";
@@ -51,7 +51,7 @@ async function updateActor(tokenizerResponse) {
   // for non-wildcard tokens, we set the token img now
   if (tokenizerResponse.actor.data.token.randomImg) {
     const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
-    const options = DirectoryPicker.parse(Utils.getBaseUploadFolder(tokenizerResponse.actor.data.type));
+    const options = DirectoryPicker.parse(tokenizerResponse.tokenUploadDirectory);
 
     if (tokenizerResponse.actor.data.token.img.indexOf("*") === -1) {
       // set it to a wildcard we can actually use
@@ -184,7 +184,7 @@ export async function autoToken(actor, options) {
   await tokenizer._initToken(tokenizer.tokenOptions.tokenFilename);
   // upload result to foundry
   const dataResult = await tokenizer.Token.get("blob");
-  tokenizer.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResult, targetFilename, tokenizer.tokenOptions.type, tokenizer.getOverRidePath(true));
+  tokenizer.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResult, tokenizer.getOverRidePath(true), targetFilename);
   // update actor
   if (mergedOptions.updateActor) {
     await updateActor(tokenizer.tokenOptions);

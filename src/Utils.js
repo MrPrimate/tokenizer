@@ -56,16 +56,6 @@ export default class Utils {
     return undefined;
   }
 
-  static getBaseUploadFolder(type) {
-    if (type === "character") {
-      return game.settings.get("vtta-tokenizer", "image-upload-directory");
-    } else if (type === "npc") {
-      return game.settings.get("vtta-tokenizer", "npc-image-upload-directory");
-    } else {
-      return game.settings.get("vtta-tokenizer", "image-upload-directory");
-    }
-  }
-
   static upload() {
     let fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -171,13 +161,11 @@ export default class Utils {
     });
   }
 
-  static async uploadToFoundry(data, filename, type, overRideFolder) {
+  static async uploadToFoundry(data, directoryPath, fileName) {
     // create new file from the response
-    let file = new File([data], filename, { type: data.type });
+    let file = new File([data], fileName, { type: data.type });
 
-    const options = overRideFolder
-      ? DirectoryPicker.parse(overRideFolder)
-      : DirectoryPicker.parse(Utils.getBaseUploadFolder(type));
+    const options = DirectoryPicker.parse(directoryPath);
 
     const result = (game.version)
       ? await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false })

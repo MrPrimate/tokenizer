@@ -154,6 +154,16 @@ export default class Tokenizer extends FormApplication {
     this._setTokenFrame(framePath, true);
   }
 
+  getBaseUploadDirectory() {
+    if (this.tokenType === "character") {
+      return game.settings.get("vtta-tokenizer", "image-upload-directory");
+    } else if (this.tokenType === "npc") {
+      return game.settings.get("vtta-tokenizer", "npc-image-upload-directory");
+    } else {
+      return game.settings.get("vtta-tokenizer", "image-upload-directory");
+    }
+  }
+
   //  Options include
   //  name: name to use as part of filename identifier
   //  type: pc, npc
@@ -179,6 +189,15 @@ export default class Tokenizer extends FormApplication {
     this.omfgFrames = [];
     this.jColsonFrames = [];
     this.customFrames = game.settings.get(CONSTANTS.MODULE_ID, "custom-frames");
+    this.addFrame = game.settings.get(CONSTANTS.MODULE_ID, "add-frame-default") || this.tokenOptions.auto;
+    this.defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
+    this.tokenType = this.tokenOptions.type === "pc" ? "pc" : "npc";
+    this.nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
+    this.imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
+    // add some default file names, these will likely be changed
+    this.uploadDirectory = this.getBaseUploadDirectory();
+    this.avatarFileName = `${this.tokenOptions.name}.Avatar${this.nameSuffix}.${this.imageFormat}`;
+    this.tokenFileName = `${this.tokenOptions.name}.Token${this.nameSuffix}.${this.imageFormat}`;
   }
 
   /**
@@ -215,7 +234,7 @@ export default class Tokenizer extends FormApplication {
 
   getWildCardPath() {
     if (!this.tokenOptions.isWildCard) return undefined;
-    let wildCardPath = Utils.getBaseUploadFolder(this.tokenOptions.type);
+    let wildCardPath = `${this.uploadDirectory}`;
     if (this.tokenOptions.tokenFilename) {
       let wildCardTokenPathArray = this.tokenOptions.tokenFilename.split("/");
       wildCardTokenPathArray.pop();
@@ -239,7 +258,6 @@ export default class Tokenizer extends FormApplication {
 
   async _getFilename(suffix = "Avatar", postfix = "") {
     const actorName = await Utils.makeSlug(this.tokenOptions.name);
-    const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
 
     if (suffix === "Token" && this.tokenOptions.isWildCard) {
       // for wildcards we respect the current path of the existing/provided tokenpath
@@ -247,7 +265,7 @@ export default class Tokenizer extends FormApplication {
       const dirOptions = DirectoryPicker.parse(wildCardPath);
       const tokenWildcard = this.tokenOptions.tokenFilename.indexOf("*") === -1
         // set it to a wildcard we can actually use
-        ? `${dirOptions.current}/${actorName}.Token-*.${imageFormat}`
+        ? `${dirOptions.current}/${actorName}.Token-*.${this.imageFormat}`
         : this.tokenOptions.tokenFilename;
 
       const browser = await FilePicker.browse(dirOptions.activeSource, tokenWildcard, {
@@ -260,23 +278,28 @@ export default class Tokenizer extends FormApplication {
 
       return targetFilename;
     }
-    return `${actorName}.${suffix}${postfix}.${imageFormat}`;
+    return `${actorName}.${suffix}${postfix}.${this.imageFormat}`;
   }
 
+  async updateToken(dataBlob) {
+    this.tokenOptions.tokenUploadDirectory = this.getOverRidePath(true) || this.uploadDirectory;
+    this.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataBlob, this.tokenOptions.tokenUploadDirectory, this.tokenFileName);
+  }
+
+  async updateAvatar(dataBlob) {
+    if (!this.tokenToggle) {
+      this.tokenOptions.avatarUploadDirectory = this.getOverRidePath(false) || this.uploadDirectory;
+      this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataBlob, this.tokenOptions.avatarUploadDirectory, this.avatarFileName);
+    }
+  }
+
+  // eslint-disable-next-line no-unused-vars
   _updateObject(event, formData) {
-    // Update the object this ApplicationForm is based on
-    // e.g. this.object.update(formData)
-
     // upload token and avatar
-    let avatarFilename = formData.targetAvatarFilename;
-    let tokenFilename = formData.targetTokenFilename;
-
     // get the data
     Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async (dataResults) => {
-      if (!this.tokenToggle) {
-        this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataResults[0], avatarFilename, this.tokenOptions.type, this.getOverRidePath(false));
-      }
-      this.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResults[1], tokenFilename, this.tokenOptions.type, this.getOverRidePath(true));
+      await this.updateAvatar(dataResults[0]);
+      await this.updateToken(dataResults[1]);
 
       this.callback(this.tokenOptions);
     });
@@ -442,22 +465,20 @@ export default class Tokenizer extends FormApplication {
 
   async _initToken(src) {
     let imgSrc = src ?? CONST.DEFAULT_TOKEN;
-    const addFrame = game.settings.get(CONSTANTS.MODULE_ID, "add-frame-default") || this.tokenOptions.auto;
     try {
       logger.debug("Initializing Token, trying to download", imgSrc);
       const img = await Utils.download(imgSrc);
       logger.debug("Got image", img);
 
       if (game.settings.get(CONSTANTS.MODULE_ID, "default-color-layer")) {
-        const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
-        this.Token.addImageLayer(null, { colorLayer: true, color: defaultColor });
+        this.Token.addImageLayer(null, { colorLayer: true, color: this.defaultColor });
       }
       // if we add a frame by default offset the token image
-      const options = addFrame
+      const options = this.addFrame
         ? this.tokenOffset
         : {};
       this.Token.addImageLayer(img, options);
-      if (addFrame) {
+      if (this.addFrame) {
         logger.debug("Loading default token frame");
         await this._setTokenFrame();
       } 
@@ -474,12 +495,11 @@ export default class Tokenizer extends FormApplication {
 
   async _setTokenFrame(fileName, fullPath = false) {
     // load the default frame, if there is one set
-    const type = this.tokenOptions.type === "pc" ? "pc" : "npc";
     const nonHostile = parseInt(this.tokenOptions.disposition) !== -1;
     const npcFrame = nonHostile
       ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-neutral")
       : game.settings.get(CONSTANTS.MODULE_ID, "default-frame-npc");
-    const frameTypePath = type === "pc"
+    const frameTypePath = this.tokenType === "pc"
       ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc")
       : npcFrame;
     const isDefault = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "") ||
@@ -510,17 +530,18 @@ export default class Tokenizer extends FormApplication {
 
   loadImages() {
     let tokenView = document.querySelector(".token > .view");
-    const nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
 
     // get the target filename for the avatar
-    this._getFilename("Avatar", nameSuffix).then((targetFilename) => {
+    this._getFilename("Avatar", this.nameSuffix).then((targetFilename) => {
       $('input[name="targetAvatarFilename"]').val(targetFilename);
+      this.avatarFileName = targetFilename;
     });
     // get the target filename for the token
-    this._getFilename("Token", nameSuffix).then((targetFilename) => {
+    this._getFilename("Token", this.nameSuffix).then((targetFilename) => {
       // $('span[name="targetPath"]').text(targetFilename);
       $('span[name="targetFilename"]').text(targetFilename);
       $('input[name="targetTokenFilename"]').val(targetFilename);
+      this.tokenFileName = targetFilename;
     });
 
     if (this.tokenOptions.isWildCard) {
