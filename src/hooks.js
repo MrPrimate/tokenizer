@@ -43,34 +43,50 @@ async function updateActor(tokenizerResponse) {
 
   const dateTag = `${+new Date()}`;
 
+  const version = (game.version ?? game.data.version);
+  const v10 = Utils.versionCompare(version, "10.0") >= 0;
+
+  const actorDataPrototypeToken = v10
+    ? tokenizerResponse.actor.prototypeToken
+    : tokenizerResponse.actor.data.token;
+
+  const originalPrototypeTokenPath = v10
+    ? actorDataPrototypeToken.texture.src
+    : actorDataPrototypeToken.img;
+
   // updating the avatar filename
   const update = {
     img: tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag,
   };
 
-  // for non-wildcard tokens, we set the token img now
-  if (tokenizerResponse.actor.data.token.randomImg) {
+  if (!actorDataPrototypeToken.randomImg) {
+    // for non-wildcard tokens, we set the token img now
+    const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
+    if (v10) {
+      setProperty(update, "prototypeToken.texture.src", tokenPath);
+    } else {
+      setProperty(update, "token.img", tokenPath);
+    }
+  } else if (originalPrototypeTokenPath.indexOf("*") === -1) {
+    // if it is a wildcard and it isn't get like one, we change that
     const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
     const options = DirectoryPicker.parse(tokenizerResponse.tokenUploadDirectory);
 
-    if (tokenizerResponse.actor.data.token.img.indexOf("*") === -1) {
-      // set it to a wildcard we can actually use
-      const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
-      ui.notifications.info("Tokenizer: Wildcarding token image to " + tokenizerResponse.actor.data.token.img);
-      update.token = {
-        img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
-      };
-    }
-  } else {
+    // set it to a wildcard we can actually use
+    const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
+    ui.notifications.info("Tokenizer: Wildcarding token image to " + originalPrototypeTokenPath);
     update.token = {
-      img: tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag,
+      img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
     };
-  }
+
+  } 
 
   logger.debug("Updating with", update);
   await tokenizerResponse.actor.update(update);
+  // if there is a scene token, lets update it
   if (tokenizerResponse.token) {
-    tokenizerResponse.token.update(update.token);
+    const tokenUpdate = v10 ? update.prototypeToken : update.token;
+    tokenizerResponse.token.update(tokenUpdate);
   }
 }
 
