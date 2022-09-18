@@ -4,6 +4,7 @@
 
 * Can now change the save location and name for a specific toke or avatar on the Tokenizer screen.
 * The actors image could get a very long file name in some situations.
+* In v10, scene edited tokens would not be updated.
 
 # [3.9.3]
 
