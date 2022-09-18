@@ -196,6 +196,7 @@ export default class Tokenizer extends FormApplication {
     this.nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
     this.imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
     // add some default file names, these will likely be changed
+    this.wildCardPath = undefined;
     this.avatarUploadDirectory = this.getOverRidePath(false) || this.getBaseUploadDirectory();
     this.tokenUploadDirectory = this.getOverRidePath(true) || this.getBaseUploadDirectory();
     this.avatarFileName = `${this.tokenOptions.name}.Avatar${this.nameSuffix}.${this.imageFormat}`;
@@ -242,6 +243,7 @@ export default class Tokenizer extends FormApplication {
       wildCardTokenPathArray.pop();
       wildCardPath = wildCardTokenPathArray.join("/");
     }
+    this.wildCardPath = wildCardPath;
     return wildCardPath;
   }
 
@@ -263,8 +265,7 @@ export default class Tokenizer extends FormApplication {
 
     if (suffix === "Token" && this.tokenOptions.isWildCard) {
       // for wildcards we respect the current path of the existing/provided tokenpath
-      const wildCardPath = this.getWildCardPath();
-      const dirOptions = DirectoryPicker.parse(wildCardPath);
+      const dirOptions = DirectoryPicker.parse(this.wildCardPath);
       const tokenWildcard = this.tokenOptions.tokenFilename.indexOf("*") === -1
         // set it to a wildcard we can actually use
         ? `${dirOptions.current}/${actorName}.Token-*.${this.imageFormat}`
