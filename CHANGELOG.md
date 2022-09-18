@@ -1,5 +1,10 @@
 # Changelog
 
+# [3.9.4]
+
+* Can now change the save location and name for a specific toke or avatar on the Tokenizer screen.
+* The actors image could get a very long file name in some situations.
+
 # [3.9.3]
 
 * Can change directory/default frames again in v10.

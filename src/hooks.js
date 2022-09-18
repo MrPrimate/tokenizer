@@ -45,7 +45,7 @@ async function updateActor(tokenizerResponse) {
 
   // updating the avatar filename
   const update = {
-    img: tokenizerResponse.avatarFilename + "?" + dateTag,
+    img: tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag,
   };
 
   // for non-wildcard tokens, we set the token img now
@@ -63,7 +63,7 @@ async function updateActor(tokenizerResponse) {
     }
   } else {
     update.token = {
-      img: tokenizerResponse.tokenFilename + "?" + dateTag,
+      img: tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag,
     };
   }
 
