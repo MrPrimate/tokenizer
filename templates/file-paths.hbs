@@ -1,0 +1,25 @@
+<div class="form-description">
+  <form id="tokenizer-directory-form" autocomplete="off" onsubmit="event.preventDefault();">
+
+    {{#each type}}
+    <h2>{{this.name}}</h2>
+    <h4>{{localize "vtta-tokenizer.label.directory"}}</h4>
+    <div class="form-content" style="display: flex">
+      <input class="tokenizer-config" type="text" data-dtype="Directory" name="{{this.key}}UploadDirectory" readonly style="flex: 0 1 auto" ;
+        value="{{this.directoryPath}}" />
+    </div>
+    <h4>{{localize "vtta-tokenizer.label.file-name"}}</h4>
+    <div class="form-content" style="display: flex">
+      <input class="tokenizer-config" type="text" name="{{this.key}}FileName" style="flex: 0 1 auto" ;
+        value="{{this.fileName}}" />
+    </div>
+    <hr>
+    {{/each}}
+
+    <div class="tokenizer-directory-setup" id="munching-folder-setup" style="color: red">
+    </div>
+
+    <button id="tokenizer-directory-settings" type="submit">Save</button>
+  </form>
+</div>
+

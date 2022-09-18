@@ -4,6 +4,7 @@ import View from "./View.js";
 import DirectoryPicker from "../libs/DirectoryPicker.js";
 import ImageBrowser from "../libs/ImageBrowser.js";
 import CONSTANTS from "../constants.js";
+import { TokenizerSaveLocations } from "../libs/TokenizerSaveLocations.js";
 
 export default class Tokenizer extends FormApplication {
 
@@ -195,7 +196,8 @@ export default class Tokenizer extends FormApplication {
     this.nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
     this.imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
     // add some default file names, these will likely be changed
-    this.uploadDirectory = this.getBaseUploadDirectory();
+    this.avatarUploadDirectory = this.getOverRidePath(false) || this.getBaseUploadDirectory();
+    this.tokenUploadDirectory = this.getOverRidePath(true) || this.getBaseUploadDirectory();
     this.avatarFileName = `${this.tokenOptions.name}.Avatar${this.nameSuffix}.${this.imageFormat}`;
     this.tokenFileName = `${this.tokenOptions.name}.Token${this.nameSuffix}.${this.imageFormat}`;
   }
@@ -234,7 +236,7 @@ export default class Tokenizer extends FormApplication {
 
   getWildCardPath() {
     if (!this.tokenOptions.isWildCard) return undefined;
-    let wildCardPath = `${this.uploadDirectory}`;
+    let wildCardPath = `${this.tokenUploadDirectory}`;
     if (this.tokenOptions.tokenFilename) {
       let wildCardTokenPathArray = this.tokenOptions.tokenFilename.split("/");
       wildCardTokenPathArray.pop();
@@ -282,14 +284,18 @@ export default class Tokenizer extends FormApplication {
   }
 
   async updateToken(dataBlob) {
-    this.tokenOptions.tokenUploadDirectory = this.getOverRidePath(true) || this.uploadDirectory;
-    this.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataBlob, this.tokenOptions.tokenUploadDirectory, this.tokenFileName);
+    this.tokenOptions.tokenUploadDirectory = this.tokenUploadDirectory;
+    const filePath = await Utils.uploadToFoundry(dataBlob, this.tokenUploadDirectory, this.tokenFileName);
+    logger.debug(`Created token at ${filePath}`);
+    this.tokenOptions.tokenFilename = filePath;
   }
 
   async updateAvatar(dataBlob) {
     if (!this.tokenToggle) {
-      this.tokenOptions.avatarUploadDirectory = this.getOverRidePath(false) || this.uploadDirectory;
-      this.tokenOptions.avatarFilename = await Utils.uploadToFoundry(dataBlob, this.tokenOptions.avatarUploadDirectory, this.avatarFileName);
+      this.tokenOptions.avatarUploadDirectory = this.avatarUploadDirectory;
+      const filePath = await Utils.uploadToFoundry(dataBlob, this.avatarUploadDirectory, this.avatarFileName);
+      logger.debug(`Created avatar at ${filePath}`);
+      this.tokenOptions.avatarFilename = filePath;
     }
   }
 
@@ -454,6 +460,11 @@ export default class Tokenizer extends FormApplication {
             $("#tokenizer-avatar :input").attr("disabled", false);
           }
 
+          break;
+        }
+        case "locations": {
+          const locations = new TokenizerSaveLocations(this);
+          locations.render(true);
           break;
         }
         // no default

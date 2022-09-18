@@ -167,6 +167,8 @@ export default class Utils {
 
     const options = DirectoryPicker.parse(directoryPath);
 
+    logger.debug(`Uploading ${fileName}`, { directoryPath, fileName, options });
+
     const result = (game.version)
       ? await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false })
       : await FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });

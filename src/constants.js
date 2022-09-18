@@ -43,6 +43,7 @@ const CONSTANTS = {
     SAMPLE_SIZE: 5,
     MINIMUM_ALPHA: 255,
   },
+  BAD_DIRS: ["[data]", "[data] ", "", null],
 };
 
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_ID}/`;
