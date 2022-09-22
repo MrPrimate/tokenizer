@@ -56,10 +56,11 @@ export default class AutoTokenize extends FormApplication {
   }
 
   async tokenizePack() {
-    const totalCount = this.pack.index.size;
     let currentCount = 1;
-    for (const i of this.pack.index) {
-      AutoTokenize._updateProgress(totalCount, currentCount, "token");
+    const tokenIndex = this.pack.index.filter((i) => i.name !== "#[CF_tempEntity]");
+    const totalCount = tokenIndex.length;
+    for (const i of tokenIndex) {
+      AutoTokenize._updateProgress(totalCount, currentCount, "token", i.name);
       logger.debug(`Tokenizing ${i.name}`);
       // eslint-disable-next-line no-await-in-loop
       const actor = await this.pack.getDocument(i._id);
@@ -93,11 +94,11 @@ export default class AutoTokenize extends FormApplication {
 
   }
 
-  static _updateProgress(total, count, type) {
+  static _updateProgress(total, count, type, note = "") {
     const localizedType = `vtta-tokenizer.label.${type}`;
     $(".import-progress-bar")
       .width(`${Math.trunc((count / total) * 100)}%`)
-      .html(`<span>${game.i18n.localize("vtta-tokenizer.label.Working")} (${game.i18n.localize(localizedType)})...</span>`);
+      .html(`<span>${game.i18n.localize("vtta-tokenizer.label.Working")} (${game.i18n.localize(localizedType)})... ${note}</span>`);
   }
 
   static _progressNote(note) {

@@ -194,13 +194,15 @@ export async function autoToken(actor, options) {
   // get the target filename for the token
   const nameSuffix = tokenizer.tokenOptions.nameSuffix ? tokenizer.tokenOptions.nameSuffix : "";
   const targetFilename = await tokenizer._getFilename("Token", nameSuffix);
+  tokenizer.tokenFileName = targetFilename;
+
   // create a Token View
   tokenizer.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
   // Add the actor image and frame to the token view
   await tokenizer._initToken(tokenizer.tokenOptions.tokenFilename);
   // upload result to foundry
   const dataResult = await tokenizer.Token.get("blob");
-  tokenizer.tokenOptions.tokenFilename = await Utils.uploadToFoundry(dataResult, tokenizer.getOverRidePath(true), targetFilename);
+  await tokenizer.updateToken(dataResult);
   // update actor
   if (mergedOptions.updateActor) {
     await updateActor(tokenizer.tokenOptions);

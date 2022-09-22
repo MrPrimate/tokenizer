@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.9.5]
+
+* Tokenize Compendium function would place images in the root directory.
+
 # [3.9.4]
 
 * Can now change the save location and name for a specific toke or avatar on the Tokenizer screen.
