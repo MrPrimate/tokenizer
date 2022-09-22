@@ -3,6 +3,7 @@
 # [3.9.5]
 
 * Tokenize Compendium function would place images in the root directory.
+* Auto-tokenize function would not respect image locations.
 
 # [3.9.4]
 
