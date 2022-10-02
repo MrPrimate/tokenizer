@@ -274,9 +274,9 @@ export function ready() {
           // replace it with Tokenizer OR FilePicker click
           $(element).on("click", (event) => {
 
-            const launchTokenizer =
-              (!disableAvatarClick && !event.shiftKey) || // avatar click not disabled, and not shift key
-              (disableAvatarClick && event.shiftKey); // avatar click disabled, and shift key
+            const launchTokenizer
+              = (!disableAvatarClick && !event.shiftKey) // avatar click not disabled, and not shift key
+              || (disableAvatarClick && event.shiftKey); // avatar click disabled, and shift key
 
             if (launchTokenizer) {
               event.stopPropagation();

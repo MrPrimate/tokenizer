@@ -8,9 +8,9 @@ const logger = {
     const logLevels = ["DEBUG", "INFO", "WARN", "ERR", "OFF"];
     const logLevelIndex = logLevels.indexOf(logLevel.toUpperCase());
     if (
-      setting == "OFF" ||
-      logLevelIndex === -1 ||
-      logLevelIndex < logLevels.indexOf(setting)
+      setting == "OFF"
+      || logLevelIndex === -1
+      || logLevelIndex < logLevels.indexOf(setting)
     ) {
       return false;
     }
@@ -24,8 +24,8 @@ const logger = {
     logLevel = logLevel.toUpperCase();
 
     const LOG_PREFIX = "Tokenizer";
-    let msg =
-      "No logging message provided.  Please see the payload for more information.";
+    let msg
+      = "No logging message provided.  Please see the payload for more information.";
     let payload = data.slice();
     if (data[0] && typeof (data[0] == "string")) {
       msg = data[0];

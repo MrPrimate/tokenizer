@@ -514,8 +514,8 @@ export default class Tokenizer extends FormApplication {
     const frameTypePath = this.tokenType === "pc"
       ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc")
       : npcFrame;
-    const isDefault = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "") ||
-      fileName != npcFrame.replace(/^\/|\/$/g, "");
+    const isDefault = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "")
+      || fileName != npcFrame.replace(/^\/|\/$/g, "");
 
     const framePath = fileName && !isDefault
       ? `${game.settings.get(CONSTANTS.MODULE_ID, "frame-directory")}/${fileName}`

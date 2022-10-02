@@ -18,14 +18,14 @@ class ImageBrowser extends FormApplication {
         uri = "https://assets.forge-vtt.com/" + userId + "/" + dir.current;
       } else {
         // S3 Bucket
-        uri =
-          game.data.files.s3.endpoint.protocol +
-          "//" +
-          dir.bucket +
-          "." +
-          game.data.files.s3.endpoint.hostname +
-          "/" +
-          dir.current;
+        uri
+          = game.data.files.s3.endpoint.protocol
+          + "//"
+          + dir.bucket
+          + "."
+          + game.data.files.s3.endpoint.hostname
+          + "/"
+          + dir.current;
       }
     } catch (exception) {
       logger.warn(`Unable to determine file URL for '${foundryFilePath}'`);
@@ -125,16 +125,16 @@ class ImageBrowser extends FormApplication {
    */
   async _onScroll(event) {
     if (this.ignoreScroll) return;
-    const bottom =
-      $(event.currentTarget).prop("scrollHeight") -
-      $(event.currentTarget).scrollTop();
+    const bottom
+      = $(event.currentTarget).prop("scrollHeight")
+      - $(event.currentTarget).scrollTop();
     const height = $(event.currentTarget).height();
     if (!this.assets) return;
     if (bottom - 20 < height) {
       this.ignoreScroll = true; // avoid multiple events to occur while scrolling
       if (
-        this.assetInc * ImageBrowser.MAX_ASSETS <
-        this.assets.length
+        this.assetInc * ImageBrowser.MAX_ASSETS
+        < this.assets.length
       ) {
         this.assetInc++;
         this.html

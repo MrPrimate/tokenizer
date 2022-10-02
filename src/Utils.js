@@ -88,15 +88,15 @@ export default class Utils {
    */
   static async useProxy(url) {
     if (
-      url.toLowerCase().startsWith("https://www.dndbeyond.com/") ||
-      url.toLowerCase().startsWith("https://dndbeyond.com/") ||
-      url.toLowerCase().startsWith("https://media-waterdeep.cursecdn.com/") ||
-      url.toLowerCase().startsWith("https://images.dndbeyond.com")
+      url.toLowerCase().startsWith("https://www.dndbeyond.com/")
+      || url.toLowerCase().startsWith("https://dndbeyond.com/")
+      || url.toLowerCase().startsWith("https://media-waterdeep.cursecdn.com/")
+      || url.toLowerCase().startsWith("https://images.dndbeyond.com")
     ) {
       return true;
     } else if (
-      await game.settings.get("vtta-tokenizer", "force-proxy") &&
-      url.toLowerCase().match("^https?://")
+      await game.settings.get("vtta-tokenizer", "force-proxy")
+      && url.toLowerCase().match("^https?://")
     ) {
       return true;
     } else {
@@ -212,12 +212,12 @@ export default class Utils {
   }
 
   static async makeSlug(name) {
-    const toReplace =
-      "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(
+    const toReplace
+      = "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(
         ","
       );
-    const replacers =
-      "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(
+    const replacers
+      = "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(
         ","
       );
     const replaceDict = Object.fromEntries(
