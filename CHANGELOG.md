@@ -1,5 +1,10 @@
 # Changelog
 
+# [3.10.0]
+
+* This version of tokenizer is only compatible with version 10 of Foundry.
+* Tokenizer will now open when clicking the character in the Coriolis system.
+
 # [3.9.5]
 
 * Tokenize Compendium function would place images in the root directory.
