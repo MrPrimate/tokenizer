@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.10.1]
+
+* Small version bump to enforce version constaints on v9.
+
 # [3.10.0]
 
 * This version of tokenizer is only compatible with version 10 of Foundry.

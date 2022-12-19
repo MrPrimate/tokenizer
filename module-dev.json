@@ -7,8 +7,10 @@
   "download": "",
   "manifest": "https://raw.githubusercontent.com/MrPrimate/tokenizer/master/module-dev.json",
   "changelog": "https://github.com/MrPrimate/tokenizer/blob/master/CHANGELOG.md",
+  "minimumCoreVersion": "10.282",
+  "compatibleCoreVersion": "10",
   "compatibility": {
-    "minimum": "10.279",
+    "minimum": "10.282",
     "verified": 10
   },
   "author": "MrPrimate (jack@mrprimate.co.uk), Sebastian Will (vttassets@gmail.com)",
