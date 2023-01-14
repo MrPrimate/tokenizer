@@ -33,7 +33,7 @@ jobs:
     - name: Get Version              # Run the script that returns the version from `module.json`
       shell: bash
       id: get-version
-      run: echo "::set-output name=version::$(node ./.github/workflows/get-version.js)"
+      run: echo "release_version=$(node ./.github/workflows/get-version.js)" >> $GITHUB_OUTPUT
     - name: Build module.json
       run: node ./.github/workflows/build-module-json.js | jq . > module.json
     - run: zip -r ./vtta-tokenizer.zip module.json src templates css img lang LICENSE.md       # Add folders/files here
