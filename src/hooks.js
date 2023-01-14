@@ -92,7 +92,7 @@ async function updateActor(tokenizerResponse) {
 
 function tokenizeActor(actor) {
   if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
+    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`), { permanent: true });
   }
 
   const options = {
@@ -111,7 +111,7 @@ function tokenizeActor(actor) {
 
 function tokenizeSceneToken(doc) {
   if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
+    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`), { permanent: true });
   }
 
   const options = {
