@@ -1,7 +1,7 @@
 import Tokenizer from "./tokenizer/Tokenizer.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
-import Utils from "./Utils.js";
-import logger from "./logger.js";
+import Utils from "./libs/Utils.js";
+import logger from "./libs/logger.js";
 import View from "./tokenizer/View.js";
 import AutoTokenize from "./tokenizer/AutoTokenize.js";
 import CONSTANTS from "./constants.js";
@@ -189,9 +189,7 @@ export async function autoToken(actor, options) {
   return tokenizer.tokenOptions.tokenFilename;
 }
 
-export function ready() {
-  logger.info("Ready");
-
+function fixUploadLocation() {
   // Set base character upload folder.
   const characterUploads = game.settings.get(CONSTANTS.MODULE_ID, "image-upload-directory");
   const npcUploads = game.settings.get(CONSTANTS.MODULE_ID, "npc-image-upload-directory");
@@ -206,9 +204,12 @@ export function ready() {
     }
   }
 
-  const titleLink = game.settings.get(CONSTANTS.MODULE_ID, "title-link");
-
   if (characterUploads != "" && npcUploads == "") game.settings.set(CONSTANTS.MODULE_ID, "npc-image-upload-directory", characterUploads);
+
+}
+
+function linkSheets() {
+  const titleLink = game.settings.get(CONSTANTS.MODULE_ID, "title-link");
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
@@ -277,8 +278,10 @@ export function ready() {
       }
     });
   });
+}
 
-  window.Tokenizer = {
+function exposeAPI() {
+  const API = {
     launch: launchTokenizer,
     launchTokenizer,
     tokenizeActor,
@@ -287,7 +290,16 @@ export function ready() {
     updateSceneTokenImg,
     autoToken,
   };
-  
+
+  window.Tokenizer = API;
+  game.modules.get(CONSTANTS.MODULE_ID).api = API;
+}
+
+export function ready() {
+  logger.info("Ready Hook Called");
+  fixUploadLocation();
+  linkSheets();
+  exposeAPI();
 }
 
 Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {

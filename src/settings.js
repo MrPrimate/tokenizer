@@ -1,6 +1,6 @@
 import ImagePicker from "./libs/ImagePicker.js";
 import DirectoryPicker from "./libs/DirectoryPicker.js";
-import logger from "./logger.js";
+import logger from "./libs/logger.js";
 import CONSTANTS from "./constants.js";
 
 class ResetCustomFrames extends FormApplication {

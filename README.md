@@ -121,7 +121,9 @@ You can support the OMFG on [KoFi](https://ko-fi.com/oldmightyfriendlygamer) and
 
 ## Calling Tokenizer
 
-You can call Tokenizer by using `Tokenizer.launch(options, callback)` or `Tokenizer.tokenizeActor(actor)`.
+Tokenizer is exposed through `window.Tokenizer` or `game.modules.get("vtta-tokenizer").api`
+
+You can call Tokenizer by using `window.Tokenizer.launch(options, callback)` or `window.Tokenizer.tokenizeActor(actor)`.
 
 Options can consist of:
 
@@ -155,7 +157,7 @@ let tokenizerOptions = {
   usefulString: "Useful data"
 };
 
-window.Tokenizer.launch(tokenizerOptions, (response) => {console.log(response)});
+game.modules.get("vtta-tokenizer").api.launch(tokenizerOptions, (response) => {console.log(response)});
 ```
 
 When the OK button is pressed it will return the following to the function (which in this case prints it to the console):
@@ -176,7 +178,7 @@ If you want to tokenize just a scene token then you need to call `tokenizeSceneT
 
 ```javascript
 const dragon = canvas.scene.tokens.find(t => t.name === "Adult Black Dragon");
-window.Tokenizer.tokenizeSceneToken({ token: dragon, actor: dragon.actor });
+game.modules.get("vtta-tokenizer").api.tokenizeSceneToken({ token: dragon, actor: dragon.actor });
 ```
 
 
@@ -186,9 +188,9 @@ This applies the default frame to the current token image.
 
 Call it using `window.Tokenizer.autoToken` passing in an `Actor` as the only variable.
 
-```
+```javascript
 let actor = game.actors.getName("TEST");
-await window.Tokenizer.autoToken(actor);
+await game.modules.get("vtta-tokenizer").api.autoToken(actor);
 ```
 
 This will apply the token, upload the image and update the actor.
@@ -196,5 +198,5 @@ This will apply the token, upload the image and update the actor.
 You can pass in override options in an `options` map as the second argument:
 
 ```javascript
-await window.Tokenizer.autoToken(actor, { nameSuffix: "-name-suffix" });
+await game.modules.get("vtta-tokenizer").api.autoToken(actor, { nameSuffix: "-name-suffix" });
 ```

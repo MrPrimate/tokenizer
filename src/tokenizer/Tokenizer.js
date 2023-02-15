@@ -1,5 +1,5 @@
-import Utils from "../Utils.js";
-import logger from "../logger.js";
+import Utils from "../libs/Utils.js";
+import logger from "../libs/logger.js";
 import View from "./View.js";
 import DirectoryPicker from "../libs/DirectoryPicker.js";
 import ImageBrowser from "../libs/ImageBrowser.js";

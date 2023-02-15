@@ -1,4 +1,4 @@
-import logger from "../logger.js";
+import logger from "../libs/logger.js";
 import CONSTANTS from "../constants.js";
 import DirectoryPicker from "./DirectoryPicker.js";
 

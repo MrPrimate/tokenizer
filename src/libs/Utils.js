@@ -1,4 +1,4 @@
-import DirectoryPicker from "./libs/DirectoryPicker.js";
+import DirectoryPicker from "./DirectoryPicker.js";
 import logger from "./logger.js";
 
 const SKIPPING_WORDS = [

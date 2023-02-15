@@ -1,5 +1,5 @@
 import { autoToken } from "../hooks.js";
-import logger from "../logger.js";
+import logger from "../libs/logger.js";
 
 export default class AutoTokenize extends FormApplication {
   /** @override */

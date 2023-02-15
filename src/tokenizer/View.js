@@ -1,8 +1,8 @@
 import Layer from './Layer.js';
 import Control from './Control.js';
-import Utils from '../Utils.js';
+import Utils from '../libs/Utils.js';
 import CONSTANTS from '../constants.js';
-import logger from '../logger.js';
+import logger from '../libs/logger.js';
 
 export default class View {
   constructor(dimension, element) {

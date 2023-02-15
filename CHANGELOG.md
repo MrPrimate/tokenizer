@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.10.2]
+
+* Exposed API functions via `game.modules.get("vtta-tokenizer").api` as well as `window.Tokenizer`
+
 # [3.10.1]
 
 * Small version bump to enforce version constaints on v9.

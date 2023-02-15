@@ -1,5 +1,5 @@
 import DirectoryPicker from "./DirectoryPicker.js";
-import logger from "../logger.js";
+import logger from "../libs/logger.js";
 
 class ImageBrowser extends FormApplication {
 
