@@ -47,7 +47,7 @@ jobs:
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: './module.json,./vtta-tokenizer.zip'    # don't forget to rename module zip thing
-        tag: ${{ steps.get-version.outputs.version }} # Use the version as the tag
+        tag: ${{ steps.get-version.outputs.release_version }} # Use the version as the tag
     - name: Create Release
       id: create_latest_release
       uses: ncipollo/release-action@v1
@@ -66,7 +66,7 @@ jobs:
         DISCORD_USERNAME: "Squint - Intern"
       uses: Ilshidur/action-discord@0.3.2
       with:
-        args: "Squint (Intern) has released Tokenizer ${{ steps.get-version.outputs.version }}."
+        args: "Squint (Intern) has released Tokenizer ${{ steps.get-version.outputs.release_version }}."
 
     # - name: FoundryVTT AutoPublish
     #   uses: Varriount/fvtt-autopublish@latest
