@@ -32,6 +32,27 @@ export default class Tokenizer extends FormApplication {
     return this.omfgFrames;
   }
 
+  async getTheGreatNachoFrames() {
+    if (game.settings.get(CONSTANTS.MODULE_ID, "disable-thegreatnacho-frames")) return [];
+    if (this.theGreatNachoFrames.length > 0) return this.theGreatNachoFrames;
+    logger.debug(`Checking for GreatNacho Token Frames.`);
+
+    for (let i = 1; i <= 20; i++) {
+      const fileName = `modules/vtta-tokenizer/img/thegreatnacho/theGreatNacho-${i}.webp`;
+      const label = `TheGreatNacho Frame ${i}`;
+      const obj = {
+        key: fileName,
+        label,
+        selected: false,
+      };
+      if (!this.frames.some((frame) => frame.key === fileName)) {
+        this.theGreatNachoFrames.push(obj);
+      }
+    }
+
+    return this.theGreatNachoFrames;
+  }
+
   async getJColsonFrames() {
     if (!game.modules.get("token-frames")?.active || game.settings.get(CONSTANTS.MODULE_ID, "disable-jcolson-frames")) {
       return [];
@@ -136,9 +157,10 @@ export default class Tokenizer extends FormApplication {
       : [];
 
     this.getOMFGFrames();
+    this.getTheGreatNachoFrames();
     await this.getJColsonFrames();
 
-    const frames = this.defaultFrames.concat(folderFrames, this.omfgFrames, this.jColsonFrames, this.customFrames);
+    const frames = this.defaultFrames.concat(folderFrames, this.omfgFrames, this.theGreatNachoFrames, this.jColsonFrames, this.customFrames);
 
     this.frames = frames;
     return this.frames;
@@ -188,6 +210,7 @@ export default class Tokenizer extends FormApplication {
     this.defaultFrames = Tokenizer.getDefaultFrames();
     this.frames = [];
     this.omfgFrames = [];
+    this.theGreatNachoFrames = [];
     this.jColsonFrames = [];
     this.customFrames = game.settings.get(CONSTANTS.MODULE_ID, "custom-frames");
     this.addFrame = game.settings.get(CONSTANTS.MODULE_ID, "add-frame-default") || this.tokenOptions.auto;

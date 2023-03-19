@@ -215,6 +215,14 @@ export function registerSettings() {
     default: false,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "disable-thegreatnacho-frames", {
+    name: `${CONSTANTS.MODULE_ID}.disable-thegreatnacho-frames.name`,
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "default-color", {
     name: `${CONSTANTS.MODULE_ID}.default-color.name`,
     hint: `${CONSTANTS.MODULE_ID}.default-color.hint`,

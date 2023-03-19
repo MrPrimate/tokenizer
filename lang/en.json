@@ -34,6 +34,7 @@
   "vtta-tokenizer.token-only-toggle.hint": "If selected defaults to true, can be toggled in tokenizer, per player setting",
   "vtta-tokenizer.disable-omfg-frames.name": "Disable OMFG frames",
   "vtta-tokenizer.disable-jcolson-frames.name": "Disable JColson Token Frames module integration",
+  "vtta-tokenizer.disable-thegreatnacho-frames.name": "Disable TheGreatNacho frames",
   "vtta-tokenizer.compendium.auto-tokenize": "Auto-Tokenize Compendium",
   "vtta-tokenizer.compendium.button": "Tokenize Compendium",
   "vtta-tokenizer.label.token": "Token",
