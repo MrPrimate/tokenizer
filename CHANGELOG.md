@@ -1,12 +1,9 @@
 # Changelog
 
-# [3.10.3]
-
-* More frames from TheGreatNacho.
-
 # [3.10.2]
 
 * Exposed API functions via `game.modules.get("vtta-tokenizer").api` as well as `window.Tokenizer`
+* More frames from TheGreatNacho.
 
 # [3.10.1]
 
