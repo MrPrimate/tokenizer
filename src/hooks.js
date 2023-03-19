@@ -139,7 +139,7 @@ function tokenizeDoc(doc) {
 
 async function updateSceneTokenImg(actor) {
   const updates = await Promise.all(actor.getActiveTokens().map(async (t) => {
-    const newToken = await actor.getTokenData();
+    const newToken = await actor.getTokenDocument();
     const tokenUpdate = {
       _id: t.id,
       "texture.src": newToken.texture.src,
