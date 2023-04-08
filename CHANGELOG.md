@@ -1,8 +1,9 @@
 # Changelog
 
 # [COMING SOON]
-* Download image, as requested as part of #113
-* Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
+- Download image, as requested as part of #113
+- Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
+- Try to improve performance of dragging mask layers.
 
 # [3.10.2]
 

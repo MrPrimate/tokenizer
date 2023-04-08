@@ -59,10 +59,11 @@ export default class View {
     element.appendChild(this.controlsArea);
     element.appendChild(this.menu);
 
+    const moveFunction = Utils.throttle(this.onMouseMove.bind(this), 15);
     // add event listeners for translation/scaling of the active layer
     this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
     this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
-    this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.canvas.addEventListener('mousemove', moveFunction);
     this.canvas.addEventListener('wheel', this.onWheel.bind(this), {
       passive: false,
     });
@@ -169,6 +170,7 @@ export default class View {
    */
   // eslint-disable-next-line no-unused-vars
   onMouseUp(event) {
+    this.redraw(true);
     if (this.activeLayer === null) return;
     this.isDragging = false;
   }
@@ -261,7 +263,7 @@ export default class View {
         this.activeLayer.translate(dx, dy);
         if (this.activeLayer.masked) this.activeLayer.createMask();
         this.activeLayer.redraw();
-        this.redraw(this.activeLayer.masked);
+        this.redraw(false);
       }
     }
   }

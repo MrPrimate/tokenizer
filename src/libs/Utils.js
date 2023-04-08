@@ -329,6 +329,23 @@ export default class Utils {
     return 0;
   }
 
+  static throttle(cb, delay) {
+    let wait = false;
+  
+    return (...args) => {
+      if (wait) {
+          return;
+      }
+  
+      // eslint-disable-next-line callback-return
+      cb(...args);
+      wait = true;
+      setTimeout(() => {
+        wait = false;
+      }, delay);
+    };
+  }
+
 }
 
 
