@@ -398,6 +398,16 @@ export default class Tokenizer extends FormApplication {
           view.addImageLayer(img);
           break;
         }
+        case "download-token": {
+          const filename = this.tokenFileName;
+          const blob = await this.Token.get("blob");
+          const file = new File([blob], filename, { type: blob.type });
+          let a = document.createElement("a");
+          a.href = URL.createObjectURL(file);
+          a.download = filename;
+          a.click();
+          break;
+        }
         case "download": {
           // show dialog, then download
           let urlPrompt = new Dialog({

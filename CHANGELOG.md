@@ -1,5 +1,8 @@
 # Changelog
 
+# [COMING SOON]
+* Download image, as requested as part of #113
+
 # [3.10.2]
 
 * Exposed API functions via `game.modules.get("vtta-tokenizer").api` as well as `window.Tokenizer`
