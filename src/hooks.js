@@ -43,6 +43,7 @@ function getAvatarPath(actor) {
 function launchTokenizer(options, callback) {
   if (!game.user.can("FILES_UPLOAD")) {
     ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`));
+    if (game.settings.get(CONSTANTS.MODULE_ID, "disable-player")) return;
   }
 
   game.canvas.layers.forEach((layer) => {
@@ -91,10 +92,6 @@ async function updateActor(tokenizerResponse) {
 }
 
 function tokenizeActor(actor) {
-  if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`), { permanent: true });
-  }
-
   const options = {
     actor: actor,
     name: actor.name,
@@ -110,10 +107,6 @@ function tokenizeActor(actor) {
 }
 
 function tokenizeSceneToken(doc) {
-  if (!game.user.can("FILES_UPLOAD")) {
-    ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_ID}.requires-upload-permission`), { permanent: true });
-  }
-
   const options = {
     actor: doc.actor,
     token: doc.token,
@@ -197,11 +190,6 @@ function fixUploadLocation() {
   if (game.user.isGM) {
     DirectoryPicker.verifyPath(DirectoryPicker.parse(characterUploads));
     DirectoryPicker.verifyPath(DirectoryPicker.parse(npcUploads));
-    // Update proxy if needed
-    const corsProxy = game.settings.get(CONSTANTS.MODULE_ID, "proxy");
-    if (corsProxy === "https://london.drop.mrprimate.co.uk/") {
-      game.settings.set(CONSTANTS.MODULE_ID, "proxy", "https://images.ddb.mrprimate.co.uk/");
-    }
   }
 
   if (characterUploads != "" && npcUploads == "") game.settings.set(CONSTANTS.MODULE_ID, "npc-image-upload-directory", characterUploads);
@@ -209,6 +197,10 @@ function fixUploadLocation() {
 }
 
 function linkSheets() {
+  if (!game.user.can("FILES_UPLOAD") && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")) {
+    return;
+  }
+
   const titleLink = game.settings.get(CONSTANTS.MODULE_ID, "title-link");
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
@@ -303,6 +295,8 @@ export function ready() {
 }
 
 Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
+  if (!game.user.isGM) return;
+
   entryOptions.push({
     name: "Tokenizer",
     callback: (li) => {
@@ -324,7 +318,7 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
   });
 
   entryOptions.push({
-    name: "Apply Prototype Token to Scene Tokens",
+    name: `${CONSTANTS.MODULE_ID}.apply-prototype-to-scene`,
     callback: (li) => {
       const docId = $(li).attr("data-document-id")
         ? $(li).attr("data-document-id")
@@ -345,6 +339,8 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
 });
 
 Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
+  if (!game.user.isGM) return;
+
   contextOptions.push({
     name: `${CONSTANTS.MODULE_ID}.compendium.auto-tokenize`,
     callback: (li) => {

@@ -49,5 +49,8 @@
   "vtta-tokenizer.default-token-offset.hint": "When auto applying a frame, how many pixels to offset image by. Will be auto scaled to match.",
   "vtta-tokenizer.default-algorithm.name": "Use Ray Algorithm for mask detection?",
   "vtta-tokenizer.default-crop-image.name": "Crop Images?",
-  "vtta-tokenizer.default-crop-image.hint": "Images are automatically cropped to fit the shortest side and centred. This is useful in some auto-tokenize situations, but is probably not needed day-to-day."
+  "vtta-tokenizer.default-crop-image.hint": "Images are automatically cropped to fit the shortest side and centred. This is useful in some auto-tokenize situations, but is probably not needed day-to-day.",
+  "vtta-tokenizer.apply-prototype-to-scene": "Apply Prototype Token Image to Scene Tokens",
+  "vtta-tokenizer.disable-player.name": "Disable for Users lacking permissions?",
+  "vtta-tokenizer.disable-player.hint": "If the user doesn't have FILE UPLOAD permissions, completely disable tokenizer for them."
 }

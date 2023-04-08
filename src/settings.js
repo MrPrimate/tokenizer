@@ -146,6 +146,16 @@ export function registerSettings() {
     default: false,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "disable-player", {
+    name: `${CONSTANTS.MODULE_ID}.disable-player.name`,
+    hint: `${CONSTANTS.MODULE_ID}.disable-player.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
+
   game.settings.register(CONSTANTS.MODULE_ID, "disable-avatar-click", {
     name: `${CONSTANTS.MODULE_ID}.disable-avatar-click.name`,
     hint: `${CONSTANTS.MODULE_ID}.disable-avatar-click.hint`,
