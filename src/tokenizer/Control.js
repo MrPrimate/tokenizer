@@ -108,6 +108,20 @@ export default class Control {
       this.view.dispatchEvent(new CustomEvent('mask', { detail: { layerId: this.layer.id } }));
     });
 
+    this.visibleControl = document.createElement('button');
+    this.visibleControl.classList.add('visible-layer');
+    this.visibleControl.title = "Visible layer?";
+
+    let visibleButtonText = document.createElement('i');
+    visibleButtonText.classList.add('fas', 'fa-eye');
+    this.visibleControl.appendChild(visibleButtonText);
+
+    // send a mask event when clicked
+    this.visibleControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
+    });
+
     let positionManagementSection = document.createElement('div');
     positionManagementSection.name = 'position-management';
     positionManagementSection.classList.add('section');
@@ -278,6 +292,7 @@ export default class Control {
     previewSection.appendChild(this.layer.canvas);
     this.view.appendChild(maskManagementSection);
     maskManagementSection.appendChild(this.maskControl);
+    maskManagementSection.appendChild(this.visibleControl);
     if (this.layer.colorLayer) {
       this.view.appendChild(colorManagementSection);
       colorManagementSection.appendChild(this.colorSelector);
@@ -307,6 +322,17 @@ export default class Control {
       this.maskControl.classList.add('active');
     } else {
       this.maskControl.classList.remove('active');
+    }
+
+    // is this layer visible
+    if (this.layer.visible) {
+      this.visibleControl.classList.add('active');
+      this.visibleControl.firstChild.classList.remove('fa-eye-slash');
+      this.visibleControl.firstChild.classList.add('fa-eye');
+    } else {
+      this.visibleControl.classList.remove('active');
+      this.visibleControl.firstChild.classList.remove('fa-eye');
+      this.visibleControl.firstChild.classList.add('fa-eye-slash');
     }
 
     // is this layer active?

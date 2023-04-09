@@ -65,11 +65,11 @@
 }
 
 #vtta-tokenizer div.avatar div.view > div > canvas {
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
 }
 
 #vtta-tokenizer div.token div.view > div > canvas {
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
 }

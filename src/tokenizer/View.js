@@ -402,6 +402,10 @@ export default class View {
     control.view.addEventListener('opacity', (event) => {
       this.setOpacity(event.detail.layerId, event.detail.opacity);
     });
+    control.view.addEventListener('visible', (event) => {
+      this.setLayerVisibility(event.detail.layerId);
+      this.controls.forEach((control) => control.refresh());
+    });
   }
 
   /**
@@ -510,6 +514,14 @@ export default class View {
     if (layer !== null) {
       layer.alpha = parseInt(opacity) / 100;
       layer.redraw();
+      this.redraw();
+    }
+  }
+
+  setLayerVisibility(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.visible = !layer.visible;
       this.redraw();
     }
   }
