@@ -3,7 +3,10 @@
 # [COMING SOON]
 - Download image, as requested as part of #113
 - Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
-- Try to improve performance of dragging mask layers.
+- Huge performance of dragging/resizing mask layers.
+- Multiple masks can now be in play.
+- Mask images can now be hidden.
+
 
 # [3.10.2]
 

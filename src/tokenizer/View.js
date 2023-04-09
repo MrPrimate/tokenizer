@@ -22,8 +22,7 @@ export default class View {
     this.menu = null;
 
     // there is one mask that is active for every layer
-    this.mask = null;
-    this.maskId = null;
+    this.maskIds = new Set();
 
     // the currently selected layer for translation/scaling
     this.activeLayer = null;
@@ -64,6 +63,7 @@ export default class View {
     this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
     this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
     this.canvas.addEventListener('mousemove', moveFunction);
+    // this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
     this.canvas.addEventListener('wheel', this.onWheel.bind(this), {
       passive: false,
     });
@@ -123,12 +123,16 @@ export default class View {
    * Get this mask from the layer id or default view
    * @param {id} Number
    */
-  getMaskLayer(id = null) {
-    if (id === null) {
-      return this.layers.find((layer) => layer.id === this.maskId);
-    } else {
-      return this.layers.find((layer) => layer.id === id);
-    }
+  getMaskLayer(id) {
+    return this.layers.find((layer) => layer.id === id);
+  }
+
+    /**
+   * Get this mask from the layer id or default view
+   * @param {id} Number
+   */
+  getMaskLayers() {
+    return this.layers.find((layer) => this.maskIds.has(layer.id));
   }
 
   initializeMenu() {
@@ -157,6 +161,7 @@ export default class View {
     }
 
     if (this.activeLayer === null) return;
+    this.redraw(true, true);
     this.isDragging = true;
     this.lastPosition = {
       x: event.clientX,
@@ -214,9 +219,9 @@ export default class View {
       // this.activeLayer.translate(this.activeLayer.flipped ? -1 * delta.x : delta.x, delta.y);
       this.activeLayer.translate(delta.x, delta.y);
     }
-    if (this.activeLayer.masked) this.activeLayer.createMask();
+    // if (this.activeLayer.providesMask) this.activeLayer.createMask();
     this.activeLayer.redraw();
-    this.redraw(this.activeLayer.masked);
+    this.redraw(this.activeLayer.providesMask, true);
     this.lastPosition = {
       x: event.clientX,
       y: event.clientY,
@@ -261,9 +266,9 @@ export default class View {
 
         this.activeLayer.setScale(this.activeLayer.scale * factor);
         this.activeLayer.translate(dx, dy);
-        if (this.activeLayer.masked) this.activeLayer.createMask();
+        // if (this.activeLayer.providesMask) this.activeLayer.createMask();
         this.activeLayer.redraw();
-        this.redraw(false);
+        this.redraw(this.activeLayer.providesMask);
       }
     }
   }
@@ -286,7 +291,7 @@ export default class View {
 
     // if this layer provided the mask, remove that mask, too
     if (this.layers[index].providesMask) {
-      this.maskId = null;
+      this.maskIds.delete(index);
     }
 
     // delete this from the array
@@ -546,12 +551,10 @@ export default class View {
       // check if this layer currently provides the mask
       if (layer.providesMask === true) {
         layer.providesMask = false;
-        this.maskId = null;
+        this.maskIds.delete(id);
       } else {
-        this.maskId = id;
-        this.layers.forEach((layer) => (layer.providesMask = false));
+        this.maskIds.add(id);
         layer.providesMask = true;
-        layer.applyMask();
       }
     }
     this.redraw(true);
@@ -568,7 +571,7 @@ export default class View {
     }
   }
 
-  redraw(full = false) {
+  redraw(full = false, noMasks = false) {
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
 
@@ -578,8 +581,13 @@ export default class View {
     if (full) {
       logger.debug("Full redraw triggered");
       this.layers.forEach((layer) => {
-        if (layer.masked) layer.createMask();
-        layer.redraw();
+        logger.debug(`Recalculating mask for ${layer.id}`, layer);
+        layer.recalculateMask();
+      });
+      this.layers.forEach((layer) => {
+        logger.debug(`Recalculating visual layer for ${layer.id}`, layer);
+        // if (layer.providesMask) layer.createMask();
+        layer.redraw(noMasks);
       });
     }
 

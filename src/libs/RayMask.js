@@ -129,22 +129,22 @@ function createRays(mask, maskImageData) {
       sampleRay,
     );
 
-    rays.push(ray);
-
-    // if we didn't find and edge pixel, lets step back over sample size
+    // if we didn't find an edge pixel, lets step back over sample size
     if (sampleRay && !ray.edgePixel) {
       for (let stepIndex = rayIndex - 1; stepIndex < CONSTANTS.MASK.SAMPLE_SIZE && (rayIndex - stepIndex) >= 0; stepIndex++) {
-        rays[stepIndex] = createRay(
+        const stepRay = createRay(
           maskImageData, 
           maskCentre,
           getCanvasEdge(mask, stepIndex),
           sampleRay,
         );
-        if (rays[stepIndex].edgePixel) {
+        if (stepRay.edgePixel) {
+          rays.edgePixel = stepRay.edgePixel;
           break;
         }
       }
     }
+    rays.push(ray);
   }
   return rays;
 }
