@@ -1,6 +1,6 @@
 # Changelog
 
-# [COMING SOON]
+# [3.11.0]
 - Download image, as requested as part of #113
 - Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
 - Huge performance of dragging/resizing mask layers.
