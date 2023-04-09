@@ -2,7 +2,6 @@ const CONSTANTS = {
   MODULE_ID: "vtta-tokenizer",
   MODULE_NAME: "Tokenizer",
   BLEND_MODES: {
-    DEFAULT: "source-over",
     SOURCE_OVER: "source-over",
     SOURCE_IN: "source-in",
     SOURCE_OUT: "source-out",

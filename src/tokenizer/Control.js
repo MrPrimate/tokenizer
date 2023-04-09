@@ -1,3 +1,5 @@
+import CONSTANTS from "../constants.js";
+
 export default class Control {
   constructor(layer) {
     // , layerId) {
@@ -120,6 +122,28 @@ export default class Control {
     this.visibleControl.addEventListener('click', (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
+    });
+
+    // blend mode controls
+    this.blendControl = document.createElement('select');
+    // this.blendControl.disabled = true;
+    this.blendControl.classList.add('blend-control');
+
+    for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
+      const option = document.createElement('option');
+      option.value = mode;
+      option.innerHTML = mode;
+      this.blendControl.append(option);
+    }
+
+    this.blendControl.addEventListener('change', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('blend', {
+        detail: {
+          layerId: this.layer.id,
+          blendMode: event.target.value,
+        }
+      }));
     });
 
     let positionManagementSection = document.createElement('div');
@@ -293,6 +317,7 @@ export default class Control {
     this.view.appendChild(maskManagementSection);
     maskManagementSection.appendChild(this.maskControl);
     maskManagementSection.appendChild(this.visibleControl);
+    maskManagementSection.appendChild(this.blendControl);
     if (this.layer.colorLayer) {
       this.view.appendChild(colorManagementSection);
       colorManagementSection.appendChild(this.colorSelector);
@@ -320,8 +345,10 @@ export default class Control {
     // is this layer providing the mask for the view?
     if (this.layer.providesMask) {
       this.maskControl.classList.add('active');
+      // this.blendControl.disabled = false;
     } else {
       this.maskControl.classList.remove('active');
+      // this.blendControl.disabled = true;
     }
 
     // is this layer visible

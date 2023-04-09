@@ -4,8 +4,9 @@
 - Download image, as requested as part of #113
 - Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
 - Huge performance of dragging/resizing mask layers.
-- Multiple masks can now be in play.
+- Basic first pass implementation: Multiple masks can now be applied.
 - Mask images can now be hidden.
+- Added blend mode support, see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation and https://www.w3schools.com/tags/canvas_globalcompositeoperation.asp for details.
 
 
 # [3.10.2]

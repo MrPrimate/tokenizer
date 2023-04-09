@@ -43,9 +43,10 @@ export default class Layer {
 
     this.sourceMask = null;
     this.mask = null;
+    this.maskBlendMode = CONSTANTS.BLEND_MODES.SOURCE_IN;
 
     this.alpha = 1.0;
-    this.compositeOperation = CONSTANTS.BLEND_MODES.DEFAULT;
+    this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
     this.visible = true;
 
     // initialize with color
@@ -338,7 +339,7 @@ export default class Layer {
     // place the computed layer on the view canvas
 
     const context = this.canvas.getContext("2d");
-    context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+    context.globalCompositeOperation = this.compositeOperation;
     context.clearRect(0, 0, this.source.width, this.source.height);
     context.resetTransform();
 
@@ -358,8 +359,7 @@ export default class Layer {
           this.canvas.width,
           this.canvas.height
         );
-        // context.resetTransform();
-        context.globalCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
+        context.globalCompositeOperation = this.maskBlendMode;
       }
     }
 

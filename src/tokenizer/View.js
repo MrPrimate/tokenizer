@@ -406,6 +406,9 @@ export default class View {
       this.setLayerVisibility(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
     });
+    control.view.addEventListener('blend', (event) => {
+      this.setBlendMode(event.detail.layerId, event.detail.blendMode);
+    });
   }
 
   /**
@@ -498,6 +501,14 @@ export default class View {
     if (layer !== null) {
       layer.reset();
       this.redraw();
+    }
+  }
+
+  setBlendMode(id, blendMode) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.compositeOperation = blendMode;
+      this.redraw(true);
     }
   }
 

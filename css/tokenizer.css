@@ -3,6 +3,10 @@
   top: -3px;
 }
 
+#vtta-tokenizer .blend-control {
+  width: 60px;
+}
+
 #vtta-tokenizer div.view > div > canvas {
   padding-left: 0;
   padding-right: 0;
