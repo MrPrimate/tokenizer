@@ -161,7 +161,7 @@ export default class View {
     }
 
     if (this.activeLayer === null) return;
-    this.redraw(true, true);
+    this.redraw(true);
     this.isDragging = true;
     this.lastPosition = {
       x: event.clientX,
@@ -221,7 +221,7 @@ export default class View {
     }
     // if (this.activeLayer.providesMask) this.activeLayer.createMask();
     this.activeLayer.redraw();
-    this.redraw(this.activeLayer.providesMask, true);
+    this.redraw(this.activeLayer.providesMask);
     this.lastPosition = {
       x: event.clientX,
       y: event.clientY,
@@ -266,7 +266,6 @@ export default class View {
 
         this.activeLayer.setScale(this.activeLayer.scale * factor);
         this.activeLayer.translate(dx, dy);
-        // if (this.activeLayer.providesMask) this.activeLayer.createMask();
         this.activeLayer.redraw();
         this.redraw(this.activeLayer.providesMask);
       }
@@ -438,6 +437,7 @@ export default class View {
     if (reset) {
       // setting the color
       this.colorPickingForLayer.restoreColor();
+      this.redraw(true);
     }
 
     // refreshing the control
@@ -594,7 +594,7 @@ export default class View {
     }
   }
 
-  redraw(full = false, noMasks = false) {
+  redraw(full = false) {
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
 
@@ -609,8 +609,7 @@ export default class View {
       });
       this.layers.forEach((layer) => {
         logger.debug(`Recalculating visual layer for ${layer.id}`, layer);
-        // if (layer.providesMask) layer.createMask();
-        layer.redraw(noMasks);
+        layer.redraw();
       });
     }
 

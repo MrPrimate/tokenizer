@@ -208,35 +208,28 @@ export default class Layer {
     return layer;
   }
 
-  static fromColor(view, color, width, height) {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-
-    const context = canvas.getContext("2d");
-    context.fillStyle = color;
-    context.rect(0, 0, canvas.width, canvas.height);
-    context.fill();
-
-    const layer = new Layer({ view, canvas, color });
-    layer.redraw();
-    return layer;
-  }
-
-
   /**
    * Sets the background color for this layer. It will be masked, too
    * @param {color} hexColorString
    */
   setColor(hexColorString = null) {
+    if (!this.colorLayer) return;
     this.color = hexColorString;
     const context = this.canvas.getContext("2d");
     context.fillStyle = hexColorString;
     context.rect(0, 0, this.width, this.height);
     context.fill();
     this.source = Utils.cloneCanvas(this.canvas);
+  }
 
-    this.redraw();
+  static fromColor(view, color, width, height) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const layer = new Layer({ view, canvas, color });
+    layer.setColor(color);
+    return layer;
   }
 
   saveColor() {
@@ -244,8 +237,7 @@ export default class Layer {
   }
 
   restoreColor() {
-    this.color = this.previousColor;
-    this.redraw();
+    this.setColor(this.previousColor);
   }
 
   reset() {
@@ -321,7 +313,7 @@ export default class Layer {
   /**
    * Refreshes the view canvas with the background color and/or the source image
    */
-  redraw(noMasks = false) {
+  redraw() {
     // we take the original image and apply our scaling transformations
     const original = Utils.cloneCanvas(this.source);
     // apply transformations to original
@@ -345,9 +337,9 @@ export default class Layer {
 
     // for (const maskId of Array.from(this.view.maskIds).reverse()) {
     for (const maskId of this.view.maskIds) {
+      const maskLayer = this.view.getMaskLayer(maskId);
       // we apply the mask if the layer is below a masking layer
-      if (!noMasks && this.view.isOriginLayerHigher(maskId, this.id)) {
-        const maskLayer = this.view.getMaskLayer(maskId);
+      if (maskLayer && this.view.isOriginLayerHigher(maskId, this.id)) {
         context.drawImage(
           maskLayer.sourceMask,
           0,
@@ -365,14 +357,21 @@ export default class Layer {
 
     context.translate(0, 0);
 
-    // apply computed image and scale
-    context.drawImage(
-      original,
-      this.position.x,
-      this.position.y,
-      this.source.width * this.scale,
-      this.source.height * this.scale
-    );
+    if (this.colorLayer) {
+      context.fillStyle = this.color;
+      context.rect(0, 0, this.width, this.height);
+      context.fill();
+    } else {
+      // apply computed image and scale
+      context.drawImage(
+        original,
+        this.position.x,
+        this.position.y,
+        this.source.width * this.scale,
+        this.source.height * this.scale
+      );
+    }
+
     context.resetTransform();
   }
 }
