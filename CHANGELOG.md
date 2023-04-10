@@ -1,5 +1,9 @@
 # Changelog
 
+# [3.11.1]
+- In some circumstances when layers were removed
+- Colour layers would not change 
+
 # [3.11.0]
 - Download image, as requested as part of #113
 - Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
