@@ -42,6 +42,9 @@ const CONSTANTS = {
     SAMPLE_SIZE: 5,
     MINIMUM_ALPHA: 255,
   },
+  MASKER: {
+    ALPHA_COLOR: "rgb(113, 113, 255)",
+  },
   BAD_DIRS: ["[data]", "[data] ", "", null],
 };
 

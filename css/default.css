@@ -64,12 +64,12 @@
     /* Safari, Android, iOS */ url("./fonts/roboto-condensed-v18-latin-700.svg#RobotoCondensed") format("svg"); /* Legacy iOS */
 }
 
-#vtta-tokenizer div.avatar div.view > div > canvas {
+#tokenizer div.avatar div.view > div > canvas {
   width: 450px;
   height: 450px;
 }
 
-#vtta-tokenizer div.token div.view > div > canvas {
+#tokenizer div.token div.view > div > canvas {
   width: 450px;
   height: 450px;
 }

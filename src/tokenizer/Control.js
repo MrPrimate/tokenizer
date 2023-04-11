@@ -110,20 +110,6 @@ export default class Control {
       this.view.dispatchEvent(new CustomEvent('mask', { detail: { layerId: this.layer.id } }));
     });
 
-    this.visibleControl = document.createElement('button');
-    this.visibleControl.classList.add('visible-layer');
-    this.visibleControl.title = "Visible layer?";
-
-    let visibleButtonText = document.createElement('i');
-    visibleButtonText.classList.add('fas', 'fa-eye');
-    this.visibleControl.appendChild(visibleButtonText);
-
-    // send a mask event when clicked
-    this.visibleControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
-    });
-
     // blend mode controls
     this.blendControl = document.createElement('select');
     // this.blendControl.disabled = true;
@@ -152,6 +138,21 @@ export default class Control {
     let positionManagementTitle = document.createElement('span');
     positionManagementTitle.innerHTML = 'Transform';
     positionManagementSection.appendChild(positionManagementTitle);
+
+    // is this layer visible?
+    this.visibleControl = document.createElement('button');
+    this.visibleControl.classList.add('visible-layer');
+    this.visibleControl.title = "Visible layer?";
+
+    let visibleButtonText = document.createElement('i');
+    visibleButtonText.classList.add('fas', 'fa-eye');
+    this.visibleControl.appendChild(visibleButtonText);
+
+    // send a mask event when clicked
+    this.visibleControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
+    });
 
     // Makes the layer active for translating/ scaling
     this.activeControl = document.createElement('button');
@@ -316,10 +317,10 @@ export default class Control {
     previewSection.appendChild(this.layer.canvas);
     this.view.appendChild(maskManagementSection);
     maskManagementSection.appendChild(this.maskControl);
-    maskManagementSection.appendChild(this.visibleControl);
     maskManagementSection.appendChild(this.blendControl);
     if (this.layer.colorLayer) {
       this.view.appendChild(colorManagementSection);
+      colorManagementSection.appendChild(this.visibleControl);
       colorManagementSection.appendChild(this.colorSelector);
       colorManagementSection.appendChild(this.colorSelectorProxy);
       colorManagementSection.appendChild(this.clearColor);
@@ -328,6 +329,7 @@ export default class Control {
       this.maskControl.disabled = true;
     } else {
       this.view.appendChild(positionManagementSection);
+      positionManagementSection.appendChild(this.visibleControl);
       positionManagementSection.appendChild(this.activeControl);
       positionManagementSection.appendChild(this.flipControl);
       positionManagementSection.appendChild(this.resetControl);

@@ -14,7 +14,7 @@ export default class AutoTokenize extends FormApplication {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: "auto-tokenize",
-      classes: ["vtta-tokenizer"],
+      classes: ["tokenizer"],
       title: "Auto Tokenize",
       template: "modules/vtta-tokenizer/templates/auto.hbs",
       width: 350,
@@ -30,7 +30,7 @@ export default class AutoTokenize extends FormApplication {
     };
     return {
       data,
-      cssClass: "vtta-tokenizer-window"
+      cssClass: "tokenizer-window"
     };
 
   }

@@ -1,13 +1,13 @@
-#vtta-tokenizer button .fas {
+#tokenizer button .fas {
   position: relative;
   top: -3px;
 }
 
-#vtta-tokenizer .blend-control {
+#tokenizer .blend-control {
   width: 60px;
 }
 
-#vtta-tokenizer div.view > div > canvas {
+#tokenizer div.view > div > canvas {
   padding-left: 0;
   padding-right: 0;
   margin-left: auto;
@@ -17,17 +17,17 @@
   margin-bottom: 5px;
 }
 
-#vtta-tokenizer > div {
+#tokenizer > div {
   display: flex;
   flex-direction: row;
   align-items: top;
 }
 
-#vtta-tokenizer > div > div {
+#tokenizer > div > div {
   padding: 5px;
 }
 
-#vtta-tokenizer div.view-layer-control {
+#tokenizer div.view-layer-control {
   font-family: "Roboto", sans-serif;
   padding: 5px;
   display: flex;
@@ -39,24 +39,24 @@
   padding: 5px;
 }
 
-#vtta-tokenizer div.view-layer-control canvas {
+#tokenizer div.view-layer-control canvas {
   height: 40px;
   width: 40px;
   background-color: white;
 }
 
-#vtta-tokenizer #stage canvas.isColorPicking {
+#tokenizer #stage canvas.isColorPicking {
   -webkit-box-shadow: -2px 2px 5px -2px rgb(229, 240, 162, 0.75);
   -moz-box-shadow: -2px 2px 5px -2px rgb(229, 240, 162, 0.75);
   box-shadow: -2px 2px 5px -2px rgb(229, 240, 162, 0.75);
 }
 
-#vtta-tokenizer div.view-layer-control span {
+#tokenizer div.view-layer-control span {
   display: none;
 }
 
-#vtta-tokenizer div.view-layer-control .section,
-#vtta-tokenizer .section {
+#tokenizer div.view-layer-control .section,
+#tokenizer .section {
   height: 40px;
   display: flex;
   flex-direction: row;
@@ -68,22 +68,22 @@
   margin-right: 5px;
 }
 
-#vtta-tokenizer div.view-layer-control input[type="color"] {
+#tokenizer div.view-layer-control input[type="color"] {
   display: none;
 }
 
-#vtta-tokenizer .filePickerTarget {
+#tokenizer .filePickerTarget {
   display: none;
 }
 
-#vtta-tokenizer div.view-layer-control button:disabled {
+#tokenizer div.view-layer-control button:disabled {
   -webkit-appearance: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
-#vtta-tokenizer div.view-layer-control button,
-#vtta-tokenizer button {
+#tokenizer div.view-layer-control button,
+#tokenizer button {
   border: thin solid black;
   height: 30px;
   width: 30px;
@@ -95,7 +95,7 @@
   box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
 }
 
-#vtta-tokenizer select {
+#tokenizer select {
   border: thin solid black;
   height: 30px;
   width: 255px;
@@ -107,56 +107,56 @@
 }
 
 /* Move up/down control section */
-#vtta-tokenizer div.view-layer-control .section.move-control {
+#tokenizer div.view-layer-control .section.move-control {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-#vtta-tokenizer div.view-layer-control .section.move-control button {
+#tokenizer div.view-layer-control .section.move-control button {
   border-radius: 4px;
   height: 15px;
   width: 30px;
 }
 
-#vtta-tokenizer div.view-layer-control .section.move-control button .fas {
+#tokenizer div.view-layer-control .section.move-control button .fas {
   position: relative;
 }
 
-#vtta-tokenizer div.view-layer-control .section.move-control button.move-up {
+#tokenizer div.view-layer-control .section.move-control button.move-up {
   margin-bottom: 0px;
   padding-bottom: 0px;
 }
-#vtta-tokenizer div.view-layer-control .section.move-control button.move-up .fas {
+#tokenizer div.view-layer-control .section.move-control button.move-up .fas {
   top: -11px;
 }
 
-#vtta-tokenizer div.view-layer-control .section.move-control button.move-down {
+#tokenizer div.view-layer-control .section.move-control button.move-down {
   margin-top: 2px;
   padding-top: 2px;
 }
-#vtta-tokenizer div.view-layer-control .section.move-control button.move-down .fas {
+#tokenizer div.view-layer-control .section.move-control button.move-down .fas {
   top: -8px;
 }
 
-#vtta-tokenizer div.view-layer-control button.delete-control {
+#tokenizer div.view-layer-control button.delete-control {
   background-color: red;
   color: white;
 }
 
-#vtta-tokenizer div.view-layer-control button.delete-control:disabled {
+#tokenizer div.view-layer-control button.delete-control:disabled {
   background-color: rgb(255, 124, 124);
 }
 
-#vtta-tokenizer div.view-layer-control button:disabled {
+#tokenizer div.view-layer-control button:disabled {
   -webkit-appearance: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
 
-#vtta-tokenizer div.view-layer-control .color-picker {
+#tokenizer div.view-layer-control .color-picker {
   border-radius: 100%;
   border: thin solid black;
   height: 25px;
@@ -170,7 +170,7 @@
   -moz-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
   box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
 }
-#vtta-tokenizer div.view-layer-control .color-picker.transparent {
+#tokenizer div.view-layer-control .color-picker.transparent {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#fff9f9+0,d8e1e7+50,b5c6d0+51,f7f7f7+100 */
   background: rgb(255, 249, 249); /* Old browsers */
   background: -moz-linear-gradient(
@@ -197,7 +197,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff9f9', endColorstr='#f7f7f7',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
-#vtta-tokenizer div.view-layer-control button.active {
+#tokenizer div.view-layer-control button.active {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#e6f0a3+0,d2e638+50,c3d825+51,dbf043+100;Green+Gloss+%232 */
   background: hsl(68, 72%, 79%); /* Old browsers */
   background: -moz-linear-gradient(
@@ -224,7 +224,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f0a3', endColorstr='#dbf043',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
-#vtta-tokenizer div.menu {
+#tokenizer div.menu {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -234,7 +234,7 @@
   margin-top: 5px;
 }
 
-#vtta-tokenizer div.section {
+#tokenizer div.section {
   display: flex;
   flex-direction: row;
   align-content: center;
@@ -243,23 +243,23 @@
   border: thin solid rgb(149, 159, 168);
 }
 
-#vtta-tokenizer div.section div.title {
+#tokenizer div.section div.title {
   font-weight: normal;
 }
 
-#vtta-tokenizer div.section div.content {
+#tokenizer div.section div.content {
   display: flex;
   flex-direction: row;
 }
 
-#vtta-tokenizer div.footer {
+#tokenizer div.footer {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
 }
 
-#vtta-tokenizer div.footer button {
+#tokenizer div.footer button {
   width: 25%;
   line-height: 1px;
 }
@@ -285,18 +285,18 @@
 }
 
 
-.vtta-tokenizer .active::after {
+.tokenizer .active::after {
   content: "\2796";
   /* Unicode character for "minus" sign (-) */
 }
 
-.vtta-tokenizer label {
+.tokenizer label {
   display: block;
   padding-left: 15px;
   text-indent: -15px;
 }
 
-.vtta-tokenizer input[type=checkbox] {
+.tokenizer input[type=checkbox] {
   width: 20px;
   height: 20px;
   padding: 0;
@@ -307,33 +307,33 @@
   *overflow: hidden;
 }
 
-.vtta-tokenizer .import-invalid {
+.tokenizer .import-invalid {
   display: none;
 }
 
-.vtta-tokenizer .import-hidden {
+.tokenizer .import-hidden {
   visibility: hidden;
 }
 
-.vtta-tokenizer .import-progress {
+.tokenizer .import-progress {
   background-color: #f1f1f1;
   margin: 5px 0;
   width: 100%;
 }
 
-.vtta-tokenizer .import-progress .import-progress-bar {
+.tokenizer .import-progress .import-progress-bar {
   max-width: 100%;
   height: 24px;
   background-color: green;
   text-align: center;
 }
 
-.vtta-tokenizer .import-progress .import-progress-bar span {
+.tokenizer .import-progress .import-progress-bar span {
   white-space: nowrap;
   line-height: 24px;
 }
 
-.vtta-tokenizer .tokenizer-overlay {
+.tokenizer .tokenizer-overlay {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
@@ -342,7 +342,7 @@
   left: 0;
 }
 
-.vtta-tokenizer .tokenizer-working {
+.tokenizer .tokenizer-working {
   color: white;
   position: absolute;
   top: 50%;
@@ -352,7 +352,7 @@
 }
 
 /* The actual popup */
-#vtta-tokenizer .popup {
+#tokenizer .popup {
   box-sizing: border-box;
   user-select: none;
   padding: 3px;
@@ -369,7 +369,7 @@
 }
 
 /* Popup arrow */
-#vtta-tokenizer .popup::after {
+#tokenizer .popup::after {
   content: "";
   position: absolute;
   bottom: 100%;
@@ -381,10 +381,10 @@
 }
 
 /* Toggle this class - hide and show the popup */
-#vtta-tokenizer .popup .show {
+#tokenizer .popup .show {
   visibility: visible;
 }
 
-#vtta-tokenizer .show {
+#tokenizer .show {
   visibility: visible;
 }

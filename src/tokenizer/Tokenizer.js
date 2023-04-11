@@ -372,13 +372,13 @@ export default class Tokenizer extends FormApplication {
   activateListeners(html) {
     this.loadImages();
 
-    $("#vtta-tokenizer .file-picker-thumbs").click((event) => {
+    $("#tokenizer .file-picker-thumbs").click((event) => {
         event.preventDefault();
         const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleFrameSelection.bind(this) });
         picker.render(true);
     });
 
-    $("#vtta-tokenizer .filePickerTarget").on("change", (event) => {
+    $("#tokenizer .filePickerTarget").on("change", (event) => {
       const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
       const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
 
@@ -387,7 +387,7 @@ export default class Tokenizer extends FormApplication {
         .catch((error) => ui.notifications.error(error));
     });
 
-    $("#vtta-tokenizer button.menu-button").click(async (event) => {
+    $("#tokenizer button.menu-button").click(async (event) => {
       event.preventDefault();
       const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
       const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
@@ -590,7 +590,7 @@ export default class Tokenizer extends FormApplication {
     });
 
     if (this.tokenOptions.isWildCard) {
-      $("#vtta-tokenizer div.token > h1").text("Token (Wildcard)");
+      $("#tokenizer div.token > h1").text("Token (Wildcard)");
       this.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
       // load the default frame, if there is one set
       this._setTokenFrame();
