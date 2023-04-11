@@ -368,6 +368,16 @@
   visibility: hidden;
 }
 
+#tokenizer select.blend-control-selector {
+  color: #c9c7b8;
+  -webkit-appearance: none;
+}
+
+#tokenizer option, optgroup {
+  color: rgb(0, 0, 0);
+  -webkit-appearance: none;
+}
+
 /* Popup arrow */
 #tokenizer .popup::after {
   content: "";

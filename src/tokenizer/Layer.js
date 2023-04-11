@@ -42,7 +42,7 @@ export default class Layer {
     this.providesMask = false;
     this.sourceMask = null;
     this.mask = null;
-    this.maskBlendMode = CONSTANTS.BLEND_MODES.SOURCE_IN;
+    this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.customMask = false;
 
     this.alpha = 1.0;
@@ -351,7 +351,7 @@ export default class Layer {
           this.canvas.width,
           this.canvas.height
         );
-        context.globalCompositeOperation = this.maskBlendMode;
+        context.globalCompositeOperation = this.maskCompositeOperation;
       }
     }
 

@@ -406,7 +406,7 @@ export default class View {
       this.controls.forEach((control) => control.refresh());
     });
     control.view.addEventListener('blend', (event) => {
-      this.setBlendMode(event.detail.layerId, event.detail.blendMode);
+      this.setBlendMode(event.detail.layerId, event.detail.blendMode, event.detail.mask);
     });
   }
 
@@ -504,10 +504,11 @@ export default class View {
     }
   }
 
-  setBlendMode(id, blendMode) {
+  setBlendMode(id, blendMode, isMask) {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
-      layer.compositeOperation = blendMode;
+      if (isMask) layer.maskCompositeOperation = blendMode;
+      else layer.compositeOperation = blendMode;
       this.redraw(true);
     }
   }

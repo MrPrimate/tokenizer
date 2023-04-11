@@ -111,27 +111,77 @@ export default class Control {
     });
 
     // blend mode controls
-    this.blendControl = document.createElement('select');
-    // this.blendControl.disabled = true;
+    let blendManagementSection = document.createElement('div');
+
+    this.blendControl = document.createElement('button');
     this.blendControl.classList.add('blend-control');
+    this.blendControl.title = "Blend modes";
 
-    for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
-      const option = document.createElement('option');
-      option.value = mode;
-      option.innerHTML = mode;
-      this.blendControl.append(option);
-    }
+    let blendButtonText = document.createElement('i');
+    blendButtonText.classList.add('fas', 'fa-masks-theater');
+    this.blendControl.appendChild(blendButtonText);
 
-    this.blendControl.addEventListener('change', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('blend', {
-        detail: {
-          layerId: this.layer.id,
-          blendMode: event.target.value,
+    this.blendSelectorSpan = document.createElement('div');
+    this.blendSelectorSpan.classList.add('popup');
+
+    this.blendControlImage = document.createElement('select');
+    this.blendControlImage.classList.add('blend-control-image');
+    this.blendControlMask = document.createElement('select');
+    this.blendControlMask.classList.add('blend-control-mask');
+
+    [this.blendControlMask, this.blendControlImage].forEach((blendControlElement) => {
+      blendControlElement.classList.add('blend-control-selector');
+      for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
+        const option = document.createElement('option');
+        option.value = mode;
+        option.innerHTML = mode;
+        if ((blendControlElement.classList.contains("blend-control-image") && mode === this.layer.compositeOperation)
+          || (blendControlElement.classList.contains("blend-control-mask") && mode === this.layer.maskCompositeOperation)) {
+          option.selected = true;
         }
-      }));
+        blendControlElement.append(option);
+      }
+  
+      blendControlElement.addEventListener('change', (event) => {
+        event.preventDefault();
+        this.view.dispatchEvent(new CustomEvent('blend', {
+          detail: {
+            layerId: this.layer.id,
+            image: blendControlElement.classList.contains("blend-control-image"),
+            mask: blendControlElement.classList.contains("blend-control-mask"),
+            blendMode: event.target.value,
+          }
+        }));
+      });
+  
     });
 
+    let blendImageDiv = document.createElement('div');
+    let blendImageText = document.createElement('i');
+    blendImageText.title = "Image Blend Mode";
+    blendImageText.classList.add('fas', 'fa-image');
+    blendImageDiv.appendChild(blendImageText);
+    blendImageDiv.appendChild(this.blendControlImage);
+    this.blendSelectorSpan.appendChild(blendImageDiv);
+
+    let blendMaskDiv = document.createElement('div');
+    let blendMaskText = document.createElement('i');
+    blendMaskText.title = "Mask Blend Mode";
+    blendMaskText.classList.add('fas', 'fa-mask');
+    blendMaskDiv.appendChild(blendMaskText);
+    blendMaskDiv.appendChild(this.blendControlMask);
+    this.blendSelectorSpan.appendChild(blendMaskDiv);
+
+    // send an activate event when clicked
+    this.blendControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.blendSelectorSpan.classList.toggle("show");
+    });
+
+    blendManagementSection.appendChild(this.blendControl);
+    blendManagementSection.appendChild(this.blendSelectorSpan);
+
+    // position management section
     let positionManagementSection = document.createElement('div');
     positionManagementSection.name = 'position-management';
     positionManagementSection.classList.add('section');
@@ -200,7 +250,7 @@ export default class Control {
       this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
 
-    // resets the layer on the view
+    // opacity management
     let opacityManagementSection = document.createElement('div');
 
     this.opacityControl = document.createElement('button');
@@ -210,6 +260,7 @@ export default class Control {
     let opacityButtonText = document.createElement('i');
     opacityButtonText.classList.add('fas', 'fa-adjust');
     this.opacityControl.appendChild(opacityButtonText);
+    opacityManagementSection.appendChild(this.opacityControl);
 
     // this.opacitySliderSpan = document.createElement('span');
     this.opacitySliderSpan = document.createElement('div');
@@ -245,7 +296,6 @@ export default class Control {
       this.view.dispatchEvent(new CustomEvent('opacity', { detail }));
     });
 
-    opacityManagementSection.appendChild(this.opacityControl);
     opacityManagementSection.appendChild(this.opacitySliderSpan);
 
     // the move up/down order section
@@ -317,7 +367,7 @@ export default class Control {
     previewSection.appendChild(this.layer.canvas);
     this.view.appendChild(maskManagementSection);
     maskManagementSection.appendChild(this.maskControl);
-    maskManagementSection.appendChild(this.blendControl);
+    maskManagementSection.appendChild(blendManagementSection);
     if (this.layer.colorLayer) {
       this.view.appendChild(colorManagementSection);
       colorManagementSection.appendChild(this.visibleControl);
