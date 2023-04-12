@@ -1,5 +1,8 @@
 # Changelog
 
+# [NEXT UP]
+- Blend modes can be selected for intial layer draw and for mask drawing.
+
 # [3.11.1]
 - In some circumstances when layers were removed
 - Colour layers would not change 
