@@ -72,7 +72,6 @@
   height: 40px;
   display: flex;
   flex-direction: row;
-  flex-direction: row;
   align-content: center;
   align-items: center;
   border: thin solid rgb(149, 159, 168);
@@ -114,9 +113,17 @@
   box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
 }
 
+#tokenizer button.invisible-button {
+  margin: 10px;
+  width: 30px;
+  white-space: nowrap;
+  border: none;
+  display: flex;
+  background-color: rgb(194, 194, 194);
+}
+
 #tokenizer button.menu-button.text-button {
   width: 100%;
-  height: 2em;
 }
 
 #tokenizer select {
@@ -283,12 +290,26 @@
 #tokenizer div.footer {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
-#tokenizer div.footer button {
-  width: 15%;
+#tokenizer div.footer-start {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#tokenizer div.footer-end {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+#tokenizer div.footer button.ok-button {
+  width: 150px;
   height: 40px;
 }
 

@@ -16,7 +16,7 @@
                 <div class="view" id="tokenizer-avatar"></div>
                 <div class="menu" id="avatar-options">
                     <div class="section">
-                        <div class="title">Add Layer</div>
+                        <div class="title"><button title="Add layer" class="invisible-button"><i class="fa-solid fa-plus"></i></button></div>
                         <div class="content">
                             <button title="Use Token image" class="menu-button" data-type="token" data-target="avatar"><i class="fas fa-user-circle"></i></button>
                             <button title="Use a URL" class="menu-button" data-type="download" data-target="avatar"><i class="fas fa-globe"></i></button>
@@ -35,14 +35,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="menu">
-                    <div class="section">
-                        <div class="title">Paste Target</div>
-                        <div class="content">
-                            <button title="Paste target" id="paste-toggle" class="menu-button text-button" data-type="paste-toggle-{{this.pasteTarget}}"><i class="fas fa-clipboard button-fas"></i> {{this.pasteTargetName}}</button>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="token" id="tokenizer-token-parent">
                 <div class="title">
@@ -55,9 +47,9 @@
                 <div class="view" id="tokenizer-token"></div>
                 <div class="menu" id="token-options">
                     <div class="section">
-                        <div class="title">Add Layer</div>
+                        <div class="title"><button title="Add layer" class="invisible-button"><i class="fa-solid fa-plus"></i></button></div>
                         <div class="content">
-                            <button title="Use Avatar image" class="menu-button" data-type="avatar" data-target="token"><i class="fas fa-user"></i></button>
+                            <button title="Use Avatar image" class="menu-button" data-type="avatar" data-target="token"><i class="fas fa-image-portrait"></i></button>
                             <button title="Use a URL" class="menu-button" data-type="download" data-target="token"><i class="fas fa-globe"></i></button>
                             <button title="Upload from your computer" class="menu-button" data-type="upload" data-target="token"><i class="fas fa-upload"></i></button>
                             {{#if canBrowse }}
@@ -72,41 +64,24 @@
                             </button>
                             {{/if}}
                             <button title="Use a color layer" class="menu-button" data-type="color" data-target="token"><i class="fas fa-fill"></i></button>
-                        </div>
-                    </div>
-                    <div class="section">
-                        <div class="title">Add frame</div>
-                        <div class="content">
-                            <button title="Add Frame" class="menu-button file-picker-thumbs" data-type="frame" data-target="token"><i class="fas fa-user-circle"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu">
-                    <div class="section">
-                        <div class="title">Save Location/Name</div>
-                        <div class="content">
-                            <button title="Save Location/Name" class="menu-button" data-type="locations"><i class="fas fa-folder-open"></i></button>
-                        </div>
-                    </div>
-                    <div class="section">
-                        <div class="title">Download</div>
-                        <div class="content">
-                            <button title="Download" name="downloadToken" class="menu-button" data-type="download-token" data-target="token"><i class="fas fa-download"></i></button>
+                            <button title="Add Frame" class="menu-button text-button file-picker-thumbs" data-type="frame" data-target="token" style="order: 100;">Add frame&nbsp;&nbsp;<i class="fas fa-user-circle fas-button"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="footer">
-            <div>
-                {{!-- <span style="font-weight: bold">Target : </span>
-                <span name="targetPath">Generating...</span> --}}
+            <div class="footer-start">
+                <button title="Save Location/Name" class="menu-button" data-type="locations"><i class="fas fa-folder-open"></i></button>
+                <button title="Download" name="downloadToken" class="menu-button" data-type="download-token" data-target="token"><i class="fas fa-download"></i></button>
                 <span style="font-weight: bold">Token Filename: </span>
                 <span name="targetFilename">Generating...</span>
                 <input type="hidden" name="targetAvatarFilename" />
                 <input type="hidden" name="targetTokenFilename" />
             </div>
-            <button class="ok-button" title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>Apply&nbsp;&nbsp;<i class="fas fa-stamp button-fas"></i></button>
+            <div class="footer-end">
+                <button class="ok-button" title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>Apply&nbsp;&nbsp;<i class="fas fa-stamp button-fas"></i></button>
+            </div>
         </div>
     </div>
 </form>
