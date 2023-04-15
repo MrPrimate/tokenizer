@@ -2,6 +2,7 @@ import Utils from '../libs/Utils.js';
 import { geom } from '../libs/MarchingSquares.js';
 import CONSTANTS from '../constants.js';
 import { generateRayMask } from '../libs/RayMask.js';
+import logger from '../libs/logger.js';
 
 export default class Layer {
   constructor({ view, canvas, img = null, color = null } = {}) {
