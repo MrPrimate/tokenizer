@@ -503,7 +503,7 @@ export default class View {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.reset();
-      this.redraw();
+      this.redraw(true);
     }
   }
 
@@ -588,12 +588,11 @@ export default class View {
     return true;
   }
 
-  async editMask(id) {
+  editMask(id) {
     logger.debug(`Editing mask for layer ${id}`);
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer) {
-      await layer.editMask();
-      this.redraw(true);
+      layer.editMask(this.redraw.bind(this));
     }
   }
 

@@ -1,7 +1,10 @@
 # Changelog
 
 # [NEXT UP]
+- Mask editor - masks can now be edited, note once edited the masks cannot be moved and will remain static if the image on the layer is moved.
 - Blend modes can be selected for intial layer draw and for mask drawing.
+- Some UI improvements suggested by @Mats (Allistaar)
+#9836
 
 # [3.11.1]
 - In some circumstances when layers were removed

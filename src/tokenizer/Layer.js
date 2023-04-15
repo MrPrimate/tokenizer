@@ -2,7 +2,7 @@ import Utils from '../libs/Utils.js';
 import { geom } from '../libs/MarchingSquares.js';
 import CONSTANTS from '../constants.js';
 import { generateRayMask } from '../libs/RayMask.js';
-import logger from '../libs/logger.js';
+import { Masker } from './Masker.js';
 
 export default class Layer {
   constructor({ view, canvas, img = null, color = null } = {}) {
@@ -31,8 +31,6 @@ export default class Layer {
     this.mirror = 1;
     this.flipped = false;
 
-    // canvas referencing to the source (image) that will be displayed on the view canvas
-    this.source = Utils.cloneCanvas(this.canvas);
     // the image drawn on the source, kept for rotations
     if (img) {
       this.img = img;
@@ -66,15 +64,21 @@ export default class Layer {
     return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
   }
 
-  applyCustomMask(mask) {
-    this.mask = mask;
-    this.renderedMask = Utils.cloneCanvas(mask);
+  applyCustomMask(mask, callback) {
     this.customMask = true;
-    this.recalculateMask();
+    this.mask = mask;
+    this.renderedMask
+      .getContext('2d')
+      .drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
+    callback(true);
   }
-  editMask() {
-    logger.debug("Mask Editing is not yet implemented");
+
+  editMask(callback) {
+    const maskEditor = new Masker(this);
+    maskEditor.activateListeners(this.applyCustomMask.bind(this), callback);
+    maskEditor.draw();
   }
+
   /**
    * Activates the event listeners on the view canvas for scaling and translating
    */
@@ -169,15 +173,17 @@ export default class Layer {
   }
 
   createMask() {
-    this.renderedMask = document.createElement('canvas');
-    this.renderedMask.width = this.source.width;
-    this.renderedMask.height = this.source.height;
+    if (!this.renderedMask) {
+      this.renderedMask = document.createElement('canvas');
+      this.renderedMask.width = this.source.width;
+      this.renderedMask.height = this.source.height;
+    }
     const rayMask = game.settings.get(CONSTANTS.MODULE_ID, "default-algorithm");
     if (rayMask) {
       this.mask = generateRayMask(this.canvas);
-      this.renderedMask
-        .getContext('2d')
-        .drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
+      const maskContext = this.renderedMask.getContext('2d');
+      maskContext.resetTransform();
+      maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
     } else {
       this.createOriginalMask();
     }
@@ -262,7 +268,12 @@ export default class Layer {
     this.rotation = 0;
     this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
     this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
+    this.mask = null;
+    this.customMask = false;
     this.redraw();
+    this.createMask();
+    
+    this.recalculateMask();
   }
 
   /**
