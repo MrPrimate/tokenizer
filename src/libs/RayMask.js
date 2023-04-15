@@ -166,8 +166,7 @@ export function generateRayMask(maskCanvas) {
     .filter((ray) => ray.edgePixel)
     .map((ray) => ray.edgePixel);
 
-  const defaultFillColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
-  if (defaultFillColor !== "") context.fillStyle = defaultFillColor;
+  context.fillStyle = "black";
 
   // unable to calculate suitable radius, so just fill the whole mask
   if (edgePoints.length < 2) {
@@ -175,8 +174,6 @@ export function generateRayMask(maskCanvas) {
     context.fill();
   } else {
     context.beginPath();
-    if (defaultFillColor !== "") context.fillStyle = defaultFillColor;
-
     edgePoints.forEach((edgePoint, index) => {
       if (index === 0) {
         context.moveTo(edgePoint.x, edgePoint.y);

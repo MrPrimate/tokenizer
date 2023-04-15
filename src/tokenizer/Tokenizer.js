@@ -206,7 +206,8 @@ export default class Tokenizer extends FormApplication {
       ? options.tokenOffset
       : { position: { x: defaultOffset, y: defaultOffset } };
     this.callback = callback;
-    this.tokenToggle = game.settings.get(CONSTANTS.MODULE_ID, "token-only-toggle");
+    this.modifyAvatar = !game.settings.get(CONSTANTS.MODULE_ID, "token-only-toggle");
+    this.modifyToken = true;
     this.defaultFrames = Tokenizer.getDefaultFrames();
     this.frames = [];
     this.omfgFrames = [];
@@ -254,7 +255,6 @@ export default class Tokenizer extends FormApplication {
       frames: frames,
       pasteTarget: pasteTarget,
       pasteTargetName: pasteTargetName,
-      tokenOnlyToggle: this.tokenToggle,
     };
   }
 
@@ -308,14 +308,16 @@ export default class Tokenizer extends FormApplication {
   }
 
   async updateToken(dataBlob) {
-    this.tokenOptions.tokenUploadDirectory = this.tokenUploadDirectory;
-    const filePath = await Utils.uploadToFoundry(dataBlob, this.tokenUploadDirectory, this.tokenFileName);
-    logger.debug(`Created token at ${filePath}`);
-    this.tokenOptions.tokenFilename = filePath;
+    if (this.modifyToken) {
+      this.tokenOptions.tokenUploadDirectory = this.tokenUploadDirectory;
+      const filePath = await Utils.uploadToFoundry(dataBlob, this.tokenUploadDirectory, this.tokenFileName);
+      logger.debug(`Created token at ${filePath}`);
+      this.tokenOptions.tokenFilename = filePath;
+    }
   }
 
   async updateAvatar(dataBlob) {
-    if (!this.tokenToggle) {
+    if (this.modifyAvatar) {
       this.tokenOptions.avatarUploadDirectory = this.avatarUploadDirectory;
       const filePath = await Utils.uploadToFoundry(dataBlob, this.avatarUploadDirectory, this.avatarFileName);
       logger.debug(`Created avatar at ${filePath}`);
@@ -365,8 +367,10 @@ export default class Tokenizer extends FormApplication {
       }
     }
 
-    $("#avatar-options :input").attr("disabled", this.tokenToggle);
-    $("#tokenizer-avatar :input").attr("disabled", this.tokenToggle);
+    $("#avatar-options :input").attr("disabled", !this.modifyAvatar);
+    $("#tokenizer-avatar :input").attr("disabled", !this.modifyAvatar);
+    $("#token-options :input").attr("disabled", !this.modifyToken);
+    $("#tokenizer-token :input").attr("disabled", !this.modifyToken);
   }
 
   activateListeners(html) {
@@ -385,6 +389,56 @@ export default class Tokenizer extends FormApplication {
       Utils.download(eventTarget.value)
         .then((img) => view.addImageLayer(img))
         .catch((error) => ui.notifications.error(error));
+    });
+
+    $("#tokenizer button.box-button").click(async (event) => {
+      event.preventDefault();
+      const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
+
+      switch (eventTarget.dataset.type) {
+        case "modify-toggle": {
+          const button = document.getElementById(`modify-${eventTarget.dataset.target}`);
+          const fas = document.getElementById(`modify-${eventTarget.dataset.target}-fas`);
+          const newState = eventTarget.dataset.target === "avatar"
+            ? !this.modifyAvatar
+            : !this.modifyToken; 
+          
+          fas.classList.toggle("fa-regular");
+          fas.classList.toggle("fas");
+          fas.classList.toggle("fa-square");
+          fas.classList.toggle("fa-square-check");
+
+          $(`#${eventTarget.dataset.target}-options :input`).attr("disabled", !newState);
+          $(`#tokenizer-${eventTarget.dataset.target} :input`).attr("disabled", !newState);
+
+          if (eventTarget.dataset.target === "avatar") {
+            this.modifyAvatar = newState;
+          } else {
+            this.modifyToken = newState;
+          }
+
+          button.classList.toggle('deselected');
+          fas.classList.toggle('deselected');
+          break;
+        }
+        case "paste-toggle": {
+          const target = eventTarget.dataset.target;
+          const avatarButton = document.getElementById(`paste-avatar`);
+          const avatarFas = document.getElementById(`paste-avatar-fas`);
+          const tokenButton = document.getElementById(`paste-token`);
+          const tokenFas = document.getElementById(`paste-token-fas`);
+          game.settings.set("vtta-tokenizer", "paste-target", target);
+
+          avatarButton.classList.toggle('deselected');
+          avatarFas.classList.toggle("fa-circle");
+          avatarFas.classList.toggle("fa-circle-dot");
+          tokenButton.classList.toggle('deselected');
+          tokenFas.classList.toggle("fa-circle");
+          tokenFas.classList.toggle("fa-circle-dot");
+
+        }
+        // no default
+      }
     });
 
     $("#tokenizer button.menu-button").click(async (event) => {
@@ -463,37 +517,6 @@ export default class Tokenizer extends FormApplication {
             callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
             searchType: eventTarget.dataset.target === "avatar" ? "Portrait" : "Token"
           });
-          break;
-        }
-        case "paste-toggle-token": {
-          const toggle = document.getElementById("paste-toggle");
-          toggle.setAttribute("data-type", "paste-toggle-avatar");
-          toggle.innerHTML = '<i class="fas fa-clipboard"></i> Avatar';
-          game.settings.set("vtta-tokenizer", "paste-target", "avatar");
-          break;
-        }
-        case "paste-toggle-avatar": {
-          const toggle = document.getElementById("paste-toggle");
-          toggle.setAttribute("data-type", "paste-toggle-token");
-          toggle.innerHTML = '<i class="fas fa-clipboard"></i> Token';
-          game.settings.set("vtta-tokenizer", "paste-target", "token");
-          break;
-        }
-        case "token-only-toggle": {
-          const newTokenOnlyState = !(this.tokenToggle);
-          this.tokenToggle = newTokenOnlyState;
-
-          const toggle = document.getElementById("token-only");
-          if (newTokenOnlyState) {
-            toggle.innerHTML = '<i class="fas fa-toggle-on"></i>';
-            $("#avatar-options :input").attr("disabled", true);
-            $("#tokenizer-avatar :input").attr("disabled", true);
-          } else {
-            toggle.innerHTML = '<i class="fas fa-toggle-off"></i>';
-            $("#avatar-options :input").attr("disabled", false);
-            $("#tokenizer-avatar :input").attr("disabled", false);
-          }
-
           break;
         }
         case "locations": {

@@ -6,7 +6,13 @@
 
         <div>
             <div class="avatar">
-                <h1>Avatar</h1>
+                <div class="title">
+                    <div class="title-element"><h1>Avatar</h1></div>
+                    <div class="title-element">
+                        <button id="modify-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="modify-toggle">Modify&nbsp;&nbsp;<i id="modify-avatar-fas" class="fa-regular fa-square button-fas"></i></button>
+                        <button id="paste-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="paste-toggle">Paste target&nbsp;&nbsp;<i id="paste-avatar-fas" class="fa-regular fa-circle button-fas"></i></button>
+                    </div>
+                </div>
                 <div class="view" id="tokenizer-avatar"></div>
                 <div class="menu" id="avatar-options">
                     <div class="section">
@@ -33,23 +39,21 @@
                     <div class="section">
                         <div class="title">Paste Target</div>
                         <div class="content">
-                            <button title="Paste target" id="paste-toggle" class="menu-button" data-type="paste-toggle-{{this.pasteTarget}}"><i class="fas fa-clipboard"></i> {{this.pasteTargetName}}</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu">
-                    <div class="section">
-                        <div class="title">Modify Token Only?</div>
-                        <div class="content">
-                            <button title="Token Only" id="token-only" class="menu-button" data-type="token-only-toggle"><i class="fas fa-toggle-{{#if tokenOnlyToggle}}on{{else}}off{{/if}}"></i></button>
+                            <button title="Paste target" id="paste-toggle" class="menu-button text-button" data-type="paste-toggle-{{this.pasteTarget}}"><i class="fas fa-clipboard button-fas"></i> {{this.pasteTargetName}}</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="token" id="tokenizer-token-parent">
-                <h1>Token</h1>
+                <div class="title">
+                    <div class="title-element"><h1>Token</h1></div>
+                    <div class="title-element">
+                        <button id="modify-token" type="button" class="box-button" data-target="token" data-type="modify-toggle">Modify&nbsp;&nbsp;<i id="modify-token-fas" class="fas fa-square-check button-fas"></i></button>
+                        <button id="paste-token" type="button" class="box-button" data-target="token" data-type="paste-toggle">Paste target&nbsp;&nbsp;<i id="paste-token-fas" class="fa-regular fa-circle-dot button-fas"></i></button>
+                    </div>
+                </div>
                 <div class="view" id="tokenizer-token"></div>
-                <div class="menu">
+                <div class="menu" id="token-options">
                     <div class="section">
                         <div class="title">Add Layer</div>
                         <div class="content">
@@ -97,12 +101,12 @@
             <div>
                 {{!-- <span style="font-weight: bold">Target : </span>
                 <span name="targetPath">Generating...</span> --}}
-                <span style="font-weight: bold">Target Filename: </span>
+                <span style="font-weight: bold">Token Filename: </span>
                 <span name="targetFilename">Generating...</span>
                 <input type="hidden" name="targetAvatarFilename" />
                 <input type="hidden" name="targetTokenFilename" />
             </div>
-            <button title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>OK</button>
+            <button class="ok-button" title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>Apply&nbsp;&nbsp;<i class="fas fa-stamp button-fas"></i></button>
         </div>
     </div>
 </form>

@@ -50,7 +50,7 @@
     }
   ],
   "esmodules": ["./src/index.js"],
-  "styles": ["./css/module-settings.css", "./css/default.css", "./css/tokenizer.css"],
+  "styles": ["./css/default.css", "./css/tokenizer.css"],
   "packs": [],
   "url": "https://github.com/mrprimate/tokenizer/"
 }

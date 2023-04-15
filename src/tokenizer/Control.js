@@ -13,6 +13,10 @@ export default class Control {
     previewSection.name = 'preview';
     previewSection.classList.add('section');
 
+    let previewMaskSection = document.createElement('div');
+    previewMaskSection.name = 'previewMask';
+    previewMaskSection.classList.add('section');
+
     let colorManagementSection = document.createElement('div');
     colorManagementSection.name = 'color-management';
     colorManagementSection.classList.add('section');
@@ -108,6 +112,21 @@ export default class Control {
     this.maskControl.addEventListener('click', (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('mask', { detail: { layerId: this.layer.id } }));
+    });
+
+    // Set the mask of this layer
+    this.maskEditControl = document.createElement('button');
+    this.maskEditControl.classList.add('mask-control');
+    this.maskEditControl.disabled = true;
+    this.maskEditControl.title = "Edit mask";
+    let maskEditButtonText = document.createElement('i');
+    maskEditButtonText.classList.add('fas', 'fa-pencil');
+    this.maskEditControl.appendChild(maskEditButtonText);
+
+    // send a mask event when clicked
+    this.maskEditControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('edit-mask', { detail: { layerId: this.layer.id } }));
     });
 
     // blend mode controls
@@ -364,9 +383,12 @@ export default class Control {
 
     // push all elements to the control's view
     this.view.appendChild(previewSection);
-    previewSection.appendChild(this.layer.canvas);
+    previewSection.appendChild(this.layer.preview);
+    this.view.appendChild(previewMaskSection);
+    previewMaskSection.appendChild(this.layer.renderedMask);
     this.view.appendChild(maskManagementSection);
     maskManagementSection.appendChild(this.maskControl);
+    maskManagementSection.appendChild(this.maskEditControl);
     maskManagementSection.appendChild(blendManagementSection);
     if (this.layer.colorLayer) {
       this.view.appendChild(colorManagementSection);
@@ -397,10 +419,10 @@ export default class Control {
     // is this layer providing the mask for the view?
     if (this.layer.providesMask) {
       this.maskControl.classList.add('active');
-      // this.blendControl.disabled = false;
+      this.maskEditControl.disabled = false;
     } else {
       this.maskControl.classList.remove('active');
-      // this.blendControl.disabled = true;
+      this.maskEditControl.disabled = true;
     }
 
     // is this layer visible

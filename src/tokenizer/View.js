@@ -408,6 +408,9 @@ export default class View {
     control.view.addEventListener('blend', (event) => {
       this.setBlendMode(event.detail.layerId, event.detail.blendMode, event.detail.mask);
     });
+    control.view.addEventListener('edit-mask', async (event) => {
+      await this.editMask(event.detail.layerId);
+    });
   }
 
   /**
@@ -583,6 +586,15 @@ export default class View {
     }
     this.redraw(true);
     return true;
+  }
+
+  async editMask(id) {
+    logger.debug(`Editing mask for layer ${id}`);
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      await layer.editMask();
+      this.redraw(true);
+    }
   }
 
   // eslint-disable-next-line default-param-last

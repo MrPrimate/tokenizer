@@ -1,6 +1,18 @@
+#tokenizer button .fa-regular,
 #tokenizer button .fas {
   position: relative;
+}
+
+#tokenizer button.box-button .fa-regular,
+#tokenizer button.box-button .fas {
   top: -3px;
+}
+
+#tokenizer button .fa-regular::before,
+#tokenizer button .fas::before,
+#tokenizer button .button-fas::before {
+  margin-top: 50%;
+  display: flex;
 }
 
 #tokenizer .blend-control {
@@ -76,23 +88,35 @@
   display: none;
 }
 
-#tokenizer div.view-layer-control button:disabled {
+#tokenizer button:disabled.menu-button {
   -webkit-appearance: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
+
 #tokenizer div.view-layer-control button,
-#tokenizer button {
-  border: thin solid black;
+#tokenizer button.menu-button {
+  padding: 5px;
+  margin: 2px;
   height: 30px;
   width: 30px;
-  padding: 5px;
-  margin: 4px;
+  padding: 0 0.5em;
+  white-space: nowrap;
+  border: thin solid black;
+  border-radius: 2px;
+  display: flex;
+  letter-spacing: .05em;
+  line-height: 28px;
   -webkit-appearance: none;
   -webkit-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
   box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
+}
+
+#tokenizer button.menu-button.text-button {
+  width: 100%;
+  height: 2em;
 }
 
 #tokenizer select {
@@ -127,6 +151,8 @@
 #tokenizer div.view-layer-control .section.move-control button.move-up {
   margin-bottom: 0px;
   padding-bottom: 0px;
+  padding: 5px;
+  display: block;
 }
 #tokenizer div.view-layer-control .section.move-control button.move-up .fas {
   top: -11px;
@@ -135,6 +161,8 @@
 #tokenizer div.view-layer-control .section.move-control button.move-down {
   margin-top: 2px;
   padding-top: 2px;
+  padding: unset;
+  display: block;
 }
 #tokenizer div.view-layer-control .section.move-control button.move-down .fas {
   top: -8px;
@@ -260,8 +288,8 @@
 }
 
 #tokenizer div.footer button {
-  width: 25%;
-  line-height: 1px;
+  width: 15%;
+  height: 40px;
 }
 
 #paste-toggle {
@@ -284,11 +312,6 @@
   margin: 2px;
 }
 
-
-.tokenizer .active::after {
-  content: "\2796";
-  /* Unicode character for "minus" sign (-) */
-}
 
 .tokenizer label {
   display: block;
@@ -351,6 +374,10 @@
   transform: translateX(-50%) translateY(-50%);
 }
 
+#tokenizer .hidden {
+  display: none;
+}
+
 /* The actual popup */
 #tokenizer .popup {
   box-sizing: border-box;
@@ -397,4 +424,118 @@
 
 #tokenizer .show {
   visibility: visible;
+}
+
+
+.masker {
+  background-color: #f5f7e8;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.masker canvas {
+  max-width: 100vw;
+  max-height: 100vh;
+  margin-left: auto;
+  display: block;
+  margin-right: auto;
+}
+.masker .description {
+  position: absolute;
+  width: 20vw;
+  border: thin solid #8d2702;
+  bottom: 5px;
+  right: 5px;
+}
+.masker .description section.window-content {
+  padding: 5px !important;
+}
+.masker .description section.window-content h1 {
+  margin-top: 0;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.masker .description section.window-content .buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.masker .description section.window-content .buttons button {
+  max-width: 50% !important;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -ms-flex-preferred-size: 40%;
+      flex-basis: 40%;
+}
+
+
+.tokenizer .title {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.tokenizer .title-element:nth-child(1) {
+  order: 0;
+  flex: 0 1 auto;
+  align-self: auto;
+}
+
+.tokenizer .title-element:nth-child(2) {
+  order: 0;
+  flex: 1 0 auto;
+  align-self: auto;
+  justify-content: flex-end;
+  display: flex;
+  margin: auto;
+  gap: 2px;
+}
+
+.tokenizer .box-button-box {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.tokenizer .title .box-button {
+  background: rgb(94, 0, 0);
+  align-items: center;
+  justify-content: center;
+  color: rgb(255, 255, 255);
+  font-size: 10px;
+  cursor: pointer;
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.3), inset 0 0 0 2px hsla(0,0%,100%,.2);
+  flex: 0;
+  height: 2em;
+  margin: 0;
+  padding: 0 0.5em;
+  white-space: nowrap;
+  width: 100%;
+  border-radius: 2px;
+  display: flex;
+  font-family: var(--sans-serif);
+  font-size: var(--font-size-10);
+  font-weight: 500;
+  letter-spacing: .05em;
+  min-height: 1.5em;
+  text-rendering: optimizeLegibility;
+  text-transform: uppercase;
+  line-height: 28px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.tokenizer .box-button.deselected {
+  text-decoration-style: dotted;
+  color: rgb(94, 0, 0);
+  background: rgb(255, 255, 255);
 }
