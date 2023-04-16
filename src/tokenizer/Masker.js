@@ -22,7 +22,7 @@ export class Masker {
 
     this.canvas.width = layer.canvas.width;
     this.canvas.height = layer.canvas.height;
-    this.canvas.getContext("2d").drawImage(layer.canvas, 0, 0);
+    this.canvas.getContext("2d").drawImage(layer.preview, 0, 0);
 
     this.brushSize = 20;
 
@@ -230,7 +230,7 @@ export class Masker {
     this.chequeredSource.height = this.layer.canvas.height;
     this.drawChequeredBackground();
     const chequeredSourceContext = this.chequeredSource.getContext("2d");
-    chequeredSourceContext.drawImage(this.layer.canvas, 0, 0);
+    chequeredSourceContext.drawImage(this.layer.preview, 0, 0);
 
     // now the masked version
     const masked = document.createElement("canvas");
