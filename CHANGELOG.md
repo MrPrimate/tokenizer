@@ -1,10 +1,10 @@
 # Changelog
 
-# [NEXT UP]
+# [4.0.1]
 - Mask editor - masks can now be edited, note once edited the masks cannot be moved and will remain static if the image on the layer is moved.
+- Select which masks you would like applied to each layer to create fun effects like stepping out of a frame! See https://github.com/MrPrimate/tokenizer/blob/master/docs/multi-layers.webm
 - Blend modes can be selected for intial layer draw and for mask drawing.
-- Some UI improvements suggested by @Mats (Allistaar)
-#9836
+- Some UI improvements suggested by @Mats (Allistaar)#9836
 
 # [3.11.1]
 - In some circumstances when layers were removed
