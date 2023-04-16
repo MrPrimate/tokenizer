@@ -198,7 +198,6 @@ export default class View {
       const hex = '#' + ('000000' + Utils.rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
 
       // update the layer
-      // let layer = this.layers.find(layer => layer.id === this.colorPickingForLayer);
       // setting the color
       this.colorPickingForLayer.setColor(hex);
       // refreshing the control
@@ -216,12 +215,10 @@ export default class View {
     };
 
     if (this.activeLayer.source !== null) {
-      // this.activeLayer.translate(this.activeLayer.flipped ? -1 * delta.x : delta.x, delta.y);
       this.activeLayer.translate(delta.x, delta.y);
     }
-    // if (this.activeLayer.providesMask) this.activeLayer.createMask();
     this.activeLayer.redraw();
-    this.redraw(this.activeLayer.providesMask);
+    this.redraw(true);
     this.lastPosition = {
       x: event.clientX,
       y: event.clientY,
@@ -267,7 +264,7 @@ export default class View {
         this.activeLayer.setScale(this.activeLayer.scale * factor);
         this.activeLayer.translate(dx, dy);
         this.activeLayer.redraw();
-        this.redraw(this.activeLayer.providesMask);
+        this.redraw(true);
       }
     }
   }
@@ -292,6 +289,11 @@ export default class View {
     if (this.layers[index].providesMask) {
       this.maskIds.delete(index);
     }
+
+    // remove any masks applied to other layers
+    this.layers.forEach((l) => {
+      l.appliedMaskIds.delete(layerId);
+    });
 
     // delete this from the array
     this.layers.splice(index, 1);
@@ -339,6 +341,7 @@ export default class View {
 
     // add the new image on top
     this.layers.unshift(layer);
+    this.calculateAllDefaultMaskLayers();
     this.redraw(true);
 
     // add the control at the top of the control array
@@ -409,7 +412,11 @@ export default class View {
       this.setBlendMode(event.detail.layerId, event.detail.blendMode, event.detail.mask);
     });
     control.view.addEventListener('edit-mask', async (event) => {
-      await this.editMask(event.detail.layerId);
+      this.editMask(event.detail.layerId);
+    });
+    control.view.addEventListener('mask-layer', async (event) => {
+      this.customMaskLayerToggle(event.detail.layerId, event.detail.maskLayerId);
+      this.controls.forEach((control) => control.refresh());
     });
   }
 
@@ -491,6 +498,8 @@ export default class View {
       } else {
         this.controlsArea.insertBefore(sourceControl, targetControl.nextSibling);
       }
+      this.calculateDefaultAppliedMaskLayers(this.layers[targetId].id);
+      this.calculateDefaultAppliedMaskLayers(this.layers[sourceId].id);
     }
     this.redraw(true);
   }
@@ -565,6 +574,30 @@ export default class View {
     this.redraw();
   }
 
+  calculateDefaultAppliedMaskLayers(id) {
+    const layer = this.layers.find((l) => l.id === id);
+    const index = this.layers.findIndex((l) => l.id === id);
+
+    logger.debug(`Adding mask ids to layer ${index} (${id})`, layer);
+    if (layer && !layer.customMaskLayers) {
+      this.layers.forEach((l) => {
+        if (l.providesMask && this.isOriginLayerHigher(l.id, id)) {
+          logger.debug(`Applying id ${l.id}`);
+          layer.appliedMaskIds.add(l.id);
+        } else {
+          logger.debug(`Deleting id ${l.id}`);
+          layer.appliedMaskIds.delete(l.id);
+        }
+      });
+    }
+  }
+
+  calculateAllDefaultMaskLayers() {
+    this.layers.forEach((layer) => {
+      this.calculateDefaultAppliedMaskLayers(layer.id);
+    });
+  }
+
   /**
    * Activates the mask with the given id
    * @param Number | null id of the layer that should activate it's mask, if null: Activate the lowest layer with id = 0
@@ -583,9 +616,27 @@ export default class View {
         this.maskIds.add(id);
         layer.providesMask = true;
       }
+
+      this.calculateAllDefaultMaskLayers();
     }
+
     this.redraw(true);
     return true;
+  }
+
+  customMaskLayerToggle(id, maskLayerId) {
+    logger.debug(`Toggling custom mask layers for ${id} layer and mask ${maskLayerId}`);
+    const layer = this.layers.find((l) => l.id === id);
+    if (layer) {
+      layer.customMaskLayers = true;
+
+      if (layer.appliedMaskIds.has(maskLayerId)) {
+        layer.appliedMaskIds.delete(maskLayerId);
+      } else {
+        layer.appliedMaskIds.add(maskLayerId);
+      }
+    }
+    this.redraw(true);
   }
 
   editMask(id) {
@@ -609,9 +660,6 @@ export default class View {
   redraw(full = false) {
     const context = this.canvas.getContext('2d');
     context.clearRect(0, 0, this.width, this.height);
-
-    // console.warn(this);
-    // console.warn("layers", this.layers);
 
     if (full) {
       logger.debug("Full redraw triggered");
@@ -647,6 +695,5 @@ export default class View {
         );
       }
     }
-
   }
 }

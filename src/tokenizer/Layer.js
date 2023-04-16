@@ -50,6 +50,10 @@ export default class Layer {
     this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.customMask = false;
 
+    // mask ids to apply to this layer
+    this.appliedMaskIds = new Set();
+    this.customMaskLayers = false;
+
     this.alpha = 1.0;
     this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
     this.visible = true;
@@ -62,6 +66,17 @@ export default class Layer {
 
   static isTransparent(pixels, x, y) {
     return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
+  }
+
+  getLayerLabel(active = false) {
+    const index = this.view.layers.findIndex((layer) => layer.id === this.id);
+
+    if (index === -1) return "?";
+    if (active) {
+      return CONSTANTS.NUMBERS.ACTIVE[index];
+    } else {
+      return CONSTANTS.NUMBERS.INACTIVE[index];
+    }
   }
 
   applyCustomMask(mask, callback) {
@@ -264,6 +279,15 @@ export default class Layer {
   }
 
   reset() {
+    this.customMaskLayers = false;
+    this.appliedMaskIds.clear();
+    this.view.layers.forEach((l) => {
+      if (l.providesMask && this.view.isOriginLayerHigher(l.id, this.id)) {
+        this.appliedMaskIds.add(l.id);
+      }
+    });
+    this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+    this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.scale = this.width / Math.max(this.source.width, this.source.height);
     this.rotation = 0;
     this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
@@ -272,7 +296,6 @@ export default class Layer {
     this.customMask = false;
     this.redraw();
     this.createMask();
-    
     this.recalculateMask();
   }
 
@@ -365,11 +388,13 @@ export default class Layer {
       cContext.resetTransform();
     });
 
-    // for (const maskId of Array.from(this.view.maskIds).reverse()) {
-    for (const maskId of this.view.maskIds) {
+    const maskIds = this.customMaskLayers ? this.appliedMaskIds : this.view.maskIds;
+    for (const maskId of maskIds) {
       const maskLayer = this.view.getMaskLayer(maskId);
-      // we apply the mask if the layer is below a masking layer
-      if (maskLayer && this.view.isOriginLayerHigher(maskId, this.id)) {
+      // we apply the mask if the layer is below a masking layer if not using custom masking layers
+      if (maskLayer
+        && (this.customMaskLayers || (!this.customMaskLayers && this.view.isOriginLayerHigher(maskId, this.id)))
+      ) {
         context.drawImage(
           maskLayer.renderedMask,
           0,

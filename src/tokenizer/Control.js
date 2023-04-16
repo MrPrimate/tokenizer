@@ -9,6 +9,13 @@ export default class Control {
     this.view.setAttribute('data-layer', this.layer.id);
     this.view.classList.add('view-layer-control');
 
+    const idSection = document.createElement("div");
+    idSection.name = "layer-id-num";
+    idSection.title = "Layer number";
+    idSection.classList.add("section");
+    this.idNumber = document.createElement("div");
+    this.idNumber.innerHTML = this.layer.getLayerLabel();
+
     let previewSection = document.createElement('div');
     previewSection.name = 'preview';
     previewSection.classList.add('section');
@@ -17,12 +24,276 @@ export default class Control {
     previewMaskSection.name = 'previewMask';
     previewMaskSection.classList.add('section');
 
-    let colorManagementSection = document.createElement('div');
-    colorManagementSection.name = 'color-management';
-    colorManagementSection.classList.add('section');
+    this.configureColorManagement();
+
+    this.configureMaskManagementSection();
+
+    this.configureTranslationControls();
+
+    // opacity management
+    this.configureOpacitySection();
+
+    // the move up/down order section
+    this.configureMovementSection();
+
+    // danger zone
+    this.configureDeletionSection();
+
+    // push all elements to the control's view
+    this.view.appendChild(idSection);
+    idSection.appendChild(this.idNumber);
+    this.view.appendChild(previewSection);
+    previewSection.appendChild(this.layer.preview);
+    this.view.appendChild(previewMaskSection);
+    previewMaskSection.appendChild(this.layer.renderedMask);
+    this.view.appendChild(this.maskManagementSection);
+    if (this.layer.colorLayer) {
+      this.view.appendChild(this.colorManagementSection);
+      this.colorManagementSection.appendChild(this.visibleControl);
+      this.colorManagementSection.appendChild(this.colorSelector);
+      this.colorManagementSection.appendChild(this.colorSelectorProxy);
+      this.colorManagementSection.appendChild(this.clearColor);
+      this.colorManagementSection.appendChild(this.getColor);
+      this.colorManagementSection.appendChild(this.opacityManagementSection);
+      this.maskControl.disabled = true;
+    } else {
+      this.view.appendChild(this.positionManagementSection);
+      this.positionManagementSection.appendChild(this.visibleControl);
+      this.positionManagementSection.appendChild(this.activeControl);
+      this.positionManagementSection.appendChild(this.flipControl);
+      this.positionManagementSection.appendChild(this.resetControl);
+      this.positionManagementSection.appendChild(this.opacityManagementSection);
+    }
+    this.view.appendChild(this.moveManagementSection);
+    this.view.appendChild(this.deleteSection);
+  }
+
+  configureMaskManagementSection() {
+    this.maskManagementSection = document.createElement('div');
+    this.maskManagementSection.name = 'mask-management';
+    this.maskManagementSection.classList.add('section');
+    let maskManagementTitle = document.createElement('span');
+    maskManagementTitle.innerHTML = 'Masks';
+    this.maskManagementSection.appendChild(maskManagementTitle);
+
+    // Set the basic mask of this layer
+    this.maskControl = document.createElement('button');
+    this.maskControl.classList.add('mask-control');
+    this.maskControl.classList.add('mask-layer-button');
+    this.maskControl.title = "Toggle basic mask for this layer";
+    let maskButtonText = document.createElement('i');
+    maskButtonText.classList.add('fas', 'fa-mask');
+    this.maskControl.appendChild(maskButtonText);
+
+    // send a mask event when clicked
+    this.maskControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('mask', { detail: { layerId: this.layer.id } }));
+    });
+
+    // Set the mask of this layer
+    this.maskEditControl = document.createElement('button');
+    this.maskEditControl.classList.add('mask-control');
+    this.maskEditControl.classList.add('mask-layer-button');
+    // this.maskEditControl.disabled = true;
+    this.maskEditControl.title = "Edit mask";
+    let maskEditButtonText = document.createElement('i');
+    maskEditButtonText.classList.add('fas', 'fa-pencil');
+    this.maskEditControl.appendChild(maskEditButtonText);
+
+    // send a mask event when clicked
+    this.maskEditControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('edit-mask', { detail: { layerId: this.layer.id } }));
+    });
+
+
+    this.masksControl = document.createElement('button');
+    this.masksControl.classList.add('blend-control');
+    this.masksControl.title = "Advanced Mask Application";
+
+    let masksButtonText = document.createElement('i');
+    masksButtonText.classList.add('fas', 'fa-masks-theater');
+    this.masksControl.appendChild(masksButtonText);
+
+    this.maskSelectorSpan = document.createElement('div');
+    this.maskSelectorSpan.classList.add('popup');
+
+    this.maskLayerSelector = document.createElement("div");
+    this.maskLayerSelector.classList.add("mask-selector");
+
+    this.addSelectLayerMasks();
+    let basicMaskControls = document.createElement('div');
+    basicMaskControls.classList.add('basic-mask-control');
+    basicMaskControls.appendChild(this.maskControl);
+    basicMaskControls.appendChild(this.maskEditControl);
+    
+    this.maskSelectorSpan.appendChild(basicMaskControls);
+    this.maskSelectorSpan.appendChild(this.maskLayerSelector);
+
+    this.blendControlImage = document.createElement('select');
+    this.blendControlImage.classList.add('blend-control-image');
+    this.blendControlMask = document.createElement('select');
+    this.blendControlMask.classList.add('blend-control-mask');
+
+    [this.blendControlMask, this.blendControlImage].forEach((blendControlElement) => {
+      blendControlElement.classList.add('blend-control-selector');
+      for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
+        const option = document.createElement('option');
+        option.value = mode;
+        option.innerHTML = mode;
+        if ((blendControlElement.classList.contains("blend-control-image") && mode === this.layer.compositeOperation)
+          || (blendControlElement.classList.contains("blend-control-mask") && mode === this.layer.maskCompositeOperation)) {
+          option.selected = true;
+        }
+        blendControlElement.append(option);
+      }
+  
+      blendControlElement.addEventListener('change', (event) => {
+        event.preventDefault();
+        this.view.dispatchEvent(new CustomEvent('blend', {
+          detail: {
+            layerId: this.layer.id,
+            image: blendControlElement.classList.contains("blend-control-image"),
+            mask: blendControlElement.classList.contains("blend-control-mask"),
+            blendMode: event.target.value,
+          }
+        }));
+      });
+  
+    });
+
+    let blendImageDiv = document.createElement('div');
+    let blendImageText = document.createElement('i');
+    blendImageText.title = "Image Blend Mode";
+    blendImageText.classList.add('fas', 'fa-image');
+    blendImageDiv.appendChild(blendImageText);
+    blendImageDiv.appendChild(this.blendControlImage);
+    this.maskSelectorSpan.appendChild(blendImageDiv);
+
+    let blendMaskDiv = document.createElement('div');
+    let blendMaskText = document.createElement('i');
+    blendMaskText.title = "Mask Blend Mode";
+    blendMaskText.classList.add('fas', 'fa-mask');
+    blendMaskDiv.appendChild(blendMaskText);
+    blendMaskDiv.appendChild(this.blendControlMask);
+    this.maskSelectorSpan.appendChild(blendMaskDiv);
+
+    // send an activate event when clicked
+    this.masksControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.maskSelectorSpan.classList.toggle("show");
+    });
+
+    // blend mode controls
+    let blendManagementSection = document.createElement('div');
+    blendManagementSection.appendChild(this.masksControl);
+    blendManagementSection.appendChild(this.maskSelectorSpan);
+    this.maskManagementSection.appendChild(blendManagementSection);
+  }
+
+  configureTranslationControls() {
+    // position management section
+    this.positionManagementSection = document.createElement('div');
+    this.positionManagementSection.name = 'position-management';
+    this.positionManagementSection.classList.add('section');
+    let positionManagementTitle = document.createElement('span');
+    positionManagementTitle.innerHTML = 'Transform';
+    this.positionManagementSection.appendChild(positionManagementTitle);
+
+    // is this layer visible?
+    this.visibleControl = document.createElement('button');
+    this.visibleControl.classList.add('visible-layer');
+    this.visibleControl.title = "Visible layer?";
+
+    let visibleButtonText = document.createElement('i');
+    visibleButtonText.classList.add('fas', 'fa-eye');
+    this.visibleControl.appendChild(visibleButtonText);
+
+    // send a mask event when clicked
+    this.visibleControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
+    });
+
+    // Makes the layer active for translating/ scaling
+    this.activeControl = document.createElement('button');
+    this.activeControl.title = "Enable/disable transformations";
+    this.activeControl.classList.add('mask-control');
+    let activeButtonText = document.createElement('i');
+    activeButtonText.classList.add('fas', 'fa-lock');
+    this.activeControl.appendChild(activeButtonText);
+
+    // send an activate event when clicked
+    this.activeControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (this.activeControl.classList.contains('active')) {
+        this.view.dispatchEvent(new CustomEvent('deactivate', { detail: { layerId: this.layer.id } }));
+      } else {
+        this.view.dispatchEvent(new CustomEvent('activate', { detail: { layerId: this.layer.id } }));
+      }
+    });
+
+    // Makes flips the layer
+    this.flipControl = document.createElement('button');
+    this.flipControl.title = "Flip/Mirror layer";
+    this.flipControl.classList.add('flip-control');
+    let flipButtonText = document.createElement('i');
+    flipButtonText.classList.add('fas', 'fa-people-arrows');
+    this.flipControl.appendChild(flipButtonText);
+
+    // send an activate event when clicked
+    this.flipControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('flip', { detail: { layerId: this.layer.id } }));
+    });
+
+    // resets the layer on the view
+    this.resetControl = document.createElement('button');
+    this.resetControl.classList.add('reset-control');
+    this.resetControl.title = "Reset layer";
+    let resetButtonText = document.createElement('i');
+    resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
+    this.resetControl.appendChild(resetButtonText);
+
+    // send an activate event when clicked
+    this.resetControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
+    });
+  }
+
+  configureDeletionSection() {
+    this.deleteSection = document.createElement('div');
+    this.deleteSection.name = 'delete-management';
+    this.deleteSection.classList.add('section');
+
+    // delete
+    this.deleteControl = document.createElement('button');
+    this.deleteControl.classList.add('delete-control');
+    this.deleteControl.title = "Delete layer (cannot be undone)";
+    let deleteButtonText = document.createElement('i');
+    deleteButtonText.classList.add('fas', 'fa-trash-alt');
+    this.deleteControl.appendChild(deleteButtonText);
+
+    this.deleteControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(
+        new CustomEvent('delete', {
+          detail: { layerId: this.layer.id },
+        })
+      );
+    });
+    this.deleteSection.appendChild(this.deleteControl);
+  }
+
+  configureColorManagement() {
+    this.colorManagementSection = document.createElement('div');
+    this.colorManagementSection.name = 'color-management';
+    this.colorManagementSection.classList.add('section');
     let colorManagementTitle = document.createElement('span');
     colorManagementTitle.innerHTML = 'Color';
-    colorManagementSection.appendChild(colorManagementTitle);
+    this.colorManagementSection.appendChild(colorManagementTitle);
 
     // the color picker element, which is hidden
     this.colorSelector = document.createElement('input');
@@ -92,236 +363,13 @@ export default class Control {
         );
       }
     });
+  }
 
-    let maskManagementSection = document.createElement('div');
-    maskManagementSection.name = 'mask-management';
-    maskManagementSection.classList.add('section');
-    let maskManagementTitle = document.createElement('span');
-    maskManagementTitle.innerHTML = 'Mask';
-    maskManagementSection.appendChild(maskManagementTitle);
-
-    // Set the mask of this layer
-    this.maskControl = document.createElement('button');
-    this.maskControl.classList.add('mask-control');
-    this.maskControl.title = "Toggle masking";
-    let maskButtonText = document.createElement('i');
-    maskButtonText.classList.add('fas', 'fa-mask');
-    this.maskControl.appendChild(maskButtonText);
-
-    // send a mask event when clicked
-    this.maskControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('mask', { detail: { layerId: this.layer.id } }));
-    });
-
-    // Set the mask of this layer
-    this.maskEditControl = document.createElement('button');
-    this.maskEditControl.classList.add('mask-control');
-    this.maskEditControl.disabled = true;
-    this.maskEditControl.title = "Edit mask";
-    let maskEditButtonText = document.createElement('i');
-    maskEditButtonText.classList.add('fas', 'fa-pencil');
-    this.maskEditControl.appendChild(maskEditButtonText);
-
-    // send a mask event when clicked
-    this.maskEditControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('edit-mask', { detail: { layerId: this.layer.id } }));
-    });
-
-    // blend mode controls
-    let blendManagementSection = document.createElement('div');
-
-    this.blendControl = document.createElement('button');
-    this.blendControl.classList.add('blend-control');
-    this.blendControl.title = "Blend modes";
-
-    let blendButtonText = document.createElement('i');
-    blendButtonText.classList.add('fas', 'fa-masks-theater');
-    this.blendControl.appendChild(blendButtonText);
-
-    this.blendSelectorSpan = document.createElement('div');
-    this.blendSelectorSpan.classList.add('popup');
-
-    this.blendControlImage = document.createElement('select');
-    this.blendControlImage.classList.add('blend-control-image');
-    this.blendControlMask = document.createElement('select');
-    this.blendControlMask.classList.add('blend-control-mask');
-
-    [this.blendControlMask, this.blendControlImage].forEach((blendControlElement) => {
-      blendControlElement.classList.add('blend-control-selector');
-      for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
-        const option = document.createElement('option');
-        option.value = mode;
-        option.innerHTML = mode;
-        if ((blendControlElement.classList.contains("blend-control-image") && mode === this.layer.compositeOperation)
-          || (blendControlElement.classList.contains("blend-control-mask") && mode === this.layer.maskCompositeOperation)) {
-          option.selected = true;
-        }
-        blendControlElement.append(option);
-      }
-  
-      blendControlElement.addEventListener('change', (event) => {
-        event.preventDefault();
-        this.view.dispatchEvent(new CustomEvent('blend', {
-          detail: {
-            layerId: this.layer.id,
-            image: blendControlElement.classList.contains("blend-control-image"),
-            mask: blendControlElement.classList.contains("blend-control-mask"),
-            blendMode: event.target.value,
-          }
-        }));
-      });
-  
-    });
-
-    let blendImageDiv = document.createElement('div');
-    let blendImageText = document.createElement('i');
-    blendImageText.title = "Image Blend Mode";
-    blendImageText.classList.add('fas', 'fa-image');
-    blendImageDiv.appendChild(blendImageText);
-    blendImageDiv.appendChild(this.blendControlImage);
-    this.blendSelectorSpan.appendChild(blendImageDiv);
-
-    let blendMaskDiv = document.createElement('div');
-    let blendMaskText = document.createElement('i');
-    blendMaskText.title = "Mask Blend Mode";
-    blendMaskText.classList.add('fas', 'fa-mask');
-    blendMaskDiv.appendChild(blendMaskText);
-    blendMaskDiv.appendChild(this.blendControlMask);
-    this.blendSelectorSpan.appendChild(blendMaskDiv);
-
-    // send an activate event when clicked
-    this.blendControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.blendSelectorSpan.classList.toggle("show");
-    });
-
-    blendManagementSection.appendChild(this.blendControl);
-    blendManagementSection.appendChild(this.blendSelectorSpan);
-
-    // position management section
-    let positionManagementSection = document.createElement('div');
-    positionManagementSection.name = 'position-management';
-    positionManagementSection.classList.add('section');
-    let positionManagementTitle = document.createElement('span');
-    positionManagementTitle.innerHTML = 'Transform';
-    positionManagementSection.appendChild(positionManagementTitle);
-
-    // is this layer visible?
-    this.visibleControl = document.createElement('button');
-    this.visibleControl.classList.add('visible-layer');
-    this.visibleControl.title = "Visible layer?";
-
-    let visibleButtonText = document.createElement('i');
-    visibleButtonText.classList.add('fas', 'fa-eye');
-    this.visibleControl.appendChild(visibleButtonText);
-
-    // send a mask event when clicked
-    this.visibleControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
-    });
-
-    // Makes the layer active for translating/ scaling
-    this.activeControl = document.createElement('button');
-    this.activeControl.title = "Enable/disable transformations";
-    this.activeControl.classList.add('mask-control');
-    let activeButtonText = document.createElement('i');
-    activeButtonText.classList.add('fas', 'fa-lock');
-    this.activeControl.appendChild(activeButtonText);
-
-    // send an activate event when clicked
-    this.activeControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      if (this.activeControl.classList.contains('active')) {
-        this.view.dispatchEvent(new CustomEvent('deactivate', { detail: { layerId: this.layer.id } }));
-      } else {
-        this.view.dispatchEvent(new CustomEvent('activate', { detail: { layerId: this.layer.id } }));
-      }
-    });
-
-    // Makes flips the layer
-    this.flipControl = document.createElement('button');
-    this.flipControl.title = "Flip/Mirror layer";
-    this.flipControl.classList.add('flip-control');
-    let flipButtonText = document.createElement('i');
-    flipButtonText.classList.add('fas', 'fa-people-arrows');
-    this.flipControl.appendChild(flipButtonText);
-
-    // send an activate event when clicked
-    this.flipControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('flip', { detail: { layerId: this.layer.id } }));
-    });
-
-    // resets the layer on the view
-    this.resetControl = document.createElement('button');
-    this.resetControl.classList.add('reset-control');
-    this.resetControl.title = "Reset layer";
-    let resetButtonText = document.createElement('i');
-    resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
-    this.resetControl.appendChild(resetButtonText);
-
-    // send an activate event when clicked
-    this.resetControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
-    });
-
-    // opacity management
-    let opacityManagementSection = document.createElement('div');
-
-    this.opacityControl = document.createElement('button');
-    this.opacityControl.classList.add('opacity-control');
-    this.opacityControl.title = "Opacity";
-
-    let opacityButtonText = document.createElement('i');
-    opacityButtonText.classList.add('fas', 'fa-adjust');
-    this.opacityControl.appendChild(opacityButtonText);
-    opacityManagementSection.appendChild(this.opacityControl);
-
-    // this.opacitySliderSpan = document.createElement('span');
-    this.opacitySliderSpan = document.createElement('div');
-    this.opacitySliderSpan.classList.add('popup');
-    // this.opacitySliderSpan.classList.add("property-attribution");
-
-    this.opacitySliderControl = document.createElement('input');
-    this.opacitySliderControl.type = 'range';
-    this.opacitySliderControl.min = 0;
-    this.opacitySliderControl.max = 100;
-    this.opacitySliderControl.value = 100;
-    this.opacitySliderControl.title = "Opacity";
-    this.opacitySliderControl.name = "opacity";
-
-    this.opacitySliderSpan.appendChild(this.opacitySliderControl);
-
-    // send an activate event when clicked
-    this.opacityControl.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.opacitySliderSpan.classList.toggle("show");
-    });
-
-    this.opacitySliderSpan.addEventListener('mouseleave', () => {
-      this.opacitySliderSpan.classList.remove("show");
-    });
-
-    this.opacitySliderControl.addEventListener('input', (event) => {
-      event.preventDefault();
-      const detail = {
-        layerId: this.layer.id,
-        opacity: event.target.value,
-      };
-      this.view.dispatchEvent(new CustomEvent('opacity', { detail }));
-    });
-
-    opacityManagementSection.appendChild(this.opacitySliderSpan);
-
-    // the move up/down order section
-    let moveManagementSection = document.createElement('div');
-    moveManagementSection.classList.add('move-control');
-    moveManagementSection.name = 'move-management';
-    moveManagementSection.classList.add('section');
+  configureMovementSection() {
+    this.moveManagementSection = document.createElement('div');
+    this.moveManagementSection.classList.add('move-control');
+    this.moveManagementSection.name = 'move-management';
+    this.moveManagementSection.classList.add('section');
 
     // moving up
     this.moveUpControl = document.createElement('button');
@@ -358,72 +406,103 @@ export default class Control {
         })
       );
     });
+    this.moveManagementSection.appendChild(this.moveUpControl);
+    this.moveManagementSection.appendChild(this.moveDownControl);
 
-    // danger zone
-    let deleteSection = document.createElement('div');
-    deleteSection.name = 'delete-management';
-    deleteSection.classList.add('section');
+  }
 
-    // delete
-    this.deleteControl = document.createElement('button');
-    this.deleteControl.classList.add('delete-control');
-    this.deleteControl.title = "Delete layer (cannot be undone)";
-    let deleteButtonText = document.createElement('i');
-    deleteButtonText.classList.add('fas', 'fa-trash-alt');
-    this.deleteControl.appendChild(deleteButtonText);
+  configureOpacitySection() {
+    this.opacityManagementSection = document.createElement('div');
 
-    this.deleteControl.addEventListener('click', (event) => {
+    this.opacityControl = document.createElement('button');
+    this.opacityControl.classList.add('opacity-control');
+    this.opacityControl.title = "Opacity";
+
+    let opacityButtonText = document.createElement('i');
+    opacityButtonText.classList.add('fas', 'fa-adjust');
+    this.opacityControl.appendChild(opacityButtonText);
+    this.opacityManagementSection.appendChild(this.opacityControl);
+
+    // this.opacitySliderSpan = document.createElement('span');
+    this.opacitySliderSpan = document.createElement('div');
+    this.opacitySliderSpan.classList.add('popup');
+    // this.opacitySliderSpan.classList.add("property-attribution");
+
+    this.opacitySliderControl = document.createElement('input');
+    this.opacitySliderControl.type = 'range';
+    this.opacitySliderControl.min = 0;
+    this.opacitySliderControl.max = 100;
+    this.opacitySliderControl.value = 100;
+    this.opacitySliderControl.title = "Opacity";
+    this.opacitySliderControl.name = "opacity";
+
+    this.opacitySliderSpan.appendChild(this.opacitySliderControl);
+
+    // send an activate event when clicked
+    this.opacityControl.addEventListener('click', (event) => {
       event.preventDefault();
-      this.view.dispatchEvent(
-        new CustomEvent('delete', {
-          detail: { layerId: this.layer.id },
-        })
-      );
+      this.opacitySliderSpan.classList.toggle("show");
     });
 
-    // push all elements to the control's view
-    this.view.appendChild(previewSection);
-    previewSection.appendChild(this.layer.preview);
-    this.view.appendChild(previewMaskSection);
-    previewMaskSection.appendChild(this.layer.renderedMask);
-    this.view.appendChild(maskManagementSection);
-    maskManagementSection.appendChild(this.maskControl);
-    maskManagementSection.appendChild(this.maskEditControl);
-    maskManagementSection.appendChild(blendManagementSection);
-    if (this.layer.colorLayer) {
-      this.view.appendChild(colorManagementSection);
-      colorManagementSection.appendChild(this.visibleControl);
-      colorManagementSection.appendChild(this.colorSelector);
-      colorManagementSection.appendChild(this.colorSelectorProxy);
-      colorManagementSection.appendChild(this.clearColor);
-      colorManagementSection.appendChild(this.getColor);
-      colorManagementSection.appendChild(opacityManagementSection);
-      this.maskControl.disabled = true;
-    } else {
-      this.view.appendChild(positionManagementSection);
-      positionManagementSection.appendChild(this.visibleControl);
-      positionManagementSection.appendChild(this.activeControl);
-      positionManagementSection.appendChild(this.flipControl);
-      positionManagementSection.appendChild(this.resetControl);
-      positionManagementSection.appendChild(opacityManagementSection);
-    }
-    this.view.appendChild(moveManagementSection);
-    moveManagementSection.appendChild(this.moveUpControl);
-    moveManagementSection.appendChild(this.moveDownControl);
+    this.opacitySliderSpan.addEventListener('mouseleave', () => {
+      this.opacitySliderSpan.classList.remove("show");
+    });
 
-    this.view.appendChild(deleteSection);
-    deleteSection.appendChild(this.deleteControl);
+    this.opacitySliderControl.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        opacity: event.target.value,
+      };
+      this.view.dispatchEvent(new CustomEvent('opacity', { detail }));
+    });
+
+    this.opacityManagementSection.appendChild(this.opacitySliderSpan);
+  }
+
+  addSelectLayerMasks() {
+    this.maskLayerSelector.innerHTML = "";
+    this.layer.view.layers.forEach((layer) => {
+      const layerIdDiv = document.createElement("div");
+      const active = this.layer.appliedMaskIds.has(layer.id);
+      const layerNum = this.layer.view.layers.findIndex((l) => l.id === layer.id);
+
+      const button = document.createElement('button');
+      button.classList.add('mask-layer-choice');
+      if (active) button.classList.add('active');
+      button.title = `Toggle Layer ${layerNum}`;
+      button.innerHTML = layer.getLayerLabel(active);
+
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.view.dispatchEvent(
+          new CustomEvent('mask-layer', {
+            detail: { layerId: this.layer.id, maskLayerId: layer.id },
+          })
+        );
+      });
+
+      layerIdDiv.appendChild(button);
+      this.maskLayerSelector.appendChild(layerIdDiv);
+    });
   }
 
   refresh() {
+    this.idNumber.innerHTML = this.layer.getLayerLabel();
     // is this layer providing the mask for the view?
-    if (this.layer.providesMask) {
+    if (this.layer.customMaskLayers) {
+      this.maskControl.classList.remove('active');
+      this.maskControl.disabled = true;
+    } else if (this.layer.providesMask) {
       this.maskControl.classList.add('active');
-      this.maskEditControl.disabled = false;
+      // this.maskEditControl.disabled = false;
     } else {
       this.maskControl.classList.remove('active');
-      this.maskEditControl.disabled = true;
+      // this.maskEditControl.disabled = true;
     }
+
+    this.maskLayerSelector.innerHTML = "";
+    this.addSelectLayerMasks();
 
     // is this layer visible
     if (this.layer.visible) {

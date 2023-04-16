@@ -560,3 +560,22 @@
   color: rgb(94, 0, 0);
   background: rgb(255, 255, 255);
 }
+
+.tokenizer .mask-selector {
+  display: flex;
+}
+
+.tokenizer button.mask-layer-button {
+  background: rgb(194, 194, 194);
+}
+
+.tokenizer .mask-selector button.mask-layer-choice {
+  background: rgb(194, 194, 194);
+  font-size: 20px;
+  text-align: center;
+  justify-content: center;
+}
+
+.tokenizer div.basic-mask-control {
+  display: flex;
+}

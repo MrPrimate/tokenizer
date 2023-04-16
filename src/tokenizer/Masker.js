@@ -36,7 +36,7 @@ export class Masker {
     this.greyscale.width = layer.canvas.width;
     this.greyscale.height = layer.canvas.height;
     this.greyscale.filter = "grayscale()";
-    this.greyscale.getContext("2d").drawImage(layer.canvas, 0, 0);
+    this.greyscale.getContext("2d").drawImage(layer.preview, 0, 0);
 
     this.currentPoint = { x: 0, y: 0 };
     this.previousPoint = null;
