@@ -644,6 +644,8 @@ export default class View {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer) {
       layer.editMask(this.redraw.bind(this));
+      this.deactivateLayers();
+      this.controls.forEach((control) => control.refresh());
     }
   }
 
