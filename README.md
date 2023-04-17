@@ -60,6 +60,22 @@ Create a transparent image and paint everything you want to be opaque later with
 
 Click the **Okay** button to save the token to the Foundry VTT server.
 
+### Advanced Layers
+
+You can make characters "step out" of frames by using some of the advanced layer features.
+By default Tokenizer applies a mask to all layers under it. You can also apply specific mask layers to a layer (this disables the default approach for that layer).
+
+In addition you can edit a layers mask to add or subtract areas.
+
+![Advanced masking](/docs/quick-dynamic-masks.gif)
+
+In this example we:
+
+- Add a copy of the avatar/token layer to the top of the layer pile.
+- Edit the layers mask to include the snake head, pocket watch and the top of the hat.
+- We then apply the mask created here to the same layer, cutting out only these masked elements, but leaving the rest of the layer transparent.
+- The other layers apply masks in the usual way, but it results in the elements caught in the custom mask been placed atop the rest of the token causing a "popping" effect.
+
 ### F.A.Q.
 
 #### The Tokenizer does not open when clicking on the avatar image
