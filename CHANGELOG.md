@@ -1,16 +1,26 @@
 # Changelog
 
+# [4.0.2]
+
+- Mask editor: improve performance of editing large images.
+- Make brush size change feel more fluid.
+- Right click remove mask in editor did not work if you did not move the mouse.
+- Clicking on the add layer icon would close Tokenizer. #126
+
 # [4.0.1]
+
 - Mask editor - masks can now be edited, note once edited the masks cannot be moved and will remain static if the image on the layer is moved.
 - Select which masks you would like applied to each layer to create fun effects like stepping out of a frame! See https://github.com/MrPrimate/tokenizer/blob/master/docs/multi-layers.webm
 - Blend modes can be selected for intial layer draw and for mask drawing.
 - Some UI improvements suggested by @Mats (Allistaar)#9836
 
 # [3.11.1]
+
 - In some circumstances when layers were removed
 - Colour layers would not change 
 
 # [3.11.0]
+
 - Download image, as requested as part of #113
 - Tighten up permissions to prevent Tokenizer launching if user lacks required permissions #114
 - Huge performance of dragging/resizing mask layers.
