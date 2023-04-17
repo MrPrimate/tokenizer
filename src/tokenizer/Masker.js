@@ -1,3 +1,4 @@
+import CONSTANTS from "../constants.js";
 import Utils from "../libs/Utils.js";
 
 export class Masker {
@@ -15,29 +16,141 @@ export class Masker {
       </div>
     </div>`;
 
+  #drawChequeredBackground(width = 7) {
+    this.chequeredSource = document.createElement("canvas");
+    this.chequeredSource.width = this.width;
+    this.chequeredSource.height = this.height;
+    
+    const context = this.chequeredSource.getContext("2d");
+    const fillStyle = context.fillStyle;
+    const alpha = context.globalAlpha;
+    const columns = Math.ceil(this.chequeredSource.width / width);
+    const rows = Math.ceil(this.chequeredSource.height / width);
+
+    context.fillStyle = "rgb(212, 163, 19)";
+    for (let i = 0; i < rows; ++i) {
+      for (let j = 0, col = columns / 2; j < col; ++j) {
+        context.rect(
+          (2 * j * width) + (i % 2 ? 0 : width),
+          i * width,
+          width,
+          width
+        );
+      }
+    }
+    context.fill();
+
+    context.fillStyle = fillStyle;
+    context.globalAlpha = alpha;
+
+    this.chequeredSource.getContext("2d")
+      .drawImage(
+        this.layer.preview,
+        0,
+        0,
+        this.layer.preview.width,
+        this.layer.preview.height,
+        this.yOffset,
+        this.xOffset,
+        this.scaledWidth,
+        this.scaledHeight
+      );
+  }
+
+  #drawGreyScaleBackground() {
+    this.greyscale = document.createElement("canvas");
+    this.greyscale.width = this.width;
+    this.greyscale.height = this.height;
+    this.greyscale.filter = "grayscale()";
+    this.greyscale.getContext("2d")
+      .drawImage(
+        this.layer.preview,
+        0,
+        0,
+        this.layer.preview.width,
+        this.layer.preview.height,
+        this.yOffset,
+        this.xOffset,
+        this.scaledWidth,
+        this.scaledHeight
+      );
+  }
+
+  #createBaseCanvas() {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+  }
+
+  #createMaskCanvas() {
+    this.mask = Utils.cloneCanvas(this.canvas);
+    this.mask.width = this.width;
+    this.mask.height = this.height;
+
+    this.maskContext = this.mask.getContext("2d");
+    this.maskContext.resetTransform();
+    this.maskContext.clearRect(0, 0, this.width, this.height);
+    this.maskContext.drawImage(
+      this.layer.renderedMask,
+      0,
+      0,
+      this.layer.renderedMask.width,
+      this.layer.renderedMask.height,
+      this.yOffset,
+      this.xOffset,
+      this.scaledWidth,
+      this.scaledHeight
+    );
+
+    this.maskContext.lineJoin = "round";
+    this.maskContext.lineCap = "round";
+  }
+
+  #createMaskedSourceCanvas() {
+    this.maskedSource = document.createElement("canvas");
+    this.maskedSource.width = this.width;
+    this.maskedSource.height = this.height;
+    const maskedContext = this.maskedSource.getContext("2d");
+    // add the mask
+    maskedContext.drawImage(this.mask, 0, 0);
+    maskedContext.globalCompositeOperation = "source-in";
+    // now the chequered layer
+    maskedContext.drawImage(this.chequeredSource, 0, 0);
+  }
+
   constructor(layer) {
     this.container = $(Masker.html);
     this.layer = layer;
-    this.canvas = document.createElement("canvas");
 
-    this.canvas.width = layer.canvas.width;
-    this.canvas.height = layer.canvas.height;
-    this.canvas.getContext("2d").drawImage(layer.preview, 0, 0);
+    this.height = Math.min(1000, layer.preview.height, layer.preview.width);
+    this.width = Math.min(1000, layer.preview.height, layer.preview.width);
+
+    const crop = game.settings.get(CONSTANTS.MODULE_ID, "default-crop-image");
+    // if we crop the image we scale to the smallest dimension of the image
+    // otherwise we scale to the largest dimension of the image
+    const direction = crop ? layer.preview.height > layer.preview.width : layer.preview.height < layer.preview.width;
+
+    this.scaledWidth = !direction
+      ? this.height * (layer.preview.height / layer.preview.width)
+      : this.width;
+    this.scaledHeight = direction
+      ? this.width * (layer.preview.height / layer.preview.width)
+      : this.height;
+
+    // offset the canvas for the scaled image
+    this.yOffset = (this.width - this.scaledWidth) / 2;
+    this.xOffset = (this.height - this.scaledHeight) / 2;
+
+    // create base canvases
+    this.#createBaseCanvas();
+    this.#createMaskCanvas();
+
+    // create background images
+    this.#drawGreyScaleBackground();
+    this.#drawChequeredBackground();
 
     this.brushSize = 20;
-
     this.maskChanged = false;
-    this.mask = Utils.cloneCanvas(this.layer.renderedMask);
-    this.context = this.mask.getContext("2d");
-    this.context.lineJoin = "round";
-    this.context.lineCap = "round";
-
-    this.greyscale = document.createElement("canvas");
-    this.greyscale.width = layer.canvas.width;
-    this.greyscale.height = layer.canvas.height;
-    this.greyscale.filter = "grayscale()";
-    this.greyscale.getContext("2d").drawImage(layer.preview, 0, 0);
-
     this.currentPoint = { x: 0, y: 0 };
     this.previousPoint = null;
     this.container[0].append(this.canvas);
@@ -66,14 +179,52 @@ export class Masker {
   clickButton(event, callback, nestedCallback) {
     event.preventDefault();
     const action = event.data?.action ?? event.target?.dataset?.action;
+
     if (action) {
+      window.cancelAnimationFrame(this.cancelAnimationFrame);
       this.container.remove();
+      delete this.canvas;
       window.removeEventListener("keyup", this.onKeyUp);
 
       if (action === "ok" && this.maskChanged) {
-        return callback(this.mask, nestedCallback);
+        const mask = Utils.cloneCanvas(this.layer.renderedMask);
+        // rescale the mask back up for the appropriate layer canvas size
+        const context = mask.getContext("2d");
+        context.resetTransform();
+        context.clearRect(0, 0, mask.width, mask.height);
+        mask.getContext("2d").drawImage(
+          this.mask,
+          this.yOffset,
+          this.xOffset,
+          this.scaledWidth,
+          this.scaledHeight,
+          0,
+          0,
+          this.layer.preview.width,
+          this.layer.preview.height,
+        );
+        return callback(mask, nestedCallback);
       }
     }
+  }
+
+  drawArc(point, remove) {
+    this.maskContext.globalCompositeOperation = remove
+      ? "destination-out"
+      : "destination-over";
+
+    this.maskContext.fillStyle = "black";
+    this.maskContext.beginPath();
+
+    this.maskContext.arc(
+      point.x / this.ratio,
+      point.y / this.ratio,
+      this.brushSize / this.ratio,
+      0,
+      2 * Math.PI
+    );
+    this.maskContext.fill();
+    this.maskChanged = true;
   }
 
   activateListeners(callback, nestedCallback) {
@@ -83,10 +234,16 @@ export class Masker {
     this.canvas.addEventListener("wheel", (event) => {
       event.preventDefault();
       if (event.wheelDelta < 0) {
-          this.brushSize--;
+          if (this.brushSize > 50) this.brushSize -= 7;
+          else if (this.brushSize > 25) this.brushSize -= 4;
+          else if (this.brushSize > 10) this.brushSize -= 2;
+          else this.brushSize--;
           if (this.brushSize <= 1) this.brushSize = 1;
       } else {
-          this.brushSize++;
+          if (this.brushSize > 50) this.brushSize += 7;
+          else if (this.brushSize > 25) this.brushSize += 4;
+          else if (this.brushSize > 10) this.brushSize += 2;
+          else this.brushSize++;
           if (this.brushSize >= 100) this.brushSize = 100;
       }
       }, { passive: false }
@@ -101,23 +258,7 @@ export class Masker {
       this.mouseDown = [0, 2].includes(event.button);
       if (this.mouseDown) {
         this.previousPoint = this.getMousePointer(event);
-        this.context.globalCompositeOperation = event.shiftKey
-          ? "destination-out"
-          : "destination-over";
-
-        this.context.fillStyle = "black";
-        this.context.beginPath();
-
-        this.context.arc(
-          this.previousPoint.x / this.ratio,
-          this.previousPoint.y / this.ratio,
-          this.brushSize / this.ratio,
-          0,
-          2 * Math.PI
-        );
-        this.context.fill();
-
-        this.maskChanged = true;
+        this.drawArc(this.previousPoint, event.shiftKey || event.buttons === 2);
       }
     });
 
@@ -135,29 +276,10 @@ export class Masker {
       const distance = distanceBetween(this.previousPoint, this.currentPoint);
       const angle = angleBetween(this.previousPoint, this.currentPoint);
 
-      for (var i = 0; i < distance; i += 2) {
+      for (var i = 0; i < distance; i += 1) {
         const x = this.previousPoint.x + (Math.sin(angle) * i);
         const y = this.previousPoint.y + (Math.cos(angle) * i);
-
-        // create a "delete" operation when holding shift or right click
-        // add to the mask
-        this.context.globalCompositeOperation = event.shiftKey || event.buttons === 2
-          ? "destination-out"
-          : "destination-over";
-
-        this.context.fillStyle = "black";
-        this.context.beginPath();
-
-        this.context.arc(
-          x / this.ratio,
-          y / this.ratio,
-          this.brushSize / this.ratio,
-          0,
-          2 * Math.PI
-        );
-        this.context.fill();
-
-        this.maskChanged = true;
+        this.drawArc({ x, y }, event.shiftKey || event.buttons === 2);
         this.previousPoint = this.currentPoint;
       }
     });
@@ -191,58 +313,20 @@ export class Masker {
 
   }
 
-  drawChequeredBackground(width = 7) {
-    const context = this.chequeredSource.getContext("2d");
-    const fillStyle = context.fillStyle;
-    const alpha = context.globalAlpha;
-    const columns = Math.ceil(this.chequeredSource.width / width);
-    const rows = Math.ceil(this.chequeredSource.height / width);
-
-    context.fillStyle = "rgb(212, 163, 19)";
-    for (let i = 0; i < rows; ++i) {
-      for (let j = 0, col = columns / 2; j < col; ++j) {
-        context.rect(
-          (2 * j * width) + (i % 2 ? 0 : width),
-          i * width,
-          width,
-          width
-        );
-      }
-    }
-    context.fill();
-
-    context.fillStyle = fillStyle;
-    context.globalAlpha = alpha;
-  }
-
   draw() {
-    // add a grey version
     const context = this.canvas.getContext("2d");
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // add a grey version to canvas
     context.globalAlpha = 0.25;
     context.drawImage(this.greyscale, 0, 0);
-
     context.globalAlpha = 1;
 
-    // chequered image
-    this.chequeredSource = document.createElement("canvas");
-    this.chequeredSource.width = this.layer.canvas.width;
-    this.chequeredSource.height = this.layer.canvas.height;
-    this.drawChequeredBackground();
-    const chequeredSourceContext = this.chequeredSource.getContext("2d");
-    chequeredSourceContext.drawImage(this.layer.preview, 0, 0);
-
     // now the masked version
-    const masked = document.createElement("canvas");
-    masked.width = this.layer.canvas.width;
-    masked.height = this.layer.canvas.height;
-    const maskedContext = masked.getContext("2d");
-    maskedContext.drawImage(this.mask, 0, 0);
-    maskedContext.globalCompositeOperation = "source-in";
-    maskedContext.drawImage(this.chequeredSource, 0, 0);
+    this.#createMaskedSourceCanvas();
+    context.drawImage(this.maskedSource, 0, 0);
 
-    context.drawImage(masked, 0, 0);
-
+    // add brush
     context.fillStyle = "black";
     context.beginPath();
     context.arc(
@@ -254,6 +338,7 @@ export class Masker {
     );
     context.fill();
 
-    window.requestAnimationFrame(this.draw.bind(this));
+    // begin frame animation for duration of canvas
+    this.cancelAnimationFrame = window.requestAnimationFrame(this.draw.bind(this));
   }
 }
