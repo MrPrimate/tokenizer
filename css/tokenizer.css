@@ -120,6 +120,13 @@
   border: none;
   display: flex;
   background-color: rgb(194, 194, 194);
+  box-shadow: none;
+  outline: none;
+}
+
+#tokenizer button.invisible-button:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 #tokenizer button.menu-button.text-button {

@@ -391,6 +391,10 @@ export default class Tokenizer extends FormApplication {
         .catch((error) => ui.notifications.error(error));
     });
 
+    $("#tokenizer button.invisible-button").click(async (event) => {
+      event.preventDefault();
+    });
+
     $("#tokenizer button.box-button").click(async (event) => {
       event.preventDefault();
       const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
