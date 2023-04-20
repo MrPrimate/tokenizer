@@ -563,7 +563,7 @@ export default class Tokenizer extends FormApplication {
       if (!src || src === CONST.DEFAULT_TOKEN) {
         logger.error(`Failed to load fallback token: "${imgSrc}"`);
       } else {
-        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoad", { imgSrc, default: CONST.DEFAULT_TOKEN })
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoad", { imgSrc, default: CONST.DEFAULT_TOKEN });
         ui.notifications.error(errorMessage);
         logger.error("Failed to init image", errorMessage);
         await this._initToken();
@@ -595,7 +595,7 @@ export default class Tokenizer extends FormApplication {
         const img = await Utils.download(options.current);
         this.Token.addImageLayer(img, { masked: true, onTop: true });
       } catch (error) {
-        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current })
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current });
         ui.notifications.error(errorMessage);
       }
     }
