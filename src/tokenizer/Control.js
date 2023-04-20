@@ -32,6 +32,7 @@ export default class Control {
 
     // opacity management
     this.configureOpacitySection();
+    this.configureTransparentPixelSection();
 
     // the move up/down order section
     this.configureMovementSection();
@@ -61,8 +62,9 @@ export default class Control {
       this.positionManagementSection.appendChild(this.visibleControl);
       this.positionManagementSection.appendChild(this.activeControl);
       this.positionManagementSection.appendChild(this.flipControl);
-      this.positionManagementSection.appendChild(this.resetControl);
+      this.positionManagementSection.appendChild(this.transparentManagementSection);
       this.positionManagementSection.appendChild(this.opacityManagementSection);
+      this.positionManagementSection.appendChild(this.resetControl);
     }
     this.view.appendChild(this.moveManagementSection);
     this.view.appendChild(this.deleteSection);
@@ -78,8 +80,7 @@ export default class Control {
 
     // Set the basic mask of this layer
     this.maskControl = document.createElement('button');
-    this.maskControl.classList.add('mask-control');
-    this.maskControl.classList.add('mask-layer-button');
+    this.maskControl.classList.add('mask-control', 'mask-layer-button');
     this.maskControl.title = game.i18n.localize("vtta-tokenizer.label.ToggleBasicMask");
     let maskButtonText = document.createElement('i');
     maskButtonText.classList.add('fas', 'fa-mask');
@@ -93,8 +94,7 @@ export default class Control {
 
     // Set the mask of this layer
     this.maskEditControl = document.createElement('button');
-    this.maskEditControl.classList.add('mask-control');
-    this.maskEditControl.classList.add('mask-layer-button');
+    this.maskEditControl.classList.add('mask-control', 'mask-layer-button');
     // this.maskEditControl.disabled = true;
     this.maskEditControl.title = game.i18n.localize("vtta-tokenizer.label.EditMask");
     let maskEditButtonText = document.createElement('i');
@@ -460,6 +460,84 @@ export default class Control {
     this.opacityManagementSection.appendChild(this.opacitySliderSpan);
   }
 
+  configureTransparentPixelSection() {
+    this.transparentManagementSection = document.createElement('div');
+
+    this.transparentControl = document.createElement('button');
+    this.transparentControl.classList.add('transparent-control');
+    this.transparentControl.title = game.i18n.localize("vtta-tokenizer.label.TransparencyControl");
+
+    let buttonText = document.createElement('i');
+    buttonText.classList.add('fa-thin', 'fa-eye-dropper', 'fa-regular');
+    this.transparentControl.appendChild(buttonText);
+    this.transparentManagementSection.appendChild(this.transparentControl);
+
+    this.transparentSliderSpan = document.createElement('div');
+    this.transparentSliderSpan.classList.add('popup');
+
+    this.transparentSliderControl = document.createElement('input');
+    this.transparentSliderControl.type = 'range';
+    this.transparentSliderControl.min = 0;
+    this.transparentSliderControl.max = 150;
+    this.transparentSliderControl.value = this.layer.view.alphaTolerance;
+    this.transparentSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorSimilar");
+    this.transparentSliderControl.name = "transparent";
+
+    // send an activate event when clicked
+    this.transparentControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.transparentSliderSpan.classList.toggle("show");
+    });
+
+    this.transparentSliderControl.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        tolerance: event.target.value,
+      };
+      this.view.dispatchEvent(new CustomEvent('transparency-level', { detail }));
+    });
+
+    // get color from canvas
+    this.getAlpha = document.createElement('button');
+    this.getAlpha.classList.add('mask-layer-button');
+    this.getAlpha.title = game.i18n.localize("vtta-tokenizer.label.PickAlpha");
+    let alphaButtonText = document.createElement('i');
+    alphaButtonText.classList.add('fa-thin', 'fa-eye-dropper', 'fa-regular');
+    this.getAlpha.appendChild(alphaButtonText);
+
+    // dispatch the request for color picking
+    this.getAlpha.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (this.getAlpha.classList.contains('active')) {
+        this.getAlpha.classList.remove('active');
+        this.view.dispatchEvent(
+          new CustomEvent('pick-alpha-end', {
+            detail: { layerId: this.layer.id },
+          })
+        );
+      } else {
+        this.getAlpha.classList.add('active');
+        this.view.dispatchEvent(
+          new CustomEvent('pick-alpha-start', {
+            detail: { layerId: this.layer.id },
+          })
+        );
+      }
+    });
+
+    this.alphaSelectorProxy = document.createElement('div');
+    this.alphaSelectorProxy.classList.add('color-picker', 'transparent');
+
+    let buttonControls = document.createElement('div');
+    buttonControls.classList.add('basic-mask-control');
+    buttonControls.appendChild(this.alphaSelectorProxy);
+    buttonControls.appendChild(this.getAlpha);
+    this.transparentSliderSpan.appendChild(buttonControls);
+    this.transparentSliderSpan.appendChild(this.transparentSliderControl);
+    this.transparentManagementSection.appendChild(this.transparentSliderSpan);
+  }
+
   addSelectLayerMasks() {
     this.maskLayerSelector.innerHTML = "";
     this.layer.view.layers.forEach((layer) => {
@@ -536,6 +614,13 @@ export default class Control {
       this.clearColor.disabled = false;
     }
 
+    if (this.layer.view.isAlphaPicking) {
+      this.alphaSelectorProxy.classList.remove('transparent');
+      this.alphaSelectorProxy.style.backgroundColor = this.layer.view.alphaColorHex;
+    } else {
+      this.alphaSelectorProxy.classList.add('transparent');
+    }
+
     // first child?
     this.enableMoveUp();
     this.enableMoveDown();
@@ -561,6 +646,15 @@ export default class Control {
 
   endColorPicking() {
     this.getColor.classList.remove('active');
+  }
+
+  startAlphaPicking() {
+    this.getAlpha.classList.add('active');
+  }
+
+  endAlphaPicking() {
+    this.getAlpha.classList.remove('active');
+    this.transparentSliderSpan.classList.toggle("show");
   }
 
   enableMoveUp() {

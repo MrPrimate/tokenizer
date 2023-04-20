@@ -2,7 +2,8 @@
 
 # [Coming soon]
 
-- Improved use of localization
+- Improved use of localization.
+- You can now make similar colours in a layer disappear/become transparent pixels.
 
 # [4.0.2]
 

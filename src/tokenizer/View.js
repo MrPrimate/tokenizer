@@ -3,6 +3,7 @@ import Control from './Control.js';
 import Utils from '../libs/Utils.js';
 import CONSTANTS from '../constants.js';
 import logger from '../libs/logger.js';
+import Color from '../libs/Color.js';
 
 export default class View {
   constructor(dimension, element) {
@@ -31,6 +32,13 @@ export default class View {
     this.isColorPicking = false;
     this.colorPickingForLayer = null;
     this.colorPickingLayerId = null;
+
+    // alpha picking
+    this.isAlphaPicking = false;
+    this.alphaPickingForLayer = null;
+    this.alphaPickingLayerId = null;
+    this.alphaColor = null;
+    this.alphaTolerance = 50;
 
     // The working stage for the View
     this.stage = document.createElement('div');
@@ -156,8 +164,11 @@ export default class View {
    * @param {Event} event
    */
   onMouseDown(event) {
+    console.warn(this);
     if (this.isColorPicking) {
       this.endColorPicking(false);
+    } else if (this.isAlphaPicking) {
+      this.endAlphaPicking(false);
     }
 
     if (this.activeLayer === null) return;
@@ -204,6 +215,24 @@ export default class View {
       let control = this.controls.find((control) => control.layer.id === this.colorPickingForLayer.id);
       control.refresh();
       this.redraw();
+    } else if (this.isAlphaPicking) {
+      const eventLocation = View.getEventLocation(this.canvas, event);
+      const pixelData = this.canvas.getContext('2d').getImageData(eventLocation.x, eventLocation.y, 1, 1).data;
+      if (pixelData[0] == 0 && pixelData[1] == 0 && pixelData[2] == 0 && pixelData[3] == 0) {
+        // Do nothing if the pixel is transparent
+      } else {
+        this.alphaColorHex = '#' + ('000000' + Utils.rgbToHex(pixelData[0], pixelData[1], pixelData[2])).slice(-6);
+        this.alphaColor = new Color({
+          red: pixelData[0],
+          green: pixelData[1],
+          blue: pixelData[2],
+          alpha: pixelData[3],
+          tolerance: this.alphaTolerance,
+        });
+        const control = this.controls.find((control) => control.layer.id === this.alphaPickingForLayer.id);
+        control.refresh();
+        this.redraw();
+      }
     }
 
     if (this.activeLayer === null) return;
@@ -393,10 +422,16 @@ export default class View {
       this.controls.forEach((control) => control.refresh());
     });
     control.view.addEventListener('pick-color-start', (event) => {
-      this.startColorPicking(event.detail.layerId, event.detail.color);
+      this.startColorPicking(event.detail.layerId);
     });
     control.view.addEventListener('pick-color-end', () => {
       this.endColorPicking(true);
+    });
+    control.view.addEventListener('pick-alpha-start', (event) => {
+      this.startAlphaPicking(event.detail.layerId);
+    });
+    control.view.addEventListener('pick-alpha-end', () => {
+      this.endAlphaPicking(true);
     });
     control.view.addEventListener('delete', (event) => {
       this.removeImageLayer(event.detail.layerId);
@@ -418,12 +453,14 @@ export default class View {
       this.customMaskLayerToggle(event.detail.layerId, event.detail.maskLayerId);
       this.controls.forEach((control) => control.refresh());
     });
+    control.view.addEventListener('transparency-level', (event) => {
+      this.alphaTolerance = event.detail.tolerance;
+    });
   }
 
   /**
    * Starts color picking for a given layer
    * @param {String} id The layer that is getting the picked color as a background color
-   * @param {*} currentColor The layers current color
    */
   startColorPicking(id) {
     const layer = this.layers.find((layer) => layer.id === id);
@@ -431,6 +468,19 @@ export default class View {
     // move the control in sync
     this.isColorPicking = true;
     this.colorPickingForLayer = layer;
+    this.canvas.classList.add('isColorPicking');
+  }
+
+    /**
+   * Starts alpha picking for a given layer
+   * @param {String} id The layer that is getting the picked color as a alpha color
+   */
+  startAlphaPicking(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    layer.saveAlphas();
+    // move the control in sync
+    this.isAlphaPicking = true;
+    this.alphaPickingForLayer = layer;
     this.canvas.classList.add('isColorPicking');
   }
 
@@ -455,6 +505,34 @@ export default class View {
     control.endColorPicking();
 
     this.colorPickingForLayer = null;
+
+    control.refresh();
+    this.redraw();
+  }
+
+  /**
+   * Ends a color picking state
+   * @param {boolean} reset If the user aborted the color picking, we will reset to the original color
+   */
+  endAlphaPicking(reset = false) {
+    this.canvas.classList.remove('isColorPicking');
+    // move the control in sync
+    this.isAlphaPicking = false;
+
+    // update the layer
+    if (reset) {
+      // setting the color
+      this.alphaPickingForLayer.restoreAlphas();
+      this.redraw(true);
+    } else {
+      this.alphaPickingForLayer.addTransparentColour(this.alphaColor);
+    }
+
+    // refreshing the control
+    const control = this.controls.find((control) => control.layer.id === this.alphaPickingForLayer.id);
+    control.endAlphaPicking();
+
+    this.alphaPickingForLayer = null;
 
     control.refresh();
     this.redraw();

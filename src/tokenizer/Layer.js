@@ -3,6 +3,8 @@ import { geom } from '../libs/MarchingSquares.js';
 import CONSTANTS from '../constants.js';
 import { generateRayMask } from '../libs/RayMask.js';
 import { Masker } from './Masker.js';
+import Color from '../libs/Color.js';
+import logger from '../libs/logger.js';
 
 export default class Layer {
   constructor({ view, canvas, img = null, color = null } = {}) {
@@ -62,6 +64,10 @@ export default class Layer {
     this.previousColor = null;
     this.color = color;
     this.colorLayer = color !== null;
+
+    // extra alpha pixels
+    this.previousAlphaPixelColors = null;
+    this.alphaPixelColors = new Set();
   }
 
   static isTransparent(pixels, x, y) {
@@ -279,9 +285,18 @@ export default class Layer {
     this.setColor(this.previousColor);
   }
 
+  saveAlphas() {
+    this.previousAlphaPixelColors = new Set(this.alphaPixelColors);
+  }
+
+  restoreAlphas() {
+    this.alphaPixelColors = new Set(this.previousAlphaPixelColors);
+  }
+
   reset() {
     this.customMaskLayers = false;
     this.appliedMaskIds.clear();
+    this.alphaPixelColors.clear();
     this.view.layers.forEach((l) => {
       if (l.providesMask && this.view.isOriginLayerHigher(l.id, this.id)) {
         this.appliedMaskIds.add(l.id);
@@ -341,6 +356,37 @@ export default class Layer {
     this.mirror *= -1;
     this.flipped = !this.flipped;
     this.redraw();
+  }
+
+  applyTransparentPixels(context) {
+    if (this.alphaPixelColors.size === 0) return;
+
+    let imageData = context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    this.alphaPixelColors.forEach((color) => {
+      // iterate over all pixels
+      let count = 0;
+      for (let i = 0, n = imageData.data.length; i < n; i += 4) {
+        const pixelColor = new Color({
+          red: imageData.data[i],
+          blue: imageData.data[i + 1],
+          green: imageData.data[i + 2],
+          alpha: imageData.data[i + 3],
+        });
+        if (color.isNeighborColor(pixelColor)) {
+          count++;
+          imageData.data[i] = 0;
+          imageData.data[i + 1] = 0;
+          imageData.data[i + 2] = 0;
+          imageData.data[i + 3] = 0;
+        }
+      }
+      logger.debug("Applying the following color transparency", { color, count });
+    });
+    context.putImageData(imageData, 0, 0);
+  }
+
+  addTransparentColour(color) {
+    this.alphaPixelColors.add(color);
   }
 
   applyTransformations(context, alpha = true) {
@@ -427,6 +473,7 @@ export default class Layer {
           this.source.width * this.scale,
           this.source.height * this.scale
         );
+        this.applyTransparentPixels(cContext);
       }
 
       cContext.resetTransform();

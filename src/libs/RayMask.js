@@ -1,18 +1,17 @@
 import CONSTANTS from "../constants.js";
-
-function isOpaque(alpha) {
-  return alpha > CONSTANTS.COLOR.OPAQUE_THRESHOLD;
-}
+import Color from "./Color.js";
 
 function getEnrichedPixel(imageData, point) {
   const index = point.x + (point.y * imageData.height);
   const baseIndex = index * 4;
-  const color = {
-    red: imageData.data[baseIndex],
-    green: imageData.data[baseIndex + 1],
-    blue: imageData.data[baseIndex + 2],
-    alpha: imageData.data[baseIndex + 3],
-  };
+  const color = new Color(
+    {
+      red: imageData.data[baseIndex],
+      green: imageData.data[baseIndex + 1],
+      blue: imageData.data[baseIndex + 2],
+      alpha: imageData.data[baseIndex + 3],
+    }
+  );
   return {
     x: point.x,
     y: point.y,
@@ -67,7 +66,7 @@ function findEdgeOnRay(imageData, startPoint, endPoint) {
 
   // check to see if we find an edge
   enrichedPixels.forEach((pixel, index) => {
-    if (isOpaque(pixel.color.alpha)) {
+    if (pixel.color.isOpaque()) {
       if (start === null) {
         start = index;
       } else {
