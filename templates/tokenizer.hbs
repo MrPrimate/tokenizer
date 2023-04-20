@@ -7,28 +7,28 @@
         <div>
             <div class="avatar">
                 <div class="title">
-                    <div class="title-element"><h1>Avatar</h1></div>
+                    <div class="title-element"><h1>{{localize "vtta-tokenizer.label.avatar"}}</h1></div>
                     <div class="title-element">
-                        <button id="modify-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="modify-toggle">Modify&nbsp;&nbsp;<i id="modify-avatar-fas" class="fa-regular fa-square button-fas"></i></button>
-                        <button id="paste-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="paste-toggle">Paste target&nbsp;&nbsp;<i id="paste-avatar-fas" class="fa-regular fa-circle button-fas"></i></button>
+                        <button id="modify-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="modify-toggle">{{localize "vtta-tokenizer.label.Modify"}}&nbsp;&nbsp;<i id="modify-avatar-fas" class="fa-regular fa-square button-fas"></i></button>
+                        <button id="paste-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="paste-toggle">{{localize "vtta-tokenizer.label.PasteTarget"}}&nbsp;&nbsp;<i id="paste-avatar-fas" class="fa-regular fa-circle button-fas"></i></button>
                     </div>
                 </div>
                 <div class="view" id="tokenizer-avatar"></div>
                 <div class="menu" id="avatar-options">
                     <div class="section">
-                        <div class="title"><button title="Add layer" class="invisible-button"><i class="fa-solid fa-plus"></i></button></div>
+                        <div class="title"><button title="{{localize "vtta-tokenizer.label.AddLayer"}}" class="invisible-button"><i class="fa-solid fa-plus"></i></button></div>
                         <div class="content">
-                            <button title="Use Token image" class="menu-button" data-type="token" data-target="avatar"><i class="fas fa-user-circle"></i></button>
-                            <button title="Use a URL" class="menu-button" data-type="download" data-target="avatar"><i class="fas fa-globe"></i></button>
-                            <button title="Upload from your computer" class="menu-button" data-type="upload" data-target="avatar"><i class="fas fa-upload"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UseTokenImage"}}" class="menu-button" data-type="token" data-target="avatar"><i class="fas fa-user-circle"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UseAURL"}}" class="menu-button" data-type="download" data-target="avatar"><i class="fas fa-globe"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UploadComputer"}}" class="menu-button" data-type="upload" data-target="avatar"><i class="fas fa-upload"></i></button>
                             <input type="text" class="filePickerTarget" name="foundryAvatar" data-target="avatar" data-type="server" data-dtype="String" />
                             {{#if canBrowse }}
-                            <button title="Use an image from Foundry Server" class="menu-button file-picker" data-type="imagevideo" data-target="foundryAvatar">
+                            <button title="{{localize "vtta-tokenizer.label.UseFoundry"}}" class="menu-button file-picker" data-type="imagevideo" data-target="foundryAvatar">
                                 <i class="fas fa-server"></i>
                             </button>
                             {{/if}}
                             {{#if tokenVariantsEnabled}}
-                            <button title="Use an image from Foundry Server through TokenVariants" class="menu-button" data-type="tokenVariants" data-target="avatar">
+                            <button title="{{localize "vtta-tokenizer.label.UseFoundryTokenVariants"}}" class="menu-button" data-type="tokenVariants" data-target="avatar">
                                 <i class="fas fa-images"></i>
                             </button>
                             {{/if}}
@@ -38,33 +38,33 @@
             </div>
             <div class="token" id="tokenizer-token-parent">
                 <div class="title">
-                    <div class="title-element"><h1>Token</h1></div>
+                    <div class="title-element"><h1>{{localize "vtta-tokenizer.label.token"}}</h1></div>
                     <div class="title-element">
-                        <button id="modify-token" type="button" class="box-button" data-target="token" data-type="modify-toggle">Modify&nbsp;&nbsp;<i id="modify-token-fas" class="fas fa-square-check button-fas"></i></button>
-                        <button id="paste-token" type="button" class="box-button" data-target="token" data-type="paste-toggle">Paste target&nbsp;&nbsp;<i id="paste-token-fas" class="fa-regular fa-circle-dot button-fas"></i></button>
+                        <button id="modify-token" type="button" class="box-button" data-target="token" data-type="modify-toggle">{{localize "vtta-tokenizer.label.Modify"}}&nbsp;&nbsp;<i id="modify-token-fas" class="fas fa-square-check button-fas"></i></button>
+                        <button id="paste-token" type="button" class="box-button" data-target="token" data-type="paste-toggle">{{localize "vtta-tokenizer.label.PasteTarget"}}&nbsp;&nbsp;<i id="paste-token-fas" class="fa-regular fa-circle-dot button-fas"></i></button>
                     </div>
                 </div>
                 <div class="view" id="tokenizer-token"></div>
                 <div class="menu" id="token-options">
                     <div class="section">
-                        <div class="title"><button title="Add layer" class="invisible-button"><i class="fa-solid fa-plus"></i></button></div>
+                        <div class="title"><button title="{{localize "vtta-tokenizer.label.AddLayer"}}" class="invisible-button"><i class="fa-solid fa-plus"></i></button></div>
                         <div class="content">
-                            <button title="Use Avatar image" class="menu-button" data-type="avatar" data-target="token"><i class="fas fa-image-portrait"></i></button>
-                            <button title="Use a URL" class="menu-button" data-type="download" data-target="token"><i class="fas fa-globe"></i></button>
-                            <button title="Upload from your computer" class="menu-button" data-type="upload" data-target="token"><i class="fas fa-upload"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UseAvatarImage"}}" class="menu-button" data-type="avatar" data-target="token"><i class="fas fa-image-portrait"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UseAURL"}}" class="menu-button" data-type="download" data-target="token"><i class="fas fa-globe"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UploadComputer"}}" class="menu-button" data-type="upload" data-target="token"><i class="fas fa-upload"></i></button>
                             {{#if canBrowse }}
                             <input type="text" class="filePickerTarget" name="foundryToken" data-target="token" data-type="server" />
-                            <button title="Use an image from Foundry Server" class="menu-button file-picker" data-type="imagevideo" data-target="foundryToken">
+                            <button title="{{localize "vtta-tokenizer.label.UseFoundry"}}" class="menu-button file-picker" data-type="imagevideo" data-target="foundryToken">
                                 <i class="fas fa-server"></i>
                             </button>
                             {{/if}}
                             {{#if tokenVariantsEnabled}}
-                            <button title="Use an image from Foundry Server through TokenVariants" class="menu-button" data-type="tokenVariants" data-target="token">
+                            <button title="{{localize "vtta-tokenizer.label.UseFoundryTokenVariants"}}" class="menu-button" data-type="tokenVariants" data-target="token">
                                 <i class="fas fa-images"></i>
                             </button>
                             {{/if}}
-                            <button title="Use a color layer" class="menu-button" data-type="color" data-target="token"><i class="fas fa-fill"></i></button>
-                            <button title="Add Frame" class="menu-button text-button file-picker-thumbs" data-type="frame" data-target="token" style="order: 100;">Add frame&nbsp;&nbsp;<i class="fas fa-user-circle fas-button"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.UseAColorLayer"}}" class="menu-button" data-type="color" data-target="token"><i class="fas fa-fill"></i></button>
+                            <button title="{{localize "vtta-tokenizer.label.AddFrame"}}" class="menu-button text-button file-picker-thumbs" data-type="frame" data-target="token" style="order: 100;">{{localize "vtta-tokenizer.label.AddFrame"}}&nbsp;&nbsp;<i class="fas fa-user-circle fas-button"></i></button>
                         </div>
                     </div>
                 </div>
@@ -72,15 +72,15 @@
         </div>
         <div class="footer">
             <div class="footer-start">
-                <button title="Save Location/Name" class="menu-button" data-type="locations"><i class="fas fa-folder-open"></i></button>
-                <button title="Download" name="downloadToken" class="menu-button" data-type="download-token" data-target="token"><i class="fas fa-download"></i></button>
-                <span style="font-weight: bold">Token Filename: </span>
+                <button title="{{localize "vtta-tokenizer.label.SaveLocation"}}" class="menu-button" data-type="locations"><i class="fas fa-folder-open"></i></button>
+                <button title="{{localize "vtta-tokenizer.label.Download"}}" name="downloadToken" class="menu-button" data-type="download-token" data-target="token"><i class="fas fa-download"></i></button>
+                <span style="font-weight: bold">{{localize "vtta-tokenizer.label.TokenFilename"}}: </span>
                 <span name="targetFilename">Generating...</span>
                 <input type="hidden" name="targetAvatarFilename" />
                 <input type="hidden" name="targetTokenFilename" />
             </div>
             <div class="footer-end">
-                <button class="ok-button" title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>Apply&nbsp;&nbsp;<i class="fas fa-stamp button-fas"></i></button>
+                <button class="ok-button" title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>{{localize "vtta-tokenizer.label.Apply"}}&nbsp;&nbsp;<i class="fas fa-stamp button-fas"></i></button>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@ export default class Control {
 
     const idSection = document.createElement("div");
     idSection.name = "layer-id-num";
-    idSection.title = "Layer number";
+    idSection.title = game.i18n.localize("vtta-tokenizer.label.LayerNumber");
     idSection.classList.add("section");
     this.idNumber = document.createElement("div");
     this.idNumber.innerHTML = this.layer.getLayerLabel();
@@ -80,7 +80,7 @@ export default class Control {
     this.maskControl = document.createElement('button');
     this.maskControl.classList.add('mask-control');
     this.maskControl.classList.add('mask-layer-button');
-    this.maskControl.title = "Toggle basic mask for this layer";
+    this.maskControl.title = game.i18n.localize("vtta-tokenizer.label.ToggleBasicMask");
     let maskButtonText = document.createElement('i');
     maskButtonText.classList.add('fas', 'fa-mask');
     this.maskControl.appendChild(maskButtonText);
@@ -96,7 +96,7 @@ export default class Control {
     this.maskEditControl.classList.add('mask-control');
     this.maskEditControl.classList.add('mask-layer-button');
     // this.maskEditControl.disabled = true;
-    this.maskEditControl.title = "Edit mask";
+    this.maskEditControl.title = game.i18n.localize("vtta-tokenizer.label.EditMask");
     let maskEditButtonText = document.createElement('i');
     maskEditButtonText.classList.add('fas', 'fa-pencil');
     this.maskEditControl.appendChild(maskEditButtonText);
@@ -110,7 +110,7 @@ export default class Control {
 
     this.masksControl = document.createElement('button');
     this.masksControl.classList.add('blend-control');
-    this.masksControl.title = "Advanced Mask Application";
+    this.masksControl.title = game.i18n.localize("vtta-tokenizer.label.AdvancedMaskApplication");
 
     let masksButtonText = document.createElement('i');
     masksButtonText.classList.add('fas', 'fa-masks-theater');
@@ -165,7 +165,7 @@ export default class Control {
 
     let blendImageDiv = document.createElement('div');
     let blendImageText = document.createElement('i');
-    blendImageText.title = "Image Blend Mode";
+    blendImageText.title = game.i18n.localize("vtta-tokenizer.label.ImageBlendMode");
     blendImageText.classList.add('fas', 'fa-image');
     blendImageDiv.appendChild(blendImageText);
     blendImageDiv.appendChild(this.blendControlImage);
@@ -173,7 +173,7 @@ export default class Control {
 
     let blendMaskDiv = document.createElement('div');
     let blendMaskText = document.createElement('i');
-    blendMaskText.title = "Mask Blend Mode";
+    blendMaskText.title = game.i18n.localize("vtta-tokenizer.label.MaskBlendMode");
     blendMaskText.classList.add('fas', 'fa-mask');
     blendMaskDiv.appendChild(blendMaskText);
     blendMaskDiv.appendChild(this.blendControlMask);
@@ -198,13 +198,13 @@ export default class Control {
     this.positionManagementSection.name = 'position-management';
     this.positionManagementSection.classList.add('section');
     let positionManagementTitle = document.createElement('span');
-    positionManagementTitle.innerHTML = 'Transform';
+    positionManagementTitle.innerHTML = game.i18n.localize("vtta-tokenizer.label.Transform");
     this.positionManagementSection.appendChild(positionManagementTitle);
 
     // is this layer visible?
     this.visibleControl = document.createElement('button');
     this.visibleControl.classList.add('visible-layer');
-    this.visibleControl.title = "Visible layer?";
+    this.visibleControl.title = game.i18n.localize("vtta-tokenizer.label.VisibleLayer");
 
     let visibleButtonText = document.createElement('i');
     visibleButtonText.classList.add('fas', 'fa-eye');
@@ -218,7 +218,7 @@ export default class Control {
 
     // Makes the layer active for translating/ scaling
     this.activeControl = document.createElement('button');
-    this.activeControl.title = "Enable/disable transformations";
+    this.activeControl.title = game.i18n.localize("vtta-tokenizer.label.EnableDisableTransformation");
     this.activeControl.classList.add('mask-control');
     let activeButtonText = document.createElement('i');
     activeButtonText.classList.add('fas', 'fa-lock');
@@ -236,7 +236,7 @@ export default class Control {
 
     // Makes flips the layer
     this.flipControl = document.createElement('button');
-    this.flipControl.title = "Flip/Mirror layer";
+    this.flipControl.title = game.i18n.localize("vtta-tokenizer.label.FlipLayer");
     this.flipControl.classList.add('flip-control');
     let flipButtonText = document.createElement('i');
     flipButtonText.classList.add('fas', 'fa-people-arrows');
@@ -251,7 +251,7 @@ export default class Control {
     // resets the layer on the view
     this.resetControl = document.createElement('button');
     this.resetControl.classList.add('reset-control');
-    this.resetControl.title = "Reset layer";
+    this.resetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetLayer");
     let resetButtonText = document.createElement('i');
     resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
     this.resetControl.appendChild(resetButtonText);
@@ -271,7 +271,7 @@ export default class Control {
     // delete
     this.deleteControl = document.createElement('button');
     this.deleteControl.classList.add('delete-control');
-    this.deleteControl.title = "Delete layer (cannot be undone)";
+    this.deleteControl.title = game.i18n.localize("vtta-tokenizer.label.DeleteLayer");
     let deleteButtonText = document.createElement('i');
     deleteButtonText.classList.add('fas', 'fa-trash-alt');
     this.deleteControl.appendChild(deleteButtonText);
@@ -292,7 +292,7 @@ export default class Control {
     this.colorManagementSection.name = 'color-management';
     this.colorManagementSection.classList.add('section');
     let colorManagementTitle = document.createElement('span');
-    colorManagementTitle.innerHTML = 'Color';
+    colorManagementTitle.innerHTML = game.i18n.localize("vtta-tokenizer.label.Color");
     this.colorManagementSection.appendChild(colorManagementTitle);
 
     // the color picker element, which is hidden
@@ -302,7 +302,7 @@ export default class Control {
 
     // a nicer looking proxy for the color picker
     this.colorSelectorProxy = document.createElement('div');
-    this.colorSelectorProxy.title = "Edit tint";
+    this.colorSelectorProxy.title = game.i18n.localize("vtta-tokenizer.label.EditTint");
     this.colorSelectorProxy.classList.add('color-picker', 'transparent');
     this.colorSelectorProxy.addEventListener('click', () => {
       this.colorSelector.click();
@@ -323,7 +323,7 @@ export default class Control {
     this.clearColor = document.createElement('button');
     this.clearColor.disabled = true;
     this.clearColor.classList.add('danger');
-    this.clearColor.title = "Clear tint";
+    this.clearColor.title = game.i18n.localize("vtta-tokenizer.label.ClearTint");
     let clearButtonText = document.createElement('i');
     clearButtonText.classList.add('fas', 'fa-minus-circle');
     this.clearColor.appendChild(clearButtonText);
@@ -339,7 +339,7 @@ export default class Control {
 
     // get color from canvas
     this.getColor = document.createElement('button');
-    this.getColor.title = "Pick tint color from canvas";
+    this.getColor.title = game.i18n.localize("vtta-tokenizer.label.PickTint");
     let colorButtonText = document.createElement('i');
     colorButtonText.classList.add('fas', 'fa-eye-dropper');
     this.getColor.appendChild(colorButtonText);
@@ -374,7 +374,7 @@ export default class Control {
     // moving up
     this.moveUpControl = document.createElement('button');
     this.moveUpControl.classList.add('move-control', 'move-up');
-    this.moveUpControl.title = "Move layer up";
+    this.moveUpControl.title = game.i18n.localize("vtta-tokenizer.label.MoveLayerUp");
     let moveUpButtonText = document.createElement('i');
     moveUpButtonText.classList.add('fas', 'fa-caret-up');
     this.moveUpControl.appendChild(moveUpButtonText);
@@ -392,7 +392,7 @@ export default class Control {
     // moving down
     this.moveDownControl = document.createElement('button');
     this.moveDownControl.classList.add('move-control', 'move-down');
-    this.moveDownControl.title = "Move layer down";
+    this.moveDownControl.title = game.i18n.localize("vtta-tokenizer.label.MoveLayerDown");
     let moveDownButtonText = document.createElement('i');
     moveDownButtonText.classList.add('fas', 'fa-caret-down');
     this.moveDownControl.appendChild(moveDownButtonText);
@@ -416,7 +416,7 @@ export default class Control {
 
     this.opacityControl = document.createElement('button');
     this.opacityControl.classList.add('opacity-control');
-    this.opacityControl.title = "Opacity";
+    this.opacityControl.title = game.i18n.localize("vtta-tokenizer.label.Opacity");
 
     let opacityButtonText = document.createElement('i');
     opacityButtonText.classList.add('fas', 'fa-adjust');
@@ -433,7 +433,7 @@ export default class Control {
     this.opacitySliderControl.min = 0;
     this.opacitySliderControl.max = 100;
     this.opacitySliderControl.value = 100;
-    this.opacitySliderControl.title = "Opacity";
+    this.opacitySliderControl.title = game.i18n.localize("vtta-tokenizer.label.Opacity");
     this.opacitySliderControl.name = "opacity";
 
     this.opacitySliderSpan.appendChild(this.opacitySliderControl);
@@ -470,7 +470,7 @@ export default class Control {
       const button = document.createElement('button');
       button.classList.add('mask-layer-choice');
       if (active) button.classList.add('active');
-      button.title = `Toggle Layer ${layerNum}`;
+      button.title = game.i18n.format("vtta-tokenizer.label.ToggleLayer", { layerNum });
       button.innerHTML = layer.getLayerLabel(active);
 
       button.addEventListener('click', (event) => {

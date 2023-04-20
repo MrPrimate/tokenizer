@@ -76,7 +76,8 @@ async function updateActor(tokenizerResponse) {
 
     // set it to a wildcard we can actually use
     const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
-    ui.notifications.info("Tokenizer: Wildcarding token image to " + tokenizerResponse.actor.prototypeToken.texture.src);
+    const message = game.i18n.format("vtta-tokenizer.notification.wildcard", { path: tokenizerResponse.actor.prototypeToken.texture.src });
+    ui.notifications.info(message);
     update.token = {
       img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
     };
@@ -159,7 +160,7 @@ export async function autoToken(actor, options) {
   const tokenizer = new Tokenizer(mergedOptions, updateActor);
 
   // create mock elements to generate images in
-  const tokenizerHtml = `<div class="token" id="tokenizer-token-parent"><h1>Token</h1><div class="view" id="tokenizer-token"></div>`;
+  const tokenizerHtml = `<div class="token" id="tokenizer-token-parent"><h1>${game.i18n.localize("vtta-tokenizer.label.token")}</h1><div class="view" id="tokenizer-token"></div>`;
   let doc = Utils.htmlToDoc(tokenizerHtml);
   let tokenView = doc.querySelector(".token > .view");
   

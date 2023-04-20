@@ -1,5 +1,9 @@
 # Changelog
 
+# [Coming soon]
+
+- Improved use of localization
+
 # [4.0.2]
 
 - Mask editor: improve performance of editing large images.

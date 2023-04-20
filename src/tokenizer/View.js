@@ -140,7 +140,7 @@ export default class View {
     newImageSection.name = 'color-management';
     newImageSection.classList.add('section');
     var title = document.createElement('span');
-    title.innerHTML = 'New Image';
+    title.innerHTML = game.i18n.localize("vtta-tokenizer.label.NewImage");
     newImageSection.appendChild(title);
 
     // Set the mask of this layer

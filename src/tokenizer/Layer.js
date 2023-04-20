@@ -90,8 +90,9 @@ export default class Layer {
 
   editMask(callback) {
     const maskEditor = new Masker(this);
-    maskEditor.activateListeners(this.applyCustomMask.bind(this), callback);
-    maskEditor.draw();
+    maskEditor.display(this.applyCustomMask.bind(this), callback).then(() => {
+      maskEditor.draw();
+    });
   }
 
   /**

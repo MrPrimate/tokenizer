@@ -3,19 +3,6 @@ import Utils from "../libs/Utils.js";
 
 export class Masker {
 
-  static html = `
-    <div class="masker">
-      <div class="tokenizer description">
-        <section class="window-content">
-          <h1>Custom Mask Editor</h1>
-          <p>Add to the mask with the left mouse button, and remove holding shift. </p>
-          <p>Remove from the mask, use the right mouse or hold shift with the left mouse button. </p>
-          <p>Use the mouse wheel to increase/decrease brush size. </p>
-          <div id="mask-editor-buttons" class="buttons"><button data-action="ok" class="tokenizer ui button" title="[Enter] Close and save changes"><i class="fas fa-check"></i> Apply</button><button data-action="cancel" class="tokenizer ui button" title="[ESC] Close and discard changes"><i class="fas fa-times"></i> Cancel</button></div>
-        </section>
-      </div>
-    </div>`;
-
   #drawChequeredBackground(width = 7) {
     this.chequeredSource = document.createElement("canvas");
     this.chequeredSource.width = this.width;
@@ -119,7 +106,7 @@ export class Masker {
   }
 
   constructor(layer) {
-    this.container = $(Masker.html);
+    this.container = null;
     this.layer = layer;
 
     this.height = Math.min(1000, layer.preview.height, layer.preview.width);
@@ -153,10 +140,15 @@ export class Masker {
     this.maskChanged = false;
     this.currentPoint = { x: 0, y: 0 };
     this.previousPoint = null;
-    this.container[0].append(this.canvas);
     this.mouseDown = false;
+  }
 
+  async display(callback, nestedCallback) {
+    const html = await renderTemplate("modules/vtta-tokenizer/templates/maskeditor.hbs");
+    this.container = $(html);
+    this.container[0].append(this.canvas);
     $("body").append(this.container);
+    this.#activateListeners(callback, nestedCallback);
   }
 
   getMousePointer(event) {
@@ -227,7 +219,7 @@ export class Masker {
     this.maskChanged = true;
   }
 
-  activateListeners(callback, nestedCallback) {
+  #activateListeners(callback, nestedCallback) {
     let rect = this.canvas.getBoundingClientRect();
     this.ratio = rect.width / this.canvas.width;
 

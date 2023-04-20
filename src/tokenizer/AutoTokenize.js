@@ -82,13 +82,20 @@ export default class AutoTokenize extends FormApplication {
 
       $(".tokenizer-overlay").toggleClass("import-invalid");
 
-      AutoTokenize._renderCompleteDialog(`Successful Token generation for ${this.packName}`, { title: this.packName, description: `Updated ${this.pack.index.size} actor tokens` });
+      AutoTokenize._renderCompleteDialog(
+        game.i18n.format("vtta-tokenizer.auto.success", { packName: this.packName }), 
+        {
+          title: this.packName,
+          description: game.i18n.format("vtta-tokenizer.auto.success-content", { size: this.pack.index.size })
+        }
+      );
 
       this.close();
     } catch (err) {
       $(".tokenizer-overlay").toggleClass("import-invalid");
-      ui.notifications.error(`There was an error importing ${this.packName}`);
-      logger.error(`Error importing file ${this.packName}`, err);
+      const errorText = game.i18n.format("vtta-tokenizer.auto.error", { packName: this.packName });
+      ui.notifications.error(errorText);
+      logger.error(errorText, err);
       this.close();
     }
 

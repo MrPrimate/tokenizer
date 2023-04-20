@@ -1,6 +1,6 @@
 <form class="{{cssClass}}" autocomplete="off" onsubmit="event.preventDefault();">
   <div class="import-file-selector">
-    <p class="notes">Tokenize all ({{ data.length }}) actors in this compendium {{ data.packName }}?</p>
+    <p class="notes">{{localize "vtta-tokenizer.auto.description" length=data.length packName=data.packName }}</p>
     <div class="import-progress import-hidden">
       <div class="import-progress-bar" style="width: 0%"></div>
     </div>
@@ -12,6 +12,6 @@
     </div>
   </div>
   <div class="tokenizer-overlay import-invalid">
-    <div class="tokenizer-working import-hidden"><i class="fas fa-cog"></i><div style="font-size: 15px; text-align: center;">Updating Tokens...</div></div>
+    <div class="tokenizer-working import-hidden"><i class="fas fa-cog"></i><div style="font-size: 15px; text-align: center;">{{localize "vtta-tokenizer.auto.updating"}}</div></div>
   </div>
 </form>

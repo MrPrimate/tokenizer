@@ -17,7 +17,7 @@ export default class Tokenizer extends FormApplication {
       ["v2", "v3", "v4", "v7", "v12"].forEach((v) => {
         for (let i = 1; i <= 8; i++) {
           const fileName = `modules/vtta-tokenizer/img/omfg/${version}/${v}/OMFG_Tokenizer_${v}_0${i}.png`;
-          const label = `OMFG Frame ${v} 0${i}`;
+          const label = `OMFG ${game.i18n.localize("vtta-tokenizer.label.Frame")} ${v} 0${i}`;
           const obj = {
             key: fileName,
             label,
@@ -39,7 +39,7 @@ export default class Tokenizer extends FormApplication {
 
     for (let i = 1; i <= 20; i++) {
       const fileName = `modules/vtta-tokenizer/img/thegreatnacho/theGreatNacho-${i}.webp`;
-      const label = `TheGreatNacho Frame ${i}`;
+      const label = `TheGreatNacho ${game.i18n.localize("vtta-tokenizer.label.Frame")} ${i}`;
       const obj = {
         key: fileName,
         label,
@@ -78,12 +78,14 @@ export default class Tokenizer extends FormApplication {
     const defaultFrames = [
       {
         key: setPlayerDefaultFrame,
-        label: "Default Player Frame",
+        label: game.i18n.localize("vtta-tokenizer.default-frame-pc.name"),
         selected: false,
       },
       {
         key: setNPCDefaultFrame,
-        label: npcDiff ? "Default NPC Frame (Hostile)" : "Default NPC Frame",
+        label: npcDiff
+          ? game.i18n.localize("vtta-tokenizer.default-frame-npc.hostile")
+          : game.i18n.localize("vtta-tokenizer.default-frame-npc.neutral"),
         selected: true,
       }
     ];
@@ -94,14 +96,16 @@ export default class Tokenizer extends FormApplication {
     if (foundryDefaultPCFrame !== setPlayerDefaultFrame) {
       defaultFrames.push({
         key: foundryDefaultPCFrame,
-        label: "Default Player Frame (Foundry)",
+        label: game.i18n.localize("vtta-tokenizer.default-frame-pc.foundry"),
         selected: false,
       });
     }
     if (foundryDefaultNPCFrame !== setNPCDefaultFrame) {
       defaultFrames.push({
         key: foundryDefaultNPCFrame,
-        label: npcDiff ? "Default NPC Frame (Foundry, Hostile)" : "Default NPC Frame (Foundry)",
+        label: npcDiff
+          ? game.i18n.localize("vtta-tokenizer.default-frame-npc.foundry-hostile")
+          : game.i18n.localize("vtta-tokenizer.default-frame-npc.foundry-neutral"),
         selected: false,
       });
     }
@@ -109,7 +113,7 @@ export default class Tokenizer extends FormApplication {
     if (npcDiff) {
       defaultFrames.push({
         key: otherNPCFrame.replace(/^\/|\/$/g, ""),
-        label: "Default NPC Frame (Other)",
+        label: game.i18n.localize("vtta-tokenizer.default-frame-npc.other"),
         selected: false,
       });
     }
@@ -360,10 +364,11 @@ export default class Tokenizer extends FormApplication {
       $("#tokenizer-control").css("height", "auto");
     } catch (error) {
       if (inputUrl) {
-        ui.notifications.error(`Failed to load original image "${url}". File has possibly been deleted. Falling back to default.`);
+        const error = game.i18n.format("vtta-tokenizer.notification.failedInput", { url });
+        ui.notifications.error(error);
         await this._initAvatar();
       } else {
-        ui.notifications.error('Failed to load fallback image.');
+        ui.notifications.error(game.i18n.localize("vtta-tokenizer.notification.failedFallback"));
       }
     }
 
@@ -471,7 +476,7 @@ export default class Tokenizer extends FormApplication {
           let urlPrompt = new Dialog({
             title: "Download from the internet",
             content: `
-                      <p>Please provide the URL of your desired image.</p>
+                      <p>${game.i18n.localize("vtta-tokenizer.download.url")}.</p>
                       <form>
                       <div class="form-group">
                          <label>URL</label>
@@ -481,12 +486,12 @@ export default class Tokenizer extends FormApplication {
             buttons: {
               cancel: {
                 icon: '<i class="fas fa-times"></i>',
-                label: "Cancel",
+                label: game.i18n.localize("vtta-tokenizer.label.Cancel"),
                 callback: () => logger.debug("Cancelled"),
               },
               ok: {
                 icon: '<i class="fas fa-check"></i>',
-                label: "OK",
+                label: game.i18n.localize("vtta-tokenizer.label.OK"),
                 callback: () => {
                   Utils.download($("#url").val())
                     .then((img) => view.addImageLayer(img))
@@ -558,8 +563,9 @@ export default class Tokenizer extends FormApplication {
       if (!src || src === CONST.DEFAULT_TOKEN) {
         logger.error(`Failed to load fallback token: "${imgSrc}"`);
       } else {
-        ui.notifications.error(`Failed to load token: "${imgSrc}", falling back to "${CONST.DEFAULT_TOKEN}"`);
-        logger.error("Failed to init image", error);
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoad", { imgSrc, default: CONST.DEFAULT_TOKEN })
+        ui.notifications.error(errorMessage);
+        logger.error("Failed to init image", errorMessage);
         await this._initToken();
       }
     }
@@ -589,7 +595,8 @@ export default class Tokenizer extends FormApplication {
         const img = await Utils.download(options.current);
         this.Token.addImageLayer(img, { masked: true, onTop: true });
       } catch (error) {
-        ui.notifications.error(`Failed to load frame: "${options.current}"`);
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current })
+        ui.notifications.error(errorMessage);
       }
     }
   }
