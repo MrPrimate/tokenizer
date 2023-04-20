@@ -4,6 +4,7 @@
 
 - Improved use of localization.
 - You can now make similar colours in a layer disappear/become transparent pixels.
+- Layers and transparent pixels can now be reset independently.
 
 # [4.0.2]
 

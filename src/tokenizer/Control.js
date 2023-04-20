@@ -107,6 +107,18 @@ export default class Control {
       this.view.dispatchEvent(new CustomEvent('edit-mask', { detail: { layerId: this.layer.id } }));
     });
 
+    // Set the mask of this layer
+    this.maskResetControl = document.createElement('button');
+    this.maskResetControl.classList.add('mask-layer-button');
+    this.maskResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetMasks");
+    let maskResetButtonText = document.createElement('i');
+    maskResetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
+    this.maskResetControl.appendChild(maskResetButtonText);
+
+    this.maskResetControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('reset-mask-layer', { detail: { layerId: this.layer.id } }));
+    });
 
     this.masksControl = document.createElement('button');
     this.masksControl.classList.add('blend-control');
@@ -127,6 +139,7 @@ export default class Control {
     basicMaskControls.classList.add('basic-mask-control');
     basicMaskControls.appendChild(this.maskControl);
     basicMaskControls.appendChild(this.maskEditControl);
+    basicMaskControls.appendChild(this.maskResetControl);
     
     this.maskSelectorSpan.appendChild(basicMaskControls);
     this.maskSelectorSpan.appendChild(this.maskLayerSelector);
@@ -529,10 +542,23 @@ export default class Control {
     this.alphaSelectorProxy = document.createElement('div');
     this.alphaSelectorProxy.classList.add('color-picker', 'transparent');
 
+    this.transparencyResetControl = document.createElement('button');
+    this.transparencyResetControl.classList.add('mask-layer-button');
+    this.transparencyResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetTransparency");
+    let resetButtonText = document.createElement('i');
+    resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
+    this.transparencyResetControl.appendChild(resetButtonText);
+
+    this.transparencyResetControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('reset-transparency-level', { detail: { layerId: this.layer.id } }));
+    });
+
     let buttonControls = document.createElement('div');
     buttonControls.classList.add('basic-mask-control');
     buttonControls.appendChild(this.alphaSelectorProxy);
     buttonControls.appendChild(this.getAlpha);
+    buttonControls.appendChild(this.transparencyResetControl);
     this.transparentSliderSpan.appendChild(buttonControls);
     this.transparentSliderSpan.appendChild(this.transparentSliderControl);
     this.transparentManagementSection.appendChild(this.transparentSliderSpan);

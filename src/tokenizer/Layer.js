@@ -209,6 +209,7 @@ export default class Layer {
     } else {
       this.createOriginalMask();
     }
+    this.sourceMask = Utils.cloneCanvas(this.mask);
   }
 
   static fromImage(view, img, canvasHeight, canvasWidth) {
@@ -291,6 +292,21 @@ export default class Layer {
 
   restoreAlphas() {
     this.alphaPixelColors = new Set(this.previousAlphaPixelColors);
+  }
+
+  resetMasks() {
+    this.customMaskLayers = false;
+    this.appliedMaskIds.clear();
+    this.view.layers.forEach((l) => {
+      if (l.providesMask && this.view.isOriginLayerHigher(l.id, this.id)) {
+        this.appliedMaskIds.add(l.id);
+      }
+    });
+    this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+    this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
+    this.customMask = false;
+    this.mask = Utils.cloneCanvas(this.sourceMask);
+    this.redraw();
   }
 
   reset() {

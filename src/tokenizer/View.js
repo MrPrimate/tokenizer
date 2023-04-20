@@ -456,6 +456,13 @@ export default class View {
     control.view.addEventListener('transparency-level', (event) => {
       this.alphaTolerance = event.detail.tolerance;
     });
+    control.view.addEventListener('reset-transparency-level', (event) => {
+      this.resetTransparencyLevel(event.detail.layerId);
+    });
+    control.view.addEventListener('reset-mask-layer', (event) => {
+      this.resetCustomMaskLayers(event.detail.layerId);
+      this.controls.forEach((control) => control.refresh());
+    });
   }
 
   /**
@@ -482,6 +489,22 @@ export default class View {
     this.isAlphaPicking = true;
     this.alphaPickingForLayer = layer;
     this.canvas.classList.add('isColorPicking');
+  }
+
+  resetTransparencyLevel(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      layer.alphaPixelColors.clear();
+      this.redraw(true);
+    }
+  }
+
+  resetCustomMaskLayers(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      layer.resetMasks();
+      this.redraw(true);
+    }
   }
 
   /**
