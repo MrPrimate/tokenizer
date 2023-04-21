@@ -1,6 +1,6 @@
 # Changelog
 
-# [Coming soon]
+# [4.0.3]
 
 - Improved use of localization.
 - You can now make similar colours in a layer disappear/become transparent pixels.
