@@ -7,7 +7,7 @@ import Color from '../libs/Color.js';
 import logger from '../libs/logger.js';
 
 export default class Layer {
-  constructor({ view, canvas, img = null, color = null } = {}) {
+  constructor({ view, canvas, tintColor, tintLayer, img = null, color = null } = {}) {
     this.view = view;
     this.id = Utils.generateUUID();
     this.canvas = canvas;
@@ -68,6 +68,11 @@ export default class Layer {
     // extra alpha pixels
     this.previousAlphaPixelColors = null;
     this.alphaPixelColors = new Set();
+
+    // tint the layer?
+    this.tintLayer = tintLayer;
+    this.tintColor = tintColor;
+    // this.tintColor = "#f59042";
   }
 
   static isTransparent(pixels, x, y) {
@@ -212,7 +217,7 @@ export default class Layer {
     this.sourceMask = Utils.cloneCanvas(this.mask);
   }
 
-  static fromImage(view, img, canvasHeight, canvasWidth) {
+  static fromImage({ view, img, canvasHeight, canvasWidth, tintColor, tintLayer } = {}) {
     const height = Math.max(1000, canvasHeight, img.naturalHeight, img.naturalWidth);
     const width = Math.max(1000, canvasWidth, img.naturalHeight, img.naturalWidth);
     const canvas = document.createElement("canvas");
@@ -248,7 +253,7 @@ export default class Layer {
         scaledHeight
       );
 
-    const layer = new Layer({ view, canvas, img });
+    const layer = new Layer({ view, canvas, img, tintColor, tintLayer });
     layer.createMask();
     layer.redraw();
     return layer;
@@ -268,7 +273,7 @@ export default class Layer {
     this.source = Utils.cloneCanvas(this.canvas);
   }
 
-  static fromColor(view, color, width, height) {
+  static fromColor({ view, color, width, height } = {}) {
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
@@ -429,6 +434,23 @@ export default class Layer {
     }
   }
 
+  applyTint(context) {
+    const tintCanvas = Utils.cloneCanvas(this.source);
+    const tintContext = tintCanvas.getContext("2d");
+    tintCanvas.width = this.source.width;
+    tintCanvas.height = this.source.height;
+    this.applyTransformations(tintContext, false);
+    tintContext.drawImage(this.source, 0, 0);
+    tintContext.globalCompositeOperation = 'source-atop';
+    tintContext.fillStyle = this.tintColor;
+    tintContext.fillRect(0, 0, this.source.width, this.source.height);  
+    tintContext.globalCompositeOperation = 'source-over';
+
+    context.globalCompositeOperation = 'color';
+    context.drawImage(tintCanvas, 0, 0);
+    context.globalCompositeOperation = 'source-over';
+  }
+
   /**
    * Refreshes the view canvas with the background color and/or the source image
    */
@@ -439,6 +461,7 @@ export default class Layer {
     const originalContext = original.getContext("2d");
     this.applyTransformations(originalContext, this.source, false);
     originalContext.drawImage(this.source, 0, 0);
+    if (this.tintLayer) this.applyTint(originalContext);
     originalContext.resetTransform();
 
     // place the computed layer on the view canvas

@@ -1,5 +1,8 @@
 # Changelog
 
+# [COMING SOON]
+- You can now choose to apply a color tint to the default token frame. Select this option in the settings if you wish to have it applied by default.
+
 # [4.0.3]
 
 - Improved use of localisation.

@@ -57,6 +57,15 @@ export function registerSettings() {
     config: true,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint", {
+    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-frame-tint.hint`,
+    type: ImagePicker.Img,
+    default: `[data] ${CONSTANTS.PATH}img/plain-marble-frame-grey.png`,
+    scope: "world",
+    config: true,
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "frame-directory", {
     name: `${CONSTANTS.MODULE_ID}.frame-directory.name`,
     hint: `${CONSTANTS.MODULE_ID}.frame-directory.hint`,
@@ -73,6 +82,47 @@ export function registerSettings() {
     config: true,
     type: Boolean,
     default: true,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "frame-tint", {
+    name: `${CONSTANTS.MODULE_ID}.frame-tint.name`,
+    hint: `${CONSTANTS.MODULE_ID}.frame-tint.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint-pc", {
+    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.pc`,
+    scope: "player",
+    config: true,
+    type: String,
+    default: "grey",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint-friendly", {
+    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.friendly`,
+    scope: "player",
+    config: true,
+    type: String,
+    default: "green",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint-neutral", {
+    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.neutral`,
+    scope: "player",
+    config: true,
+    type: String,
+    default: "blue",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint-hostile", {
+    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.hostile`,
+    scope: "player",
+    config: true,
+    type: String,
+    default: "red",
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "custom-frames", {

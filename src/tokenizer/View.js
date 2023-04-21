@@ -43,7 +43,7 @@ export default class View {
     // The working stage for the View
     this.stage = document.createElement('div');
     this.stage.name = 'view';
-     
+
     if (element.id === "tokenizer-token") {
       this.stage.setAttribute("id", "token-canvas");
       this.type = "token";
@@ -327,27 +327,55 @@ export default class View {
     this.redraw(true);
   }
 
-  addImageLayer(img, options) {
-    const defaults = { masked: false, colorLayer: false, color: null, activate: false };
-    const defaultOptions = mergeObject(defaults, CONSTANTS.TOKEN_OFFSET);
-    const mergedOptions = mergeObject(defaultOptions, options);
-
-    if (mergedOptions.colorLayer) {
-      logger.debug(`adding color layer`, options);
+  addImageLayer(img, { masked = false, colorLayer = false, color = null, activate = false, tintColor = null,
+    tintLayer = false, position = { x: null, y: null }, scale = null } = {}
+  ) {
+    const imgSrc = colorLayer
+      ? `colorLayer: ${color}`
+      : (typeof img.src === 'string' || img.src instanceof String) && !img.src.startsWith("data:image/png;base64")
+        ? img.src
+        : "blob-data";
+    if (colorLayer) {
+      logger.debug(`adding color layer`);
     } else {
-      logger.debug(`adding image layer ${img.src}`, options);
+      logger.debug(`adding image layer ${imgSrc}`);
     }
+    logger.debug(`adding layer with options`, {
+      imgSrc,
+      masked,
+      colorLayer,
+      color,
+      activate,
+      tintColor,
+      tintLayer,
+      position,
+      scale,
+    });
 
-    const layer = mergedOptions.colorLayer
-      ? Layer.fromColor(this, mergedOptions.color, this.width, this.height)
-      : Layer.fromImage(this, img, this.width, this.height);
+    const imgOptions = colorLayer
+      ? {
+        view: this,
+        color,
+        width: this.width,
+        height: this.height
+      }
+      : {
+        view: this,
+        img,
+        canvasHeight: this.width,
+        canvasWidth: this.height,
+        tintColor: tintColor,
+        tintLayer: tintLayer
+      };
 
-    if (mergedOptions.scale) layer.setScale(mergedOptions.scale);
-    if (mergedOptions.position.x && mergedOptions.position.y) {
-      const upScaledX = layer.canvas.width * (mergedOptions.position.x / 400);
-      const upScaledY = layer.canvas.height * (mergedOptions.position.y / 400);
+    const layer = colorLayer ? Layer.fromColor(imgOptions) : Layer.fromImage(imgOptions);
+
+    if (scale) layer.setScale(scale);
+    if (position.x && position.y) {
+      const upScaledX = layer.canvas.width * (position.x / 400);
+      const upScaledY = layer.canvas.height * (position.y / 400);
       layer.translate(upScaledX, upScaledY);
-      if (!mergedOptions.scale) {
+      if (!scale) {
         const newScaleFactor = (layer.canvas.width - (Math.abs(upScaledX) * 2)) / layer.canvas.width;
         layer.setScale(layer.scale * newScaleFactor);
       }
@@ -376,7 +404,7 @@ export default class View {
       this.controls.forEach((control) => control.refresh());
     });
     // if a default mask is applied, trigger the calculation of the mask, too
-    if (mergedOptions.masked) {
+    if (masked) {
       this.activateMask(layer.id);
       this.controls.forEach((control) => control.refresh());
     }
@@ -384,7 +412,7 @@ export default class View {
       this.activateLayer(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
     });
-    if (mergedOptions.activate) {
+    if (activate) {
       this.activateLayer(layer.id);
       this.controls.forEach((control) => control.refresh());
     }
@@ -765,7 +793,10 @@ export default class View {
     for (let index = this.layers.length - 1; index >= 0; index--) {
       const layer = this.layers[index];
       if (layer.visible) {
-        logger.debug(`Drawing layer ${layer.id} for ${layer.sourceImg}`);
+        const imgSrc = (typeof layer.sourceImg === 'string' || layer.sourceImg instanceof String) && !layer.sourceImg.startsWith("data:image/png;base64")
+          ? layer.sourceImg
+          : "blob-data";
+        logger.debug(`Drawing layer ${layer.id} for ${imgSrc}`);
 
         context.globalCompositeOperation = layer.compositeOperation;
         context.globalAlpha = layer.alpha;

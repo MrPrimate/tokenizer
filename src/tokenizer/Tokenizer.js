@@ -74,8 +74,15 @@ export default class Tokenizer extends FormApplication {
     const npcDiff = npcFrame !== otherNPCFrame;
     const setPlayerDefaultFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "");
     const setNPCDefaultFrame = npcFrame.replace(/^\/|\/$/g, "");
+    const tintFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint");
+    const setTintFrame = tintFrame.replace(/^\/|\/$/g, "");
 
     const defaultFrames = [
+      {
+        key: setTintFrame,
+        label: game.i18n.localize("vtta-tokenizer.default-frame-tint.name"),
+        selected: false,
+      },
       {
         key: setPlayerDefaultFrame,
         label: game.i18n.localize("vtta-tokenizer.default-frame-pc.name"),
@@ -571,17 +578,58 @@ export default class Tokenizer extends FormApplication {
     }
   }
 
+  #getNPCFrame() {
+    const tintFrame = game.settings.get(CONSTANTS.MODULE_ID, "frame-tint");
+    let npcFrame;
+    if (tintFrame) {
+      npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint");
+    } else {
+      switch (parseInt(this.tokenOptions.disposition)) {
+        case 0: 
+        case 1: {
+          npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-neutral");
+          break;
+        }
+        
+        case -1:
+        default: {
+          npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-npc");
+          break;
+        }
+      }
+    }
+    return npcFrame;
+  }
+
+  #getTintColor() {
+    if (this.tokenType === "pc") {
+      return game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint-pc");
+    }
+    switch (parseInt(this.tokenOptions.disposition)) {
+      case 0: {
+        return game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint-neutral");
+      }
+      case 1: {
+        return game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint-friendly");
+      }
+      case -1:
+      default: {
+        return game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint-hostile");
+      }
+    }
+  }
+
   async _setTokenFrame(fileName, fullPath = false) {
     // load the default frame, if there is one set
-    const nonHostile = parseInt(this.tokenOptions.disposition) !== -1;
-    const npcFrame = nonHostile
-      ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-neutral")
-      : game.settings.get(CONSTANTS.MODULE_ID, "default-frame-npc");
+    const tintFrame = game.settings.get(CONSTANTS.MODULE_ID, "frame-tint");
+    const npcFrame = this.#getNPCFrame();
+
     const frameTypePath = this.tokenType === "pc"
-      ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc")
+      ? tintFrame
+        ? game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint")
+        : game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc")
       : npcFrame;
-    const isDefault = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-pc").replace(/^\/|\/$/g, "")
-      || fileName != npcFrame.replace(/^\/|\/$/g, "");
+    const isDefault = fileName != npcFrame.replace(/^\/|\/$/g, "");
 
     const framePath = fileName && !isDefault
       ? `${game.settings.get(CONSTANTS.MODULE_ID, "frame-directory")}/${fileName}`
@@ -589,11 +637,13 @@ export default class Tokenizer extends FormApplication {
         ? fileName.replace(/^\/|\/$/g, "")
         : frameTypePath.replace(/^\/|\/$/g, "");
 
+    const tintColor = this.#getTintColor();
+
     if (framePath && framePath.trim() !== "") {
       const options = DirectoryPicker.parse(fullPath ? fileName : framePath);
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true, onTop: true });
+        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintFrame && !fileName });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current });
         ui.notifications.error(errorMessage);
