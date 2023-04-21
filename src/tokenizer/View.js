@@ -543,7 +543,7 @@ export default class View {
     this.colorPickingForLayer = null;
 
     control.refresh();
-    this.redraw();
+    this.redraw(true);
   }
 
   /**
@@ -769,7 +769,7 @@ export default class View {
     if (layer !== null) {
       logger.debug('Setting color for layer', { layer, hexColorString });
       layer.setColor(hexColorString);
-      this.redraw();
+      this.redraw(true);
     }
   }
 
