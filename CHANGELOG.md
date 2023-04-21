@@ -2,10 +2,10 @@
 
 # [4.0.3]
 
-- Improved use of localization.
+- Improved use of localisation.
 - You can now make similar colours in a layer disappear/become transparent pixels.
 - Mask layers and transparent pixels can now be reset independently.
-- Colour dropper layer color pick now respects scaled canvas and will select color under the mouse.
+- Colour dropper layer colour pick now respects scaled canvas and will select colour under the mouse.
 
 # [4.0.2]
 
