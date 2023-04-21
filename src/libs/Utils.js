@@ -56,6 +56,18 @@ export default class Utils {
     return undefined;
   }
 
+  static getRelativeCoords(event) {
+    return { x: event.offsetX || event.layerX, y: event.offsetY || event.layerY };
+  }
+
+  static getCanvasCords(canvas, event) {
+    const elementRelativeX = event.offsetX;
+    const elementRelativeY = event.offsetY;
+    const canvasRelativeX = elementRelativeX * canvas.width / canvas.clientWidth;
+    const canvasRelativeY = elementRelativeY * canvas.height / canvas.clientHeight;
+    return { x: canvasRelativeX, y: canvasRelativeY };
+  }
+
   static upload() {
     let fileInput = document.createElement("input");
     fileInput.type = "file";

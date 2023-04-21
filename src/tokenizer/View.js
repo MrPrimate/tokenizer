@@ -164,7 +164,6 @@ export default class View {
    * @param {Event} event
    */
   onMouseDown(event) {
-    console.warn(this);
     if (this.isColorPicking) {
       this.endColorPicking(false);
     } else if (this.isAlphaPicking) {
@@ -198,8 +197,8 @@ export default class View {
    */
   onMouseMove(event) {
     if (this.isColorPicking) {
-      const eventLocation = View.getEventLocation(this.canvas, event);
-      // Get the data of the pixel according to the location generate by the getEventLocation function
+      const eventLocation = Utils.getCanvasCords(this.canvas, event);
+      // Get the data of the pixel according to the mouse pointer location
       const pixelData = this.canvas.getContext('2d').getImageData(eventLocation.x, eventLocation.y, 1, 1).data;
       // If transparency on the pixel , array = [0,0,0,0]
       if (pixelData[0] == 0 && pixelData[1] == 0 && pixelData[2] == 0 && pixelData[3] == 0) {
@@ -216,7 +215,7 @@ export default class View {
       control.refresh();
       this.redraw();
     } else if (this.isAlphaPicking) {
-      const eventLocation = View.getEventLocation(this.canvas, event);
+      const eventLocation = Utils.getCanvasCords(this.canvas, event);
       const pixelData = this.canvas.getContext('2d').getImageData(eventLocation.x, eventLocation.y, 1, 1).data;
       if (pixelData[0] == 0 && pixelData[1] == 0 && pixelData[2] == 0 && pixelData[3] == 0) {
         // Do nothing if the pixel is transparent
@@ -255,20 +254,6 @@ export default class View {
   }
 
   /**
-   * Gets the view canvas position on the current page, which is necessary to allow a fluid mousewheel zoom
-   * @param {HTMLElement} element
-   * @param {Event} event
-   */
-  static getEventLocation(element, event) {
-    const pos = Utils.getElementPosition(element);
-
-    return {
-      x: event.pageX - pos.x,
-      y: event.pageY - pos.y,
-    };
-  }
-
-  /**
    * Scales the source image on mouse wheel events
    * @param {Event} event
    */
@@ -283,7 +268,7 @@ export default class View {
       this.activeLayer.redraw();
       this.redraw();
     } else {
-      const eventLocation = View.getEventLocation(this.canvas, event);
+      const eventLocation = Utils.getCanvasCords(this.canvas, event);
       if (this.activeLayer.source !== null) {
         const scaleDirection = event.deltaY / 100;
         const factor = 1 - (scaleDirection * 0.05);
