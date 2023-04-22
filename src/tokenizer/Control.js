@@ -281,6 +281,23 @@ export default class Control {
     this.deleteSection.name = 'delete-management';
     this.deleteSection.classList.add('section');
 
+    // duplicate
+    this.duplicateControl = document.createElement('button');
+    this.duplicateControl.classList.add('duplicate-control');
+    this.duplicateControl.title = game.i18n.localize("vtta-tokenizer.label.CloneLayer");
+    let duplicateButtonText = document.createElement('i');
+    duplicateButtonText.classList.add('fas', 'fa-clone');
+    this.duplicateControl.appendChild(duplicateButtonText);
+
+    this.duplicateControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(
+        new CustomEvent('duplicate', {
+          detail: { layerId: this.layer.id },
+        })
+      );
+    });
+
     // delete
     this.deleteControl = document.createElement('button');
     this.deleteControl.classList.add('delete-control');
@@ -297,6 +314,8 @@ export default class Control {
         })
       );
     });
+
+    this.deleteSection.appendChild(this.duplicateControl);
     this.deleteSection.appendChild(this.deleteControl);
   }
 

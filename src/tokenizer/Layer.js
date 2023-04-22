@@ -75,6 +75,55 @@ export default class Layer {
     // this.tintColor = "#f59042";
   }
 
+  clone() {
+    const imgOptions = {
+      view: this.view,
+      img: this.img,
+      canvasHeight: this.source.height,
+      canvasWidth: this.source.width,
+      tintColor: this.tintColor,
+      tintLayer: this.tintLayer,
+    };
+
+    const colorOptions = {
+      view: this.view,
+      color: this.color,
+      canvasHeight: this.source.height,
+      canvasWidth: this.source.width,
+    };
+
+    const newLayer = this.img
+      ? Layer.fromImage(imgOptions)
+      : Layer.fromColor(colorOptions);
+
+    newLayer.active = false;
+
+    newLayer.scale = this.scale;
+    newLayer.rotation = this.rotation;
+    newLayer.position = deepClone(this.position);
+    newLayer.center = this.center;
+    newLayer.mirror = this.mirror;
+    newLayer.flipped = this.flipped;
+    newLayer.visible = this.visible;
+    newLayer.alpha = this.alpha;
+
+    if (this.mask) newLayer.mask = Utils.cloneCanvas(this.mask);
+    if (this.sourceMask) this.sourceMask = Utils.cloneCanvas(this.sourceMask);
+    if (this.renderedMask) this.renderedMask = Utils.cloneCanvas(this.renderedMask);
+    newLayer.customMask = this.customMask;
+    newLayer.customMaskLayers = this.customMaskLayers;
+    newLayer.appliedMaskIds = new Set(this.appliedMaskIds);
+
+    newLayer.compositeOperation = this.compositeOperation;
+    newLayer.maskCompositeOperation = this.maskCompositeOperation;
+
+
+    newLayer.alphaPixelColors = new Set(this.alphaPixelColors);
+    if (this.previousAlphaPixelColors) newLayer.previousAlphaPixelColors = new Set(this.previousAlphaPixelColors);
+
+    return newLayer;
+  }
+
   static isTransparent(pixels, x, y) {
     return CONSTANTS.TRANSPARENCY_THRESHOLD < pixels.data[(((y * pixels.width) + x) * 4) + 3];
   }

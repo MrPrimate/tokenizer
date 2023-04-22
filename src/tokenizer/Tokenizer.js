@@ -525,7 +525,7 @@ export default class Tokenizer extends FormApplication {
         }
         case "color": {
           const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
-          view.addImageLayer(null, { colorLayer: true, color: defaultColor });
+          view.addColorLayer({ color: defaultColor });
           break;
         }
         case "tokenVariants": {
@@ -555,7 +555,7 @@ export default class Tokenizer extends FormApplication {
       logger.debug("Got image", img);
 
       if (game.settings.get(CONSTANTS.MODULE_ID, "default-color-layer")) {
-        this.Token.addImageLayer(null, { colorLayer: true, color: this.defaultColor });
+        this.Token.addColorLayer({ color: this.defaultColor });
       }
       // if we add a frame by default offset the token image
       const options = this.addFrame

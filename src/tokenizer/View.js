@@ -327,65 +327,7 @@ export default class View {
     this.redraw(true);
   }
 
-  addImageLayer(img, { masked = false, colorLayer = false, color = null, activate = false, tintColor = null,
-    tintLayer = false, position = { x: null, y: null }, scale = null } = {}
-  ) {
-    const imgSrc = colorLayer
-      ? `colorLayer: ${color}`
-      : (typeof img.src === 'string' || img.src instanceof String) && !img.src.startsWith("data:image/png;base64")
-        ? img.src
-        : "blob-data";
-    if (colorLayer) {
-      logger.debug(`adding color layer`);
-    } else {
-      logger.debug(`adding image layer ${imgSrc}`);
-    }
-    logger.debug(`adding layer with options`, {
-      imgSrc,
-      masked,
-      colorLayer,
-      color,
-      activate,
-      tintColor,
-      tintLayer,
-      position,
-      scale,
-    });
-
-    const imgOptions = colorLayer
-      ? {
-        view: this,
-        color,
-        width: this.width,
-        height: this.height
-      }
-      : {
-        view: this,
-        img,
-        canvasHeight: this.width,
-        canvasWidth: this.height,
-        tintColor: tintColor,
-        tintLayer: tintLayer
-      };
-
-    const layer = colorLayer ? Layer.fromColor(imgOptions) : Layer.fromImage(imgOptions);
-
-    if (scale) layer.setScale(scale);
-    if (position.x && position.y) {
-      const upScaledX = layer.canvas.width * (position.x / 400);
-      const upScaledY = layer.canvas.height * (position.y / 400);
-      layer.translate(upScaledX, upScaledY);
-      if (!scale) {
-        const newScaleFactor = (layer.canvas.width - (Math.abs(upScaledX) * 2)) / layer.canvas.width;
-        layer.setScale(layer.scale * newScaleFactor);
-      }
-    }
-
-    // add the new image on top
-    this.layers.unshift(layer);
-    this.calculateAllDefaultMaskLayers();
-    this.redraw(true);
-
+  #addLayerControls(layer, { masked, activate } = {}) {
     // add the control at the top of the control array
     const control = new Control(layer, this.layers.length - 1);
     this.controls.unshift(control);
@@ -476,6 +418,81 @@ export default class View {
       this.resetCustomMaskLayers(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
     });
+    control.view.addEventListener('duplicate', (event) => {
+      this.cloneLayer(event.detail.layerId);
+      this.controls.forEach((control) => control.refresh());
+    });
+  }
+
+  addLayer(layer, { masked = false, activate = false }) {
+    // add the new layer on top
+    this.layers.unshift(layer);
+    this.calculateAllDefaultMaskLayers();
+    this.redraw(true);
+
+    this.#addLayerControls(layer, { masked, activate });
+  }
+
+  addColorLayer({ masked = false, activate = false, color = null } = {}
+  ) {
+    logger.debug(`adding color layer with options`, {
+      imgSrc: `colorLayer: ${color}`,
+      masked,
+      color,
+      activate,
+    });
+
+    const imgOptions = {
+      view: this,
+      color,
+      width: this.width,
+      height: this.height
+    };
+
+    const layer = Layer.fromColor(imgOptions);
+    this.addLayer(layer, { masked, activate });
+  }
+
+  addImageLayer(img, { masked = false, activate = false, tintColor = null, tintLayer = false,
+    position = { x: null, y: null }, scale = null } = {}
+  ) {
+    const imgSrc = (typeof img.src === 'string' || img.src instanceof String) && !img.src.startsWith("data:image/png;base64")
+      ? img.src
+      : "blob-data";
+
+    logger.debug(`adding image layer ${imgSrc}`, {
+      imgSrc,
+      masked,
+      activate,
+      tintColor,
+      tintLayer,
+      position,
+      scale,
+    });
+
+    const imgOptions = {
+      view: this,
+      img,
+      canvasHeight: this.width,
+      canvasWidth: this.height,
+      tintColor: tintColor,
+      tintLayer: tintLayer
+    };
+
+    const layer = Layer.fromImage(imgOptions);
+
+    if (scale) layer.setScale(scale);
+    if (position.x && position.y) {
+      const upScaledX = layer.canvas.width * (position.x / 400);
+      const upScaledY = layer.canvas.height * (position.y / 400);
+      layer.translate(upScaledX, upScaledY);
+      if (!scale) {
+        const newScaleFactor = (layer.canvas.width - (Math.abs(upScaledX) * 2)) / layer.canvas.width;
+        layer.setScale(layer.scale * newScaleFactor);
+      }
+    }
+
+    this.addLayer(layer, { masked, activate });
   }
 
   /**
@@ -516,6 +533,15 @@ export default class View {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer) {
       layer.resetMasks();
+      this.redraw(true);
+    }
+  }
+
+  cloneLayer(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      const newLayer = layer.clone();
+      this.addLayer(newLayer, { masked: newLayer.providesMask, activate: false });
       this.redraw(true);
     }
   }

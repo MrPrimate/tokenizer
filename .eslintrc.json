@@ -44,7 +44,8 @@
     "ForgeVTT": true,
     "io": true,
     "isNewerVersion": true,
-    "renderTemplate": true
+    "renderTemplate": true,
+    "deepClone": true
   },
   "parserOptions": {
     "ecmaVersion": 13,
