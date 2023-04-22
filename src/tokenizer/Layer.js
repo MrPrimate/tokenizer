@@ -376,43 +376,6 @@ export default class Layer {
     this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.scale = this.width / Math.max(this.source.width, this.source.height);
     this.rotation = 0;
-    this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
-    this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
-    this.mask = null;
-    this.customMask = false;
-    this.redraw();
-    this.createMask();
-    this.recalculateMask();
-  }
-
-  /**
-   * Gets the width of the view canvas
-   */
-  get width() {
-    return this.canvas.width;
-  }
-
-  /**
-   * Gets the height of the view canvas
-   */
-  get height() {
-    return this.canvas.height;
-  }
-
-  /**
-   * Translates the source on the view canvas
-   * @param {Number} dx translation on the x-axis
-   * @param {Number} dy translation on the y-axis
-   */
-  translate(dx, dy) {
-    this.position.x -= dx;
-    this.position.y -= dy;
-    // this.redraw();
-  }
-
-  /**
-   * Scales the source on the view canvas according to a given factor
-   * @param {Number} factor
    */
   setScale(factor) {
     this.scale = factor;
