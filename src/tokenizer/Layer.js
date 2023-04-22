@@ -7,6 +7,34 @@ import Color from '../libs/Color.js';
 import logger from '../libs/logger.js';
 
 export default class Layer {
+
+  resetMasks() {
+    this.customMaskLayers = false;
+    this.appliedMaskIds.clear();
+    this.view.layers.forEach((l) => {
+      if (l.providesMask && this.view.isOriginLayerHigher(l.id, this.id)) {
+        this.appliedMaskIds.add(l.id);
+      }
+    });
+    this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
+    this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
+    this.customMask = false;
+    this.mask = Utils.cloneCanvas(this.sourceMask);
+    this.redraw();
+  }
+
+  reset() {
+    this.alphaPixelColors.clear();
+    this.resetMasks();
+    this.scale = this.width / Math.max(this.source.width, this.source.height);
+    this.rotation = 0;
+    this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
+    this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
+    this.mask = null;
+    this.redraw();
+    this.createMask();
+    this.recalculateMask();
+  }
   constructor({ view, canvas, tintColor, tintLayer, img = null, color = null } = {}) {
     this.view = view;
     this.id = Utils.generateUUID();
