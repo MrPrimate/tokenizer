@@ -168,35 +168,39 @@ export class Masker {
   }
 
   // eslint-disable-next-line consistent-return
+  #saveAndCleanup(action, callback, nestedCallback) {
+    window.cancelAnimationFrame(this.cancelAnimationFrame);
+    this.container.remove();
+    delete this.canvas;
+    window.removeEventListener("keyup", this.onKeyUp);
+
+    if (action === "ok" && this.maskChanged) {
+      const mask = Utils.cloneCanvas(this.layer.renderedMask);
+      // rescale the mask back up for the appropriate layer canvas size
+      const context = mask.getContext("2d");
+      context.resetTransform();
+      context.clearRect(0, 0, mask.width, mask.height);
+      mask.getContext("2d").drawImage(
+        this.mask,
+        this.yOffset,
+        this.xOffset,
+        this.scaledWidth,
+        this.scaledHeight,
+        0,
+        0,
+        this.layer.preview.width,
+        this.layer.preview.height,
+      );
+      return callback(mask, nestedCallback);
+    }
+  }
+
   clickButton(event, callback, nestedCallback) {
     event.preventDefault();
     const action = event.data?.action ?? event.target?.dataset?.action;
 
     if (action) {
-      window.cancelAnimationFrame(this.cancelAnimationFrame);
-      this.container.remove();
-      delete this.canvas;
-      window.removeEventListener("keyup", this.onKeyUp);
-
-      if (action === "ok" && this.maskChanged) {
-        const mask = Utils.cloneCanvas(this.layer.renderedMask);
-        // rescale the mask back up for the appropriate layer canvas size
-        const context = mask.getContext("2d");
-        context.resetTransform();
-        context.clearRect(0, 0, mask.width, mask.height);
-        mask.getContext("2d").drawImage(
-          this.mask,
-          this.yOffset,
-          this.xOffset,
-          this.scaledWidth,
-          this.scaledHeight,
-          0,
-          0,
-          this.layer.preview.width,
-          this.layer.preview.height,
-        );
-        return callback(mask, nestedCallback);
-      }
+      this.#saveAndCleanup(action, callback, nestedCallback);
     }
   }
 
@@ -286,12 +290,7 @@ export class Masker {
           : null;
 
       if (action) {
-        this.container.remove();
-        window.removeEventListener("keyup", this.onKeyUp);
-
-        if (action === "ok" && this.maskChanged) {
-          return callback(this.mask);
-        }
+        this.#saveAndCleanup(action, callback, nestedCallback);
       }
     };
     window.addEventListener("keyup", this.onKeyUp);
