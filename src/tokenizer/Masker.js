@@ -144,7 +144,7 @@ export class Masker {
   }
 
   async display(callback, nestedCallback) {
-    const html = await renderTemplate("modules/vtta-tokenizer/templates/maskeditor.hbs");
+    const html = await renderTemplate("modules/vtta-tokenizer/templates/mask-editor.hbs");
     this.container = $(html);
     this.container[0].append(this.canvas);
     $("body").append(this.container);
@@ -170,9 +170,9 @@ export class Masker {
   // eslint-disable-next-line consistent-return
   #saveAndCleanup(action, callback, nestedCallback) {
     window.cancelAnimationFrame(this.cancelAnimationFrame);
+    window.removeEventListener("keyup", this.onKeyUp);
     this.container.remove();
     delete this.canvas;
-    window.removeEventListener("keyup", this.onKeyUp);
 
     if (action === "ok" && this.maskChanged) {
       const mask = Utils.cloneCanvas(this.layer.renderedMask);
