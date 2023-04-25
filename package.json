@@ -4,11 +4,16 @@
   "license": "MIT",
   "scripts": {
     "lint": "npx eslint src/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "devDependencies": {
     "eslint": "^8.11.0",
     "jest": "^25.1.0",
-    "prettier": "2.0.5"
+    "prettier": "2.0.5",
+    "terser": "^5.10.0",
+    "terser-webpack-plugin": "^5.3.0",
+    "webpack": "^5.49.0",
+    "webpack-cli": "^4.7.2"
   }
 }
