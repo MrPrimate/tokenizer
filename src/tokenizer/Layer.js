@@ -5,6 +5,7 @@ import { generateRayMask } from '../libs/RayMask.js';
 import { Masker } from './Masker.js';
 import Color from '../libs/Color.js';
 import logger from '../libs/logger.js';
+import { MagicLasso } from './MagicLasso.js';
 
 export default class Layer {
 
@@ -24,6 +25,7 @@ export default class Layer {
   }
 
   reset() {
+    this.source = Utils.cloneCanvas(this.original);
     this.alphaPixelColors.clear();
     this.resetMasks();
     this.scale = this.width / Math.max(this.source.width, this.source.height);
@@ -35,6 +37,7 @@ export default class Layer {
     this.createMask();
     this.recalculateMask();
   }
+
   constructor({ view, canvas, tintColor, tintLayer, img = null, color = null } = {}) {
     this.view = view;
     this.id = Utils.generateUUID();
@@ -43,6 +46,8 @@ export default class Layer {
     this.source = Utils.cloneCanvas(this.canvas);
     // canvas referencing to the source (image) that will be displayed on the view canvas
     this.preview = Utils.cloneCanvas(this.canvas);
+    // for reset purposes
+    this.original = Utils.cloneCanvas(this.canvas);
 
     // the current position of the source image on the view canvas
     this.position = {
@@ -181,6 +186,16 @@ export default class Layer {
     maskEditor.display(this.applyCustomMask.bind(this), callback).then(() => {
       maskEditor.draw();
     });
+  }
+
+  applyMagicLasso(canvas, callback) {
+    this.source = canvas;
+    callback(true);
+  }
+
+  magicLasso(callback) {
+    const magicLasso = new MagicLasso(this);
+    magicLasso.display(this.applyMagicLasso.bind(this), callback);
   }
 
   /**
@@ -376,34 +391,34 @@ export default class Layer {
     this.alphaPixelColors = new Set(this.previousAlphaPixelColors);
   }
 
-  resetMasks() {
-    this.customMaskLayers = false;
-    this.appliedMaskIds.clear();
-    this.view.layers.forEach((l) => {
-      if (l.providesMask && this.view.isOriginLayerHigher(l.id, this.id)) {
-        this.appliedMaskIds.add(l.id);
-      }
-    });
-    this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-    this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
-    this.customMask = false;
-    this.mask = Utils.cloneCanvas(this.sourceMask);
-    this.redraw();
+  /**
+   * Gets the width of the view canvas
+   */
+  get width() {
+    return this.canvas.width;
   }
 
-  reset() {
-    this.customMaskLayers = false;
-    this.appliedMaskIds.clear();
-    this.alphaPixelColors.clear();
-    this.view.layers.forEach((l) => {
-      if (l.providesMask && this.view.isOriginLayerHigher(l.id, this.id)) {
-        this.appliedMaskIds.add(l.id);
-      }
-    });
-    this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-    this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
-    this.scale = this.width / Math.max(this.source.width, this.source.height);
-    this.rotation = 0;
+  /**
+   * Gets the height of the view canvas
+   */
+  get height() {
+    return this.canvas.height;
+  }
+
+  /**
+   * Translates the source on the view canvas
+   * @param {Number} dx translation on the x-axis
+   * @param {Number} dy translation on the y-axis
+   */
+  translate(dx, dy) {
+    this.position.x -= dx;
+    this.position.y -= dy;
+    // this.redraw();
+  }
+
+  /**
+   * Scales the source on the view canvas according to a given factor
+   * @param {Number} factor
    */
   setScale(factor) {
     this.scale = factor;

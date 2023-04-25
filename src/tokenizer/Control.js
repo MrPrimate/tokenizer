@@ -32,7 +32,7 @@ export default class Control {
 
     // opacity management
     this.configureOpacitySection();
-    this.configureTransparentPixelSection();
+    this.configureMagicLassoSection();
 
     // the move up/down order section
     this.configureMovementSection();
@@ -62,7 +62,7 @@ export default class Control {
       this.positionManagementSection.appendChild(this.visibleControl);
       this.positionManagementSection.appendChild(this.activeControl);
       this.positionManagementSection.appendChild(this.flipControl);
-      this.positionManagementSection.appendChild(this.transparentManagementSection);
+      this.positionManagementSection.appendChild(this.colorSelectionManagementSection);
       this.positionManagementSection.appendChild(this.opacityManagementSection);
       this.positionManagementSection.appendChild(this.resetControl);
     }
@@ -80,7 +80,7 @@ export default class Control {
 
     // Set the basic mask of this layer
     this.maskControl = document.createElement('button');
-    this.maskControl.classList.add('mask-control', 'mask-layer-button');
+    this.maskControl.classList.add('mask-control', 'popup-button');
     this.maskControl.title = game.i18n.localize("vtta-tokenizer.label.ToggleBasicMask");
     let maskButtonText = document.createElement('i');
     maskButtonText.classList.add('fas', 'fa-mask');
@@ -94,7 +94,7 @@ export default class Control {
 
     // Set the mask of this layer
     this.maskEditControl = document.createElement('button');
-    this.maskEditControl.classList.add('mask-control', 'mask-layer-button');
+    this.maskEditControl.classList.add('mask-control', 'popup-button');
     // this.maskEditControl.disabled = true;
     this.maskEditControl.title = game.i18n.localize("vtta-tokenizer.label.EditMask");
     let maskEditButtonText = document.createElement('i');
@@ -109,7 +109,7 @@ export default class Control {
 
     // Set the mask of this layer
     this.maskResetControl = document.createElement('button');
-    this.maskResetControl.classList.add('mask-layer-button');
+    this.maskResetControl.classList.add('popup-button');
     this.maskResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetMasks");
     let maskResetButtonText = document.createElement('i');
     maskResetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
@@ -492,36 +492,36 @@ export default class Control {
     this.opacityManagementSection.appendChild(this.opacitySliderSpan);
   }
 
-  configureTransparentPixelSection() {
-    this.transparentManagementSection = document.createElement('div');
+  configureMagicLassoSection() {
+    this.colorSelectionManagementSection = document.createElement('div');
 
-    this.transparentControl = document.createElement('button');
-    this.transparentControl.classList.add('transparent-control');
-    this.transparentControl.title = game.i18n.localize("vtta-tokenizer.label.TransparencyControl");
+    this.colorSelectionControl = document.createElement('button');
+    this.colorSelectionControl.classList.add('color-selection-control');
+    this.colorSelectionControl.title = game.i18n.localize("vtta-tokenizer.label.ColorChangeControl");
 
     let buttonText = document.createElement('i');
     buttonText.classList.add('fa-thin', 'fa-eye-dropper', 'fa-regular');
-    this.transparentControl.appendChild(buttonText);
-    this.transparentManagementSection.appendChild(this.transparentControl);
+    this.colorSelectionControl.appendChild(buttonText);
+    this.colorSelectionManagementSection.appendChild(this.colorSelectionControl);
 
-    this.transparentSliderSpan = document.createElement('div');
-    this.transparentSliderSpan.classList.add('popup');
+    this.colorThresholdSliderSpan = document.createElement('div');
+    this.colorThresholdSliderSpan.classList.add('popup');
 
-    this.transparentSliderControl = document.createElement('input');
-    this.transparentSliderControl.type = 'range';
-    this.transparentSliderControl.min = 0;
-    this.transparentSliderControl.max = 150;
-    this.transparentSliderControl.value = this.layer.view.alphaTolerance;
-    this.transparentSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorSimilar");
-    this.transparentSliderControl.name = "transparent";
+    this.colorThresholdSliderControl = document.createElement('input');
+    this.colorThresholdSliderControl.type = 'range';
+    this.colorThresholdSliderControl.min = 0;
+    this.colorThresholdSliderControl.max = 150;
+    this.colorThresholdSliderControl.value = 15;
+    this.colorThresholdSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorSimilar");
+    this.colorThresholdSliderControl.name = "color-threshold";
 
     // send an activate event when clicked
-    this.transparentControl.addEventListener('click', (event) => {
+    this.colorSelectionControl.addEventListener('click', (event) => {
       event.preventDefault();
-      this.transparentSliderSpan.classList.toggle("show");
+      this.colorThresholdSliderSpan.classList.toggle("show");
     });
 
-    this.transparentSliderControl.addEventListener('input', (event) => {
+    this.colorThresholdSliderControl.addEventListener('input', (event) => {
       event.preventDefault();
       const detail = {
         layerId: this.layer.id,
@@ -532,7 +532,7 @@ export default class Control {
 
     // get color from canvas
     this.getAlpha = document.createElement('button');
-    this.getAlpha.classList.add('mask-layer-button');
+    this.getAlpha.classList.add('popup-button');
     this.getAlpha.title = game.i18n.localize("vtta-tokenizer.label.PickAlpha");
     let alphaButtonText = document.createElement('i');
     alphaButtonText.classList.add('fa-thin', 'fa-eye-dropper', 'fa-regular');
@@ -562,8 +562,8 @@ export default class Control {
     this.alphaSelectorProxy.classList.add('color-picker', 'transparent');
 
     this.transparencyResetControl = document.createElement('button');
-    this.transparencyResetControl.classList.add('mask-layer-button');
-    this.transparencyResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetTransparency");
+    this.transparencyResetControl.classList.add('popup-button');
+    this.transparencyResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetColorTransparency");
     let resetButtonText = document.createElement('i');
     resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
     this.transparencyResetControl.appendChild(resetButtonText);
@@ -573,14 +573,30 @@ export default class Control {
       this.view.dispatchEvent(new CustomEvent('reset-transparency-level', { detail: { layerId: this.layer.id } }));
     });
 
+    // get color from canvas
+    this.magicLassoControl = document.createElement('button');
+    this.magicLassoControl.classList.add('popup-button');
+    this.magicLassoControl.title = game.i18n.localize("vtta-tokenizer.label.MagicLasso");
+    let magicLassoButtonText = document.createElement('i');
+    magicLassoButtonText.classList.add('fa-thin', 'fa-lasso-sparkles', 'fa-regular');
+    this.magicLassoControl.appendChild(magicLassoButtonText);
+
+    this.magicLassoControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('magic-lasso', { detail: { layerId: this.layer.id } }));
+    });
+
+
     let buttonControls = document.createElement('div');
     buttonControls.classList.add('basic-mask-control');
+    buttonControls.appendChild(this.magicLassoControl);
     buttonControls.appendChild(this.alphaSelectorProxy);
     buttonControls.appendChild(this.getAlpha);
     buttonControls.appendChild(this.transparencyResetControl);
-    this.transparentSliderSpan.appendChild(buttonControls);
-    this.transparentSliderSpan.appendChild(this.transparentSliderControl);
-    this.transparentManagementSection.appendChild(this.transparentSliderSpan);
+
+    this.colorThresholdSliderSpan.appendChild(buttonControls);
+    this.colorThresholdSliderSpan.appendChild(this.colorThresholdSliderControl);
+    this.colorSelectionManagementSection.appendChild(this.colorThresholdSliderSpan);
   }
 
   addSelectLayerMasks() {
@@ -699,7 +715,7 @@ export default class Control {
 
   endAlphaPicking() {
     this.getAlpha.classList.remove('active');
-    this.transparentSliderSpan.classList.toggle("show");
+    this.colorThresholdSliderSpan.classList.toggle("show");
   }
 
   enableMoveUp() {

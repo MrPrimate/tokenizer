@@ -422,6 +422,9 @@ export default class View {
       this.cloneLayer(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
     });
+    control.view.addEventListener('magic-lasso', async (event) => {
+      this.magicLasso(event.detail.layerId);
+    });
   }
 
   addLayer(layer, { masked = false, activate = false }) {
@@ -784,6 +787,16 @@ export default class View {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer) {
       layer.editMask(this.redraw.bind(this));
+      this.deactivateLayers();
+      this.controls.forEach((control) => control.refresh());
+    }
+  }
+
+  magicLasso(id) {
+    logger.debug(`Magic Lasso for layer ${id}`);
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      layer.magicLasso(this.redraw.bind(this));
       this.deactivateLayers();
       this.controls.forEach((control) => control.refresh());
     }
