@@ -79,6 +79,7 @@
   margin-right: 5px;
 }
 
+.magic-lasso input[type="color"],
 #tokenizer div.view-layer-control input[type="color"] {
   display: none;
 }
@@ -198,6 +199,7 @@
   box-shadow: none;
 }
 
+.magic-lasso .color-picker,
 #tokenizer div.view-layer-control .color-picker {
   border-radius: 100%;
   border: thin solid black;
@@ -212,6 +214,8 @@
   -moz-box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
   box-shadow: -2px 2px 5px -2px rgba(0, 0, 0, 0.75);
 }
+
+.magic-lasso .color-picker.transparent,
 #tokenizer div.view-layer-control .color-picker.transparent {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#fff9f9+0,d8e1e7+50,b5c6d0+51,f7f7f7+100 */
   background: rgb(255, 249, 249); /* Old browsers */

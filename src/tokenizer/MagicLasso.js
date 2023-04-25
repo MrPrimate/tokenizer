@@ -67,6 +67,25 @@ export class MagicLasso {
     );
   }
 
+  #colorPicker() {
+    // a nicer looking proxy for the color picker
+    this.colorSelector = document.getElementById("magic-lasso-color-selector");
+    this.colorSelectorProxy = document.getElementById("magic-lasso-color-selector-proxy");
+
+    this.colorSelectorProxy.addEventListener('click', () => {
+      this.colorSelector.click();
+    });
+
+    // listen to the color Selector onChange Event to update the layer's background color
+    this.colorSelector.addEventListener('change', (event) => {
+      this.colorSelectorProxy.style.backgroundColor = event.target.value;
+      this.colorSelectorProxy.classList.remove('transparent');
+      const button = document.getElementById("lasso-fill");
+      button.disabled = false;
+      this.fillColor = event.target.value;
+    });
+  }
+
   constructor(layer) {
     this.container = null;
     this.layer = layer;
@@ -96,7 +115,6 @@ export class MagicLasso {
     this.context = null;
 
     // create base canvases
-    
     this.#drawChequeredBackground();
     this.#drawLayerCanvas();
     this.#createBaseCanvas();
@@ -132,6 +150,7 @@ export class MagicLasso {
     $("body").append(this.container);
     this.#activateListeners(callback, nestedCallback);
 
+    this.#colorPicker();
     this.showThreshold();
     this.showBlur();
     this.mask = null;
@@ -401,7 +420,7 @@ export class MagicLasso {
   }
 
   static hexToRgb(hex, alpha) {
-    const int = parseInt(hex, 16);
+    const int = parseInt(hex.replace(/^#/, ""), 16);
     // eslint-disable-next-line no-bitwise
     const r = (int >> 16) & 255;
     // eslint-disable-next-line no-bitwise
