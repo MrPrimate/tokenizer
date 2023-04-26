@@ -1,6 +1,7 @@
 # Changelog
 
-# [COMING SOON]
+# [4.1.0]
+
 - Clone layer button.
 - You can now choose to apply a color tint to the default token frame. Select this option in the settings if you wish to have it applied by default. This allows you to use the same frame, but with different colors for PC's, hostile, neutral and friendly tokens.
 - Some new default tokens for use with the tint layer option.
