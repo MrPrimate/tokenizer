@@ -49,7 +49,7 @@
       "path": "lang/ja.json"
     }
   ],
-  "esmodules": ["./src/index.js"],
+  "esmodules": ["./dist/main.js"],
   "styles": ["./css/default.css", "./css/tokenizer.css"],
   "packs": [],
   "url": "https://github.com/mrprimate/tokenizer/"
