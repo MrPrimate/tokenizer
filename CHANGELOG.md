@@ -5,6 +5,7 @@
 - You can now choose to apply a color tint to the default token frame. Select this option in the settings if you wish to have it applied by default. This allows you to use the same frame, but with different colors for PC's, hostile, neutral and friendly tokens.
 - Some new default tokens for use with the tint layer option.
 - A new "Magic Lasso" feature allowing you to replace similar colors with transparent areas or a color.
+- Fixed an error that appeared when clicking the Tokenizer link in the title bar.
 
 # [4.0.3]
 

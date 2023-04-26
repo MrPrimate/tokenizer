@@ -197,12 +197,28 @@ function fixUploadLocation() {
 
 }
 
-function linkSheets() {
+
+function getActorSheetHeaderButtons(app, buttons) {
   if (!game.user.can("FILES_UPLOAD") && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")) {
     return;
   }
 
   const titleLink = game.settings.get(CONSTANTS.MODULE_ID, "title-link");
+  if (!titleLink) return;
+  const doc = (app.token) ? app : app.document;
+
+  buttons.unshift({
+    label: "Tokenizer",
+    icon: "far fa-user-circle",
+    class: CONSTANTS.MODULE_ID,
+    onclick: () => tokenizeDoc(doc),
+  });
+}
+
+function linkSheets() {
+  if (!game.user.can("FILES_UPLOAD") && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")) {
+    return;
+  }
 
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
@@ -215,19 +231,6 @@ function linkSheets() {
     Hooks.on("render" + sheetName, (app, html, data) => {
       if (game.user) {
         const doc = (app.token) ? app : app.document;
-
-        if (titleLink) {
-          const button = $(`<a class="header-button ${CONSTANTS.MODULE_ID}" id="${CONSTANTS.MODULE_ID}-button" title="Tokenizer"><i class="far fa-user-circle"></i> Tokenizer</a>`);
-          html.closest('.app').find(`#${CONSTANTS.MODULE_ID}-button`).remove();
-          let titleElement = html.closest('.app').find('.window-title');
-          if (!app._minimized) button.insertAfter(titleElement);
-
-          button.click((event) => {
-            event.preventDefault();
-            tokenizeDoc(doc);
-          });
-        }
-
         const disableAvatarClickGlobal = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click");
         const disableAvatarClickUser = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click-user");
         const disableAvatarClick = disableAvatarClickUser === "global"
@@ -361,3 +364,5 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
     icon: '<i class="fas fa-user-circle"></i>',
   });
 });
+
+Hooks.on('getActorSheetHeaderButtons', getActorSheetHeaderButtons);
