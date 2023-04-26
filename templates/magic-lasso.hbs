@@ -3,13 +3,14 @@
     <section class="window-content">
         <h1>{{localize "vtta-tokenizer.MagicLasso.title"}}</h1>
         <p>{{localize "vtta-tokenizer.MagicLasso.description"}} </p>
-        <div class="tokenizer">
-            <input id="magic-lasso-color-selector" type="color" value="#000000FF">
-            <div id="magic-lasso-color-selector-proxy" title="{{localize "vtta-tokenizer.label.FillColor"}}" class="color-picker transparent"></div>
-        </div>
+        
         <div id="magic-lasso-buttons">
             <div class="buttons">
                 <button data-action="delete" class="tokenizer ui button" title="{{localize "vtta-tokenizer.MagicLasso.delete"}}"><i class="fas fa-eye-slash"></i> {{localize "vtta-tokenizer.label.Delete"}}</button>
+                <div class="tokenizer">
+                    <input id="magic-lasso-color-selector" type="color" value="#000000FF">
+                    <div id="magic-lasso-color-selector-proxy" title="{{localize "vtta-tokenizer.label.FillColor"}}" class="color-picker transparent"></div>
+                </div>
                 <button id="lasso-fill" data-action="fill" class="tokenizer ui button" title="{{localize "vtta-tokenizer.MagicLasso.fill"}}" disabled><i class="fas fa-fill-drip"></i> {{localize "vtta-tokenizer.label.Fill"}}</button>
             </div>
             <div class="buttons">
