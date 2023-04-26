@@ -76,6 +76,12 @@ In this example we:
 - We then apply the mask created here to the same layer, cutting out only these masked elements, but leaving the rest of the layer transparent.
 - The other layers apply masks in the usual way, but it results in the elements caught in the custom mask been placed atop the rest of the token causing a "popping" effect.
 
+### Magic Lasso
+
+You can use the Magic Lasso feature to remove areas of a layer you don't want, or fill with a new color.
+
+![Magic Lasso](/docs/magic-lasso-demo.mp4)
+
 ### F.A.Q.
 
 #### The Tokenizer does not open when clicking on the avatar image
