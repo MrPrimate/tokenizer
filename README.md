@@ -80,7 +80,7 @@ In this example we:
 
 You can use the Magic Lasso feature to remove areas of a layer you don't want, or fill with a new color.
 
-![Magic Lasso](/docs/magic-lasso-demo.mp4)
+[![Magic Lasso](/docs/magic-lasso-demo.mp4)](/docs/magic-lasso-demo.mp4)
 
 ### F.A.Q.
 
