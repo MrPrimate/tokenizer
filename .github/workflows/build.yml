@@ -36,6 +36,9 @@ jobs:
       run: echo "release_version=$(node ./.github/workflows/get-version.js)" >> $GITHUB_OUTPUT
     - name: Build module.json
       run: node ./.github/workflows/build-module-json.js | jq . > module.json
+    - run: npm ci
+    - name: Webpack
+      run: npm run build
     - run: zip -r ./vtta-tokenizer.zip module.json dist templates css img lang vendor LICENSE.md       # Add folders/files here
     - name: Create Release                                # Create an additional release for this version
       id: create_versioned_release
