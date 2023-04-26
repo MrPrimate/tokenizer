@@ -90,19 +90,19 @@ export class MagicLasso {
     this.container = null;
     this.layer = layer;
 
-    this.height = Math.min(1000, layer.preview.height, layer.preview.width);
-    this.width = Math.min(1000, layer.preview.height, layer.preview.width);
+    this.height = Math.min(1000, layer.source.height, layer.source.width);
+    this.width = Math.min(1000, layer.source.height, layer.source.width);
 
     const crop = game.settings.get(CONSTANTS.MODULE_ID, "default-crop-image");
     // if we crop the image we scale to the smallest dimension of the image
     // otherwise we scale to the largest dimension of the image
-    const direction = crop ? layer.preview.height > layer.preview.width : layer.preview.height < layer.preview.width;
+    const direction = crop ? layer.source.height > layer.source.width : layer.source.height < layer.source.width;
 
     this.scaledWidth = !direction
-      ? this.height * (layer.preview.height / layer.preview.width)
+      ? this.height * (layer.source.height / layer.source.width)
       : this.width;
     this.scaledHeight = direction
-      ? this.width * (layer.preview.height / layer.preview.width)
+      ? this.width * (layer.source.height / layer.source.width)
       : this.height;
 
     // offset the canvas for the scaled image
@@ -239,11 +239,11 @@ export class MagicLasso {
     this.showBlur();
   }
 
-  getMousePointer(event) {
-    const rect = this.canvas.getBoundingClientRect();
+  #getMousePointer(event) {
+    const realPoint = Utils.getCanvasCords(this.layerCanvas, event);
     return {
-      x: Math.floor(event.clientX - rect.left),
-      y: Math.floor(event.clientY - rect.top)
+      x: Math.floor(realPoint.x),
+      y: Math.floor(realPoint.y),
     };
   }
 
@@ -251,7 +251,7 @@ export class MagicLasso {
     if (event.button == 0) {
       this.allowDraw = true;
       this.addMode = event.ctrlKey;
-      this.downPoint = this.getMousePointer(event);
+      this.downPoint = this.#getMousePointer(event);
       this.drawMask(this.downPoint.x, this.downPoint.y);
     } else {
       this.allowDraw = false;
@@ -262,7 +262,7 @@ export class MagicLasso {
 
   onMouseMove(event) {
     if (this.allowDraw) {
-      const p = this.getMousePointer(event);
+      const p = this.#getMousePointer(event);
       if (p.x != this.downPoint.x || p.y != this.downPoint.y) {
         let dx = p.x - this.downPoint.x,
           dy = p.y - this.downPoint.y,
@@ -296,20 +296,31 @@ export class MagicLasso {
 
   // eslint-disable-next-line consistent-return
   onKeyUp(event) {
-    if (event.keyCode == 17) {
-      this.canvas.classList.remove("add-mode");
-    } else {
-      const action = event.keyCode === 13
-        ? "ok"
-        : event.keyCode === 27
-          ? "cancel"
-          : null;
-
-      if (action) {
-        this.#saveAndCleanup(action);
-      }
+    switch (event.keyCode) {
+      // ctrl
+      case 17:
+        this.canvas.classList.remove("add-mode");
+        break;
+      // f
+      case 70:
+        this.fill(1);
+        break;
+      // delete
+      case 68:
+      case 46:
+      case 8: 
+        this.fill(0);
+        break;
+      // enter
+      case 13:
+        this.#saveAndCleanup("ok");
+        break;
+      // escape
+      case 27:
+        this.#saveAndCleanup("cancel");
+        break;
+      // no default
     }
-
   }
 
   showThreshold() {

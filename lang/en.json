@@ -103,7 +103,7 @@
   "vtta-tokenizer.label.MoveLayerDown": "Move layer down",
   "vtta-tokenizer.label.Opacity": "Opacity",
   "vtta-tokenizer.label.NewImage": "New Image",
-  "vtta-tokenizer.label.Delete": "Delete",
+  "vtta-tokenizer.label.Transparent": "Transparent",
   "vtta-tokenizer.label.Fill": "Fill",
   "vtta-tokenizer.label.CloneLayer": "Clone Layer",
   "vtta-tokenizer.label.ToggleLayer": "Toggle Layer {layerNum}",
@@ -142,6 +142,6 @@
   "vtta-tokenizer.MagicLasso.Threshold": "Threshold",
   "vtta-tokenizer.MagicLasso.save": "[Enter] Close and save changes",
   "vtta-tokenizer.MagicLasso.close": "[ESC] Close and discard changes",
-  "vtta-tokenizer.MagicLasso.delete": "[Delete] Delete selected changes",
+  "vtta-tokenizer.MagicLasso.transparent": "[Delete/D] Delete selected area/make it transparent",
   "vtta-tokenizer.MagicLasso.fill": "[F] Fill with color"
 }
