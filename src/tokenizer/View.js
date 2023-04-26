@@ -341,6 +341,10 @@ export default class View {
       this.setColor(event.detail.layerId, event.detail.color);
       this.controls.forEach((control) => control.refresh());
     });
+    control.view.addEventListener('color-tint', (event) => {
+      this.setLayerColorTint(event.detail.layerId, event.detail.color);
+      this.controls.forEach((control) => control.refresh());
+    });
     control.view.addEventListener('mask', (event) => {
       this.activateMask(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
@@ -496,6 +500,20 @@ export default class View {
     }
 
     this.addLayer(layer, { masked, activate });
+  }
+
+  setLayerColorTint(id, color) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      if (color) {
+        layer.tintColor = color;
+        layer.tintLayer = true;
+      } else {
+        layer.tintColor = null;
+        layer.tintLayer = false;
+      }
+      this.redraw(true);
+    }
   }
 
   /**

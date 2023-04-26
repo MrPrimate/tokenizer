@@ -91,6 +91,7 @@
   "vtta-tokenizer.label.DeleteLayer": "Delete layer (cannot be undone)",
   "vtta-tokenizer.label.Color": "Color",
   "vtta-tokenizer.label.EditTint": "Edit tint",
+  "vtta-tokenizer.label.EditLayerTint": "Edit the tint color applied to this layer",
   "vtta-tokenizer.label.FillColor": "Fill Color",
   "vtta-tokenizer.label.ClearTint": "Clear tint",
   "vtta-tokenizer.label.PickTint": "Pick tint color from canvas",

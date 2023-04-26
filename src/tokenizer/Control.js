@@ -512,7 +512,7 @@ export default class Control {
     this.colorThresholdSliderControl.min = 0;
     this.colorThresholdSliderControl.max = 150;
     this.colorThresholdSliderControl.value = 15;
-    this.colorThresholdSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorSimilar");
+    this.colorThresholdSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorThreshold");
     this.colorThresholdSliderControl.name = "color-threshold";
 
     // send an activate event when clicked
@@ -587,16 +587,74 @@ export default class Control {
     });
 
 
-    let buttonControls = document.createElement('div');
-    buttonControls.classList.add('basic-mask-control');
-    buttonControls.appendChild(this.magicLassoControl);
-    buttonControls.appendChild(this.alphaSelectorProxy);
-    buttonControls.appendChild(this.getAlpha);
-    buttonControls.appendChild(this.transparencyResetControl);
+    let lassoControls = document.createElement('div');
+    lassoControls.classList.add('basic-mask-control');
+    lassoControls.appendChild(this.magicLassoControl);
 
-    this.colorThresholdSliderSpan.appendChild(buttonControls);
+    this.#tintControls();
+    let tintControls = document.createElement('div');
+    tintControls.classList.add('basic-mask-control');
+    tintControls.appendChild(this.colorTintSelector);
+    tintControls.appendChild(this.colorTintSelectorProxy);
+    tintControls.appendChild(this.clearColorTint);
+
+    let transparencyControls = document.createElement('div');
+    transparencyControls.classList.add('basic-mask-control');
+    transparencyControls.appendChild(this.alphaSelectorProxy);
+    transparencyControls.appendChild(this.getAlpha);
+    transparencyControls.appendChild(this.transparencyResetControl);
+
+    this.colorThresholdSliderSpan.appendChild(lassoControls);
+    this.colorThresholdSliderSpan.appendChild(document.createElement('hr'));
+    this.colorThresholdSliderSpan.appendChild(tintControls);
+    this.colorThresholdSliderSpan.appendChild(document.createElement('hr'));
+    this.colorThresholdSliderSpan.appendChild(transparencyControls);
     this.colorThresholdSliderSpan.appendChild(this.colorThresholdSliderControl);
     this.colorSelectionManagementSection.appendChild(this.colorThresholdSliderSpan);
+  }
+
+  #tintControls() {
+    // the color picker element, which is hidden
+    this.colorTintSelector = document.createElement('input');
+    this.colorTintSelector.type = 'color';
+    this.colorTintSelector.value = '#000000FF';
+
+    // a nicer looking proxy for the color picker
+    this.colorTintSelectorProxy = document.createElement('div');
+    this.colorTintSelectorProxy.title = game.i18n.localize("vtta-tokenizer.label.EditLayerTint");
+    this.colorTintSelectorProxy.classList.add('color-picker', 'transparent');
+    this.colorTintSelectorProxy.addEventListener('click', () => {
+      this.colorTintSelector.click();
+    });
+
+    // listen to the color Selector onChange Event to update the layer's background color
+    this.colorTintSelector.addEventListener('change', (event) => {
+      this.colorTintSelectorProxy.style.backgroundColor = event.target.value;
+      this.colorTintSelectorProxy.classList.remove('transparent');
+      this.view.dispatchEvent(
+        new CustomEvent('color-tint', {
+          detail: { layerId: this.layer.id, color: event.target.value },
+        })
+      );
+    });
+
+    // ability to clear the color of the layer
+    this.clearColorTint = document.createElement('button');
+    this.clearColorTint.disabled = true;
+    this.clearColorTint.classList.add('danger', 'popup-button');
+    this.clearColorTint.title = game.i18n.localize("vtta-tokenizer.label.ClearTint");
+    let clearButtonText = document.createElement('i');
+    clearButtonText.classList.add('fas', 'fa-minus-circle');
+    this.clearColorTint.appendChild(clearButtonText);
+
+    this.clearColorTint.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(
+        new CustomEvent('color-tint', {
+          detail: { layerId: this.layer.id, color: null },
+        })
+      );
+    });
   }
 
   addSelectLayerMasks() {
@@ -673,6 +731,15 @@ export default class Control {
       this.colorSelectorProxy.classList.remove('transparent');
       this.colorSelectorProxy.style.backgroundColor = this.layer.color;
       this.clearColor.disabled = false;
+    }
+
+    if (this.layer.tintColor === null) {
+      this.colorTintSelectorProxy.classList.add('transparent');
+      this.clearColorTint.disabled = true;
+    } else {
+      this.colorTintSelectorProxy.classList.remove('transparent');
+      this.colorTintSelectorProxy.style.backgroundColor = this.layer.tintColor;
+      this.clearColorTint.disabled = false;
     }
 
     if (this.layer.view.isAlphaPicking) {

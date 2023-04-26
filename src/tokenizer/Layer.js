@@ -498,6 +498,7 @@ export default class Layer {
     tintContext.drawImage(this.source, 0, 0);
     tintContext.globalCompositeOperation = 'source-atop';
     tintContext.fillStyle = this.tintColor;
+    tintContext.alpha = 0.5;
     tintContext.fillRect(0, 0, this.source.width, this.source.height);  
     tintContext.globalCompositeOperation = 'source-over';
 
