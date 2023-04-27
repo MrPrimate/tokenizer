@@ -488,6 +488,11 @@ export default class View {
 
     const layer = Layer.fromImage(imgOptions);
 
+    if (masked) {
+      layer.createMask();
+      layer.redraw();
+    }
+
     if (scale) layer.setScale(scale);
     if (position.x && position.y) {
       const upScaledX = layer.canvas.width * (position.x / 400);

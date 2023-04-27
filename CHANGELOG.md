@@ -1,6 +1,10 @@
 # Changelog
 
-# [4.1.0]
+# [4.1.2]
+
+- Masks would be produced for non-border layers by default, and it was not possible to remove these default masks when editing a layer mask.
+
+# [4.1.0/4.1.1]
 
 - Clone layer button.
 - You can now choose to apply a color tint to the default token frame. Select this option in the settings if you wish to have it applied by default. This allows you to use the same frame, but with different colors for PC's, hostile, neutral and friendly tokens.

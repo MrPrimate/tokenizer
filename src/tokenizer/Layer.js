@@ -20,7 +20,7 @@ export default class Layer {
     this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
     this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.customMask = false;
-    this.mask = Utils.cloneCanvas(this.sourceMask);
+    this.mask = this.sourceMask ? Utils.cloneCanvas(this.sourceMask) : null;
     this.redraw();
   }
 
@@ -34,7 +34,7 @@ export default class Layer {
     this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
     this.mask = null;
     this.redraw();
-    this.createMask();
+    if (this.providesMask) this.createMask();
     this.recalculateMask();
   }
 
@@ -82,6 +82,7 @@ export default class Layer {
     this.renderedMask.width = this.source.width;
     this.renderedMask.height = this.source.height;
     this.mask = null;
+    this.sourceMask = null;
     this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.customMask = false;
 
@@ -129,6 +130,7 @@ export default class Layer {
       ? Layer.fromImage(imgOptions)
       : Layer.fromColor(colorOptions);
 
+    newLayer.providesMask = this.providesMask;
     newLayer.active = false;
 
     newLayer.scale = this.scale;
@@ -346,7 +348,7 @@ export default class Layer {
       );
 
     const layer = new Layer({ view, canvas, img, tintColor, tintLayer });
-    layer.createMask();
+    // layer.createMask();
     layer.redraw();
     return layer;
   }
