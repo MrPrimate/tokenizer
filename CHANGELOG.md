@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.1.3]
+
+- Fix an issue where wildcard paths for tokens that did not include a file extension could not save.
+
 # [4.1.2]
 
 - Masks would be produced for non-border layers by default, and it was not possible to remove these default masks when editing a layer mask.

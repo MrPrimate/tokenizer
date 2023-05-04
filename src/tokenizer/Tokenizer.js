@@ -303,7 +303,9 @@ export default class Tokenizer extends FormApplication {
       const tokenWildcard = this.tokenOptions.tokenFilename.indexOf("*") === -1
         // set it to a wildcard we can actually use
         ? `${dirOptions.current}/${actorName}.Token-*.${this.imageFormat}`
-        : this.tokenOptions.tokenFilename;
+        : this.tokenOptions.tokenFilename.endsWith(`.${this.imageFormat}`)
+          ? this.tokenOptions.tokenFilename
+          : `${this.tokenOptions.tokenFilename}.${this.imageFormat}`;
 
       const browser = await FilePicker.browse(dirOptions.activeSource, tokenWildcard, {
         wildcard: true,
@@ -674,7 +676,8 @@ export default class Tokenizer extends FormApplication {
     });
 
     if (this.tokenOptions.isWildCard) {
-      $("#tokenizer div.token > h1").text("Token (Wildcard)");
+      const header = document.getElementById("tokenizer-token-header");
+      header.innerText = `${game.i18n.localize("vtta-tokenizer.label.token")} (${game.i18n.localize("vtta-tokenizer.label.Wildcard")})`;
       this.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
       // load the default frame, if there is one set
       this._setTokenFrame();

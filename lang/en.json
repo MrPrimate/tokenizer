@@ -108,6 +108,7 @@
   "vtta-tokenizer.label.Fill": "Fill",
   "vtta-tokenizer.label.CloneLayer": "Clone Layer",
   "vtta-tokenizer.label.ToggleLayer": "Toggle Layer {layerNum}",
+  "vtta-tokenizer.label.Wildcard": "Wildcard",
   "vtta-tokenizer.reset-custom-frames.name": "Reset Custom Frames?",
   "vtta-tokenizer.reset-custom-frames.hint": "Clear Custom Frames List",
   "vtta-tokenizer.reset-custom-frames.list": "Reset Custom Frames List",
