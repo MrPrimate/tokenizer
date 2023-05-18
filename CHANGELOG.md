@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.1.4]
+
+- Custom Masking would not respect deletes once the initial edit had been made.
+
 # [4.1.3]
 
 - Fix an issue where wildcard paths for tokens that did not include a file extension could not save.
