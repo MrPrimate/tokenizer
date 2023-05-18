@@ -179,7 +179,7 @@ export class Masker {
       // rescale the mask back up for the appropriate layer canvas size
       const context = mask.getContext("2d");
       context.resetTransform();
-      context.clearRect(0, 0, mask.width, mask.height);
+      context.clearRect(0, 0, this.layer.preview.width, this.layer.preview.height);
       mask.getContext("2d").drawImage(
         this.mask,
         this.yOffset,

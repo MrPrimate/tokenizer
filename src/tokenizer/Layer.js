@@ -177,9 +177,10 @@ export default class Layer {
   applyCustomMask(mask, callback) {
     this.customMask = true;
     this.mask = mask;
-    this.renderedMask
-      .getContext('2d')
-      .drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
+    const maskContext = this.renderedMask.getContext('2d');
+    maskContext.resetTransform();
+    maskContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
     callback(true);
   }
 
