@@ -463,7 +463,7 @@ export default class View {
   addImageLayer(img, { masked = false, activate = false, tintColor = null, tintLayer = false,
     position = { x: null, y: null }, scale = null } = {}
   ) {
-    const imgSrc = (typeof img.src === 'string' || img.src instanceof String) && !img.src.startsWith("data:image/png;base64")
+    const imgSrc = Utils.isString(img.src) && !img.src.startsWith("data:image/png;base64")
       ? img.src
       : "blob-data";
 
@@ -855,7 +855,7 @@ export default class View {
     for (let index = this.layers.length - 1; index >= 0; index--) {
       const layer = this.layers[index];
       if (layer.visible) {
-        const imgSrc = (typeof layer.sourceImg === 'string' || layer.sourceImg instanceof String) && !layer.sourceImg.startsWith("data:image/png;base64")
+        const imgSrc = Utils.isString(layer.sourceImg) && !layer.sourceImg.startsWith("data:image/png;base64")
           ? layer.sourceImg
           : "blob-data";
         logger.debug(`Drawing layer ${layer.id} for ${imgSrc}`);

@@ -7,6 +7,14 @@ const SKIPPING_WORDS = [
 
 export default class Utils {
 
+  static isObject(obj) {
+    return typeof obj === 'object' && !Array.isArray(obj) && obj !== null;
+  }
+
+  static isString(str) {
+    return typeof str === 'string' || str instanceof String;
+  }
+
   static htmlToDoc (text) {
     const parser = new DOMParser();
     return parser.parseFromString(text, "text/html");
