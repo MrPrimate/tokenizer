@@ -3,6 +3,7 @@
  */
 
 import logger from "../libs/logger.js";
+import Utils from "./Utils.js";
 
 
 class DirectoryPicker extends FilePicker {
@@ -158,7 +159,10 @@ class DirectoryPicker extends FilePicker {
           await DirectoryPicker.createDirectory(parsedPath.activeSource, `${currentSource}`, { bucket: parsedPath.bucket });
 
         } catch (err) {
-          if (!err.startsWith("EEXIST") && !err.startsWith("The S3 key")) logger.error(`Error trying to verify path [${parsedPath.activeSource}], ${parsedPath.current}`, err);
+          const errMessage = `${(err?.message ?? Utils.isString(err) ? err : err)}`.replace(/^Error: /, "").trim();
+          if (!errMessage.startsWith("EEXIST") && !errMessage.startsWith("The S3 key")) {
+            logger.error(`Error trying to verify path [${parsedPath.activeSource}], ${parsedPath.current}`, err);
+          }
         }
       }
     } catch (err) {
