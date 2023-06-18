@@ -168,7 +168,6 @@ class DirectoryPicker extends FilePicker {
         }
       }
     } catch (err) {
-      console.warn(err);
       return false;
     }
 
