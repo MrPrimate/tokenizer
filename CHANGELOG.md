@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.1.5]
+
+- Fixes for Creating folders in v11.302 due to changed status codes from Foundry.
+
 # [4.1.4]
 
 - Custom Masking would not respect deletes once the initial edit had been made.
