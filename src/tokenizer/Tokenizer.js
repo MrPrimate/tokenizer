@@ -245,8 +245,8 @@ export default class Tokenizer extends FormApplication {
     const options = super.defaultOptions;
     options.template = "modules/vtta-tokenizer/templates/tokenizer.hbs";
     options.id = "tokenizer-control";
-    options.width = "auto";
-    options.height = "auto";
+    options.width = "auto"; // "1019";
+    options.height = "auto"; // "813";
     options.classes = ["tokenizer"];
     return options;
   }
@@ -559,6 +559,9 @@ export default class Tokenizer extends FormApplication {
       if (game.settings.get(CONSTANTS.MODULE_ID, "default-color-layer")) {
         this.Token.addColorLayer({ color: this.defaultColor });
       }
+      if (game.settings.get(CONSTANTS.MODULE_ID, "enable-default-texture-layer")) {
+        await this._addTokenTexture();
+      }
       // if we add a frame by default offset the token image
       const options = this.addFrame
         ? this.tokenOffset
@@ -648,6 +651,24 @@ export default class Tokenizer extends FormApplication {
         this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintFrame && !fileName });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current });
+        ui.notifications.error(errorMessage);
+      }
+    }
+  }
+
+  async _addTokenTexture(fileName, fullPath = false) {
+    // load the default frame, if there is one set
+    const tintLayerColour = game.settings.get(CONSTANTS.MODULE_ID, "default-texture-layer-tint");
+    const tintLayerPath = game.settings.get(CONSTANTS.MODULE_ID, "default-texture-layer");
+    const tintColor = tintLayerColour.trim() !== "" ? tintLayerColour : undefined;
+
+    if (tintLayerPath && tintLayerPath.trim() !== "") {
+      const options = DirectoryPicker.parse(fullPath ? fileName : tintLayerPath.replace(/^\/|\/$/g, ""));
+      try {
+        const img = await Utils.download(options.current);
+        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintLayerPath && !fileName });
+      } catch (error) {
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadTexture", { texture: options.current });
         ui.notifications.error(errorMessage);
       }
     }

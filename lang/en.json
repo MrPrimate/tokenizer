@@ -143,6 +143,7 @@
   "vtta-tokenizer.notification.failedFallback": "Failed to load fallback image.",
   "vtta-tokenizer.notification.failedLoad": "Failed to load token: \"{imgSrc}\", falling back to \"{default}\"",
   "vtta-tokenizer.notification.failedLoadFrame": "Failed to load frame: \"{frame}\"",
+  "vtta-tokenizer.notification.failedLoadTexture": "Failed to load texture: \"{texture}\"",
   "vtta-tokenizer.notification.wildcard": "Tokenizer: Wildcarding token image to \"{path}\"",
   "vtta-tokenizer.download.url": "Please provide the URL of your desired image",
   "vtta-tokenizer.MagicLasso.title": "Magic Lasso Mode!",

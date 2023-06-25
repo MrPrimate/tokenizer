@@ -300,6 +300,32 @@ export function registerSettings() {
     default: true,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "enable-default-texture-layer", {
+    name: `${CONSTANTS.MODULE_ID}.enable-default-texture-layer.name`,
+    hint: `${CONSTANTS.MODULE_ID}.enable-default-texture-layer.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-texture-layer", {
+    name: `${CONSTANTS.MODULE_ID}.default-texture-layer.name`,
+    scope: "world",
+    config: true,
+    type: ImagePicker.Img,
+    default: `[data] ${CONSTANTS.PATH}img/grey-texture.webp`,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-texture-layer-tint", {
+    name: `${CONSTANTS.MODULE_ID}.default-texture-layer-tint.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-texture-layer-tint.hint`,
+    scope: "player",
+    config: true,
+    type: String,
+    default: "",
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "default-token-offset", {
     name: `${CONSTANTS.MODULE_ID}.default-token-offset.name`,
     hint: `${CONSTANTS.MODULE_ID}.default-token-offset.hint`,

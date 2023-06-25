@@ -1,5 +1,9 @@
 # Changelog
 
+# Next Up
+
+- You can now select a "texture layer" and optional tint color to apply to a new token, under the token layer.
+
 # [4.2.1]
 
 - Fixes for Creating folders in v11.302 due to changed status codes from Foundry.
