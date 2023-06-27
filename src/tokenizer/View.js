@@ -429,6 +429,10 @@ export default class View {
     control.view.addEventListener('magic-lasso', async (event) => {
       this.magicLasso(event.detail.layerId);
     });
+    control.view.addEventListener('centre-layer', (event) => {
+      this.centreLayer(event.detail.layerId);
+      this.controls.forEach((control) => control.refresh());
+    });
   }
 
   addLayer(layer, { masked = false, activate = false }) {
@@ -568,6 +572,14 @@ export default class View {
     if (layer) {
       const newLayer = layer.clone();
       this.addLayer(newLayer, { masked: newLayer.providesMask, activate: false });
+      this.redraw(true);
+    }
+  }
+
+  centreLayer(id) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      layer.centre();
       this.redraw(true);
     }
   }

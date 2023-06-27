@@ -3,6 +3,8 @@
 # Next Up
 
 - You can now select a "texture layer" and optional tint color to apply to a new token, under the token layer.
+- A Centre Layer button now exists to allow you to centre the layer. Useful if you have resized/zoomed and it has skewed.
+- Centre Layer, Reset Layer and Flip Layer moved to a Layer Movement Controls popup section. 
 
 # [4.2.1]
 

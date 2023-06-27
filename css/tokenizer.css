@@ -577,7 +577,7 @@
   background: rgb(255, 255, 255);
 }
 
-.tokenizer .mask-selector {
+.tokenizer .popup-selector {
   display: flex;
 }
 
@@ -585,7 +585,7 @@
   background: rgb(194, 194, 194);
 }
 
-.tokenizer .mask-selector button.mask-layer-choice {
+.tokenizer .popup-selector button.popup-choice {
   background: rgb(194, 194, 194);
   font-size: 20px;
   text-align: center;

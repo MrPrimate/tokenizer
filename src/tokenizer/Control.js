@@ -61,10 +61,13 @@ export default class Control {
       this.view.appendChild(this.positionManagementSection);
       this.positionManagementSection.appendChild(this.visibleControl);
       this.positionManagementSection.appendChild(this.activeControl);
-      this.positionManagementSection.appendChild(this.flipControl);
+      // this.positionManagementSection.appendChild(this.flipControl);
+      // this.positionManagementSection.appendChild(this.centreLayerControl);
       this.positionManagementSection.appendChild(this.colorSelectionManagementSection);
       this.positionManagementSection.appendChild(this.opacityManagementSection);
-      this.positionManagementSection.appendChild(this.resetControl);
+      // this.positionManagementSection.appendChild(this.resetControl);
+      this.positionManagementSection.appendChild(this.layerMovementControl);
+      // this.positionManagementSection.appendChild(this.layerMovementSelectorSpan);
     }
     this.view.appendChild(this.moveManagementSection);
     this.view.appendChild(this.deleteSection);
@@ -132,7 +135,7 @@ export default class Control {
     this.maskSelectorSpan.classList.add('popup');
 
     this.maskLayerSelector = document.createElement("div");
-    this.maskLayerSelector.classList.add("mask-selector");
+    this.maskLayerSelector.classList.add("popup-selector");
 
     this.addSelectLayerMasks();
     let basicMaskControls = document.createElement('div');
@@ -250,7 +253,7 @@ export default class Control {
     // Makes flips the layer
     this.flipControl = document.createElement('button');
     this.flipControl.title = game.i18n.localize("vtta-tokenizer.label.FlipLayer");
-    this.flipControl.classList.add('flip-control');
+    this.flipControl.classList.add('flip-control', 'popup-button');
     let flipButtonText = document.createElement('i');
     flipButtonText.classList.add('fas', 'fa-people-arrows');
     this.flipControl.appendChild(flipButtonText);
@@ -263,7 +266,7 @@ export default class Control {
 
     // resets the layer on the view
     this.resetControl = document.createElement('button');
-    this.resetControl.classList.add('reset-control');
+    this.resetControl.classList.add('reset-control', 'popup-button');
     this.resetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetLayer");
     let resetButtonText = document.createElement('i');
     resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
@@ -274,6 +277,52 @@ export default class Control {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
+
+    // Centres the layer
+    this.centreLayerControl = document.createElement('button');
+    this.centreLayerControl.title = game.i18n.localize("vtta-tokenizer.label.CentreLayer");
+    this.centreLayerControl.classList.add('centre-control', 'popup-button');
+    let centreLayerText = document.createElement('i');
+    centreLayerText.classList.add('fas', 'fa-crosshairs');
+    this.centreLayerControl.appendChild(centreLayerText);
+
+    // send an activate event when clicked
+    this.centreLayerControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.view.dispatchEvent(new CustomEvent('centre-layer', { detail: { layerId: this.layer.id } }));
+    });
+
+    // Layer movement selector
+    let layerMovementSelectorSpan = document.createElement('div');
+    layerMovementSelectorSpan.classList.add('popup');
+
+    // Layer movement controls
+    let layerMovementControl = document.createElement('button');
+    layerMovementControl.title = game.i18n.localize("vtta-tokenizer.label.LayerMovementControls");
+    layerMovementControl.classList.add('layer-movement-control');
+    let layerMovementText = document.createElement('i');
+    layerMovementText.classList.add('fas', 'fa-toolbox');
+    layerMovementControl.appendChild(layerMovementText);
+
+    layerMovementControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      layerMovementSelectorSpan.classList.toggle("show");
+    });
+
+    let buttonDiv = document.createElement("div");
+    buttonDiv.classList.add("popup-selector");
+
+    buttonDiv.appendChild(this.flipControl);
+    buttonDiv.appendChild(this.centreLayerControl);
+    buttonDiv.appendChild(this.resetControl);
+
+    layerMovementSelectorSpan.appendChild(buttonDiv);
+
+    let wrapperDiv = document.createElement("div");
+    wrapperDiv.appendChild(layerMovementControl);
+    wrapperDiv.appendChild(layerMovementSelectorSpan);
+    
+    this.layerMovementControl = wrapperDiv;
   }
 
   configureDeletionSection() {
@@ -665,7 +714,7 @@ export default class Control {
       const layerNum = this.layer.view.layers.findIndex((l) => l.id === layer.id);
 
       const button = document.createElement('button');
-      button.classList.add('mask-layer-choice');
+      button.classList.add('popup-choice');
       if (active) button.classList.add('active');
       button.title = game.i18n.format("vtta-tokenizer.label.ToggleLayer", { layerNum });
       button.innerHTML = layer.getLayerLabel(active);

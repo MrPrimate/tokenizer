@@ -419,6 +419,12 @@ export default class Layer {
     // this.redraw();
   }
 
+  centre() {
+    this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
+    this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
+    // this.redraw();
+  }
+
   /**
    * Scales the source on the view canvas according to a given factor
    * @param {Number} factor
