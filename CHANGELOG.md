@@ -1,6 +1,6 @@
 # Changelog
 
-# Next Up
+# [4.2.2]
 
 - You can now select a "texture layer" and optional tint color to apply to a new token, under the token layer.
 - A Centre Layer button now exists to allow you to centre the layer. Useful if you have resized/zoomed and it has skewed.
