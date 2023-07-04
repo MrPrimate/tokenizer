@@ -592,6 +592,14 @@
   justify-content: center;
 }
 
+.tokenizer .popup-input {
+  background: rgb(194, 194, 194);
+  font-size: 20px;
+  text-align: center;
+  justify-content: center;
+  width: 50px;
+}
+
 .tokenizer div.basic-mask-control {
   display: flex;
 }

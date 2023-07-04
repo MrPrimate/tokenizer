@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.2.3]
+
+- Scale layer option - you can now scale a layer by a percentage.
+
 # [4.2.2]
 
 - You can now select a "texture layer" and optional tint color to apply to a new token, under the token layer.

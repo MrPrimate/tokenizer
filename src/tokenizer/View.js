@@ -275,7 +275,7 @@ export default class View {
         const dx = (eventLocation.x - this.activeLayer.position.x) * (factor - 1),
           dy = (eventLocation.y - this.activeLayer.position.y) * (factor - 1);
 
-        this.activeLayer.setScale(this.activeLayer.scale * factor);
+        this.activeLayer.scale *= factor;
         this.activeLayer.translate(dx, dy);
         this.activeLayer.redraw();
         this.redraw(true);
@@ -433,6 +433,10 @@ export default class View {
       this.centreLayer(event.detail.layerId);
       this.controls.forEach((control) => control.refresh());
     });
+    control.view.addEventListener('scale-layer', (event) => {
+      this.scaleLayer(event.detail.layerId, event.detail.percent);
+      this.controls.forEach((control) => control.refresh());
+    });
   }
 
   addLayer(layer, { masked = false, activate = false }) {
@@ -497,14 +501,14 @@ export default class View {
       layer.redraw();
     }
 
-    if (scale) layer.setScale(scale);
+    if (scale) layer.scale = scale;
     if (position.x && position.y) {
-      const upScaledX = layer.canvas.width * (position.x / 400);
-      const upScaledY = layer.canvas.height * (position.y / 400);
+      const upScaledX = layer.canvas.width * (position.x / this.width);
+      const upScaledY = layer.canvas.height * (position.y / this.height);
       layer.translate(upScaledX, upScaledY);
       if (!scale) {
         const newScaleFactor = (layer.canvas.width - (Math.abs(upScaledX) * 2)) / layer.canvas.width;
-        layer.setScale(layer.scale * newScaleFactor);
+        layer.scale *= newScaleFactor;
       }
     }
 
@@ -583,6 +587,15 @@ export default class View {
       this.redraw(true);
     }
   }
+
+  scaleLayer(id, percent) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer) {
+      layer.scaleByPercent(percent);
+      this.redraw(true);
+    }
+  }
+
 
   /**
    * Ends a color picking state

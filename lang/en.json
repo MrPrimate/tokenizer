@@ -118,6 +118,7 @@
   "vtta-tokenizer.label.Wildcard": "Wildcard",
   "vtta-tokenizer.label.LayerMovementControls": "Layer movement controls - flip, centre, reset",
   "vtta-tokenizer.label.CentreLayer": "Centre layer",
+  "vtta-tokenizer.label.ScaleButton": "Scale/offset layer",
   "vtta-tokenizer.reset-custom-frames.name": "Reset Custom Frames?",
   "vtta-tokenizer.reset-custom-frames.hint": "Clear Custom Frames List",
   "vtta-tokenizer.reset-custom-frames.list": "Reset Custom Frames List",

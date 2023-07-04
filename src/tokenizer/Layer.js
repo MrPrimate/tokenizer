@@ -425,14 +425,6 @@ export default class Layer {
     // this.redraw();
   }
 
-  /**
-   * Scales the source on the view canvas according to a given factor
-   * @param {Number} factor
-   */
-  setScale(factor) {
-    this.scale = factor;
-  }
-
   rotate(degree) {
     this.rotation += degree * 2;
   }
@@ -441,6 +433,18 @@ export default class Layer {
     this.mirror *= -1;
     this.flipped = !this.flipped;
     this.redraw();
+  }
+
+  scaleByPercent(percentage) {
+    const newWidth = this.original.width * (percentage / 100);
+    const newHeight = this.original.width * (percentage / 100);
+
+    const xOffset = (this.original.width - newWidth) / 2;
+    const yOffset = (this.original.width - newHeight) / 2;
+
+    this.scale = (percentage / 100);
+    this.position.x = xOffset;
+    this.position.y = yOffset;
   }
 
   applyTransparentPixels(context) {

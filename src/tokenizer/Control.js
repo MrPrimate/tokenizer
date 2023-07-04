@@ -293,8 +293,8 @@ export default class Control {
     });
 
     // Layer movement selector
-    let layerMovementSelectorSpan = document.createElement('div');
-    layerMovementSelectorSpan.classList.add('popup');
+    let layerMovementSelectorDiv = document.createElement('div');
+    layerMovementSelectorDiv.classList.add('popup');
 
     // Layer movement controls
     let layerMovementControl = document.createElement('button');
@@ -306,7 +306,7 @@ export default class Control {
 
     layerMovementControl.addEventListener('click', (event) => {
       event.preventDefault();
-      layerMovementSelectorSpan.classList.toggle("show");
+      layerMovementSelectorDiv.classList.toggle("show");
     });
 
     let buttonDiv = document.createElement("div");
@@ -316,11 +316,42 @@ export default class Control {
     buttonDiv.appendChild(this.centreLayerControl);
     buttonDiv.appendChild(this.resetControl);
 
-    layerMovementSelectorSpan.appendChild(buttonDiv);
+    layerMovementSelectorDiv.appendChild(buttonDiv);
+    layerMovementSelectorDiv.appendChild(document.createElement('hr'));
+
+    let scaleDiv = document.createElement('div');
+    scaleDiv.classList.add("popup-selector");
+
+    this.scaleInput = document.createElement('input');
+    this.scaleInput.type = "text";
+    this.scaleInput.value = `${this.layer.scale * 100}`;
+    this.scaleInput.classList.add('scale-input', 'popup-input');
+
+    this.scaleControl = document.createElement('button');
+    this.scaleControl.title = game.i18n.localize("vtta-tokenizer.label.ScaleButton");
+    this.scaleControl.classList.add('scale-control', 'popup-button');
+    let scaleText = document.createElement('i');
+    scaleText.classList.add('fas', 'fa-compress');
+    this.scaleControl.appendChild(scaleText);
+
+    this.scaleControl.addEventListener('click', (event) => {
+      event.preventDefault();
+      const percentage = parseFloat(this.scaleInput.value);
+      if (isNaN(percentage)) {
+        this.scaleInput.value = `${this.layer.scale * 100}`;
+      } else {
+        this.view.dispatchEvent(new CustomEvent('scale-layer', { detail: { layerId: this.layer.id, percent: percentage } }));
+      }
+    });
+
+    scaleDiv.appendChild(this.scaleInput);
+    scaleDiv.appendChild(this.scaleControl);
+
+    layerMovementSelectorDiv.appendChild(scaleDiv);
 
     let wrapperDiv = document.createElement("div");
     wrapperDiv.appendChild(layerMovementControl);
-    wrapperDiv.appendChild(layerMovementSelectorSpan);
+    wrapperDiv.appendChild(layerMovementSelectorDiv);
     
     this.layerMovementControl = wrapperDiv;
   }
