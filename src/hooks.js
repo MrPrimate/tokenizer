@@ -96,7 +96,7 @@ function tokenizeActor(actor) {
   const options = {
     actor: actor,
     name: actor.name,
-    type: actor.type === "character" ? "pc" : "npc",
+    type: ["character", "pc"].includes(actor.type) ? "pc" : "npc",
     disposition: actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,
@@ -112,7 +112,7 @@ function tokenizeSceneToken(doc) {
     actor: doc.actor,
     token: doc.token,
     name: doc.token.name,
-    type: doc.actor.type === "character" ? "pc" : "npc",
+    type: ["character", "pc"].includes(doc.actor.type) ? "pc" : "npc",
     disposition: doc.token.disposition,
     avatarFilename: getAvatarPath(doc.actor),
     tokenFilename: doc.token.texture.src,
@@ -147,7 +147,7 @@ export async function autoToken(actor, options) {
   const defaultOptions = {
     actor: actor,
     name: actor.name,
-    type: actor.type === "character" ? "pc" : "npc",
+    type: ["character", "pc"].includes(actor.type) ? "pc" : "npc",
     disposition: actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,

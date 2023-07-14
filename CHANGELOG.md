@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.2.4]
+
+- Fixes for systems such as Gumshoe system where PC's type is marked slightly differently in the data model.
+
 # [4.2.3]
 
 - Scale layer option - you can now scale a layer by a percentage.
