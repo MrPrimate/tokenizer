@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.2.5]
+
+- Fixes #132: When a token frame is uploaded via the upload button rather than the find frame button the apply default mask button would not work.
+
 # [4.2.4]
 
 - Fixes for systems such as Gumshoe system where PC's type is marked slightly differently in the data model.
