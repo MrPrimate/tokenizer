@@ -804,6 +804,8 @@ export default class View {
         layer.providesMask = false;
         this.maskIds.delete(id);
       } else {
+        layer.createMask();
+        layer.redraw();
         this.maskIds.add(id);
         layer.providesMask = true;
       }
