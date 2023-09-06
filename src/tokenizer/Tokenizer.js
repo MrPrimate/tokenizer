@@ -171,7 +171,7 @@ export default class Tokenizer extends FormApplication {
     this.getTheGreatNachoFrames();
     await this.getJColsonFrames();
 
-    const frames = this.defaultFrames.concat(folderFrames, this.omfgFrames, this.theGreatNachoFrames, this.jColsonFrames, this.customFrames);
+    const frames = this.defaultFrames.concat(folderFrames, this.customFrames, this.omfgFrames, this.theGreatNachoFrames, this.jColsonFrames);
 
     this.frames = frames;
     return this.frames;

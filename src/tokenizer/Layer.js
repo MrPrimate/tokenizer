@@ -284,14 +284,7 @@ export default class Layer {
       context.fill();
     }
 
-
-    // clip the canvas
-    this.renderedMask = document.createElement('canvas');
-    this.renderedMask.width = this.source.width;
-    this.renderedMask.height = this.source.height;
-    this.renderedMask
-      .getContext('2d')
-      .drawImage(temp, 1, 1, CONSTANTS.MASK_DENSITY, CONSTANTS.MASK_DENSITY, 0, 0, this.source.width, this.source.height);
+    return temp;
   }
 
   createMask() {
@@ -301,14 +294,13 @@ export default class Layer {
       this.renderedMask.height = this.source.height;
     }
     const rayMask = game.settings.get(CONSTANTS.MODULE_ID, "default-algorithm");
-    if (rayMask) {
-      this.mask = generateRayMask(this.canvas);
-      const maskContext = this.renderedMask.getContext('2d');
-      maskContext.resetTransform();
-      maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
-    } else {
-      this.createOriginalMask();
-    }
+    this.mask = rayMask
+      ? generateRayMask(this.canvas)
+      : this.createOriginalMask();
+    const maskContext = this.renderedMask.getContext('2d');
+    maskContext.resetTransform();
+    maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
+
     this.sourceMask = Utils.cloneCanvas(this.mask);
   }
 
