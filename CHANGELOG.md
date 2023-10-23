@@ -1,8 +1,9 @@
 # Changelog
 
-# [NEXT UP]
+# [4.2.6]
 
 - Non-ray masking algo would not work.
+- Support NPC's that are a PC type in Forbidden Lands system.
 
 # [4.2.5]
 
