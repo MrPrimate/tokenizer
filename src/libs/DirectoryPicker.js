@@ -86,7 +86,7 @@ class DirectoryPicker extends FilePicker {
   // Adds a FilePicker-Simulator-Button next to the input fields
   static processHtml(html) {
     $(html)
-      .find(`input[data-dtype="Directory"]`)
+      .find(`input[data-dtype="TokenizerDirectory"]`)
       .each((index, element) => {
         // $(element).prop("readonly", true);
 
