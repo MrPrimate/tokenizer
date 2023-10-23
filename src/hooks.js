@@ -92,11 +92,25 @@ async function updateActor(tokenizerResponse) {
   }
 }
 
+function getActorType(actor) {
+  if (["character", "pc"].includes(actor.type)) {
+    // forbidden lands support
+    if (getProperty(actor, "system.subtype.type") === "npc") {
+      return "npc";
+    } else {
+      return "pc";
+    }
+  } else {
+    return "npc";
+  }
+  
+}
+
 function tokenizeActor(actor) {
   const options = {
     actor: actor,
     name: actor.name,
-    type: ["character", "pc"].includes(actor.type) ? "pc" : "npc",
+    type: getActorType(actor),
     disposition: actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,
@@ -112,7 +126,7 @@ function tokenizeSceneToken(doc) {
     actor: doc.actor,
     token: doc.token,
     name: doc.token.name,
-    type: ["character", "pc"].includes(doc.actor.type) ? "pc" : "npc",
+    type: getActorType(doc.actor),
     disposition: doc.token.disposition,
     avatarFilename: getAvatarPath(doc.actor),
     tokenFilename: doc.token.texture.src,
@@ -147,7 +161,7 @@ export async function autoToken(actor, options) {
   const defaultOptions = {
     actor: actor,
     name: actor.name,
-    type: ["character", "pc"].includes(actor.type) ? "pc" : "npc",
+    type: getActorType(actor),
     disposition: actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,
