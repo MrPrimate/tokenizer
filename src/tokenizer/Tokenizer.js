@@ -271,14 +271,10 @@ export default class Tokenizer extends FormApplication {
 
   getWildCardPath() {
     if (!this.tokenOptions.isWildCard) return undefined;
-    let wildCardPath = `${this.tokenUploadDirectory}`;
-    if (this.tokenOptions.tokenFilename) {
-      let wildCardTokenPathArray = this.tokenOptions.tokenFilename.split("/");
-      wildCardTokenPathArray.pop();
-      wildCardPath = wildCardTokenPathArray.join("/");
-    }
-    this.wildCardPath = wildCardPath;
-    return wildCardPath;
+    this.wildCardPath = this.tokenOptions.tokenFilename
+      ? Utils.dirPath(this.tokenOptions.tokenFilename)
+      : `${this.tokenUploadDirectory}`;
+    return this.wildCardPath;
   }
 
   getOverRidePath(isToken) {

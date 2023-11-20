@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.2.7]
+
+- When using OSE (and possibly other systems) when using shift to open the file picker instead of Tokenizer the dialogue would not open.
+
 # [4.2.6]
 
 - Non-ray masking algo would not work.

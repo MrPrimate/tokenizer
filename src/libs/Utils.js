@@ -26,6 +26,10 @@ export default class Utils {
     });
   }
 
+  static dirPath(path) {
+    return path.split("/").slice(0, -1).join("/");
+  }
+
   static generateUUID() {
     // I generate the UID from two parts here
     // to ensure the random number provide enough bits.

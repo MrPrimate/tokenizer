@@ -250,8 +250,8 @@ function linkSheets() {
         const disableAvatarClick = disableAvatarClickUser === "global"
           ? disableAvatarClickGlobal
           : disableAvatarClickUser === "default";
-
         const dataEditField = getDataEditField();
+
         $(html)
         .find(`[data-edit="${dataEditField}"]`)
         .each((index, element) => {
@@ -271,16 +271,18 @@ function linkSheets() {
               event.preventDefault();
             } else {
               // showing the filepicker
+              const current = data.actor ? data.actor[dataEditField] : data[dataEditField];
+              const dir = Utils.dirPath(current);
               new FilePicker({
                 type: "image",
-                current: data.actor[dataEditField],
+                current,
                 callback: (path) => {
                   event.currentTarget.src = path;
                   app._onSubmit(event);
                 },
                 top: app.position.top + 40,
                 left: app.position.left + 10,
-              }).browse(data.actor[dataEditField]);
+              }).browse(dir);
             }
           });
         });
