@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.2.8]
+
+- Slight CSS corrections for if using custom themes.
+
 # [4.2.7]
 
 - When using OSE (and possibly other systems) when using shift to open the file picker instead of Tokenizer the dialogue would not open.
