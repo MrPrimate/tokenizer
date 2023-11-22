@@ -437,7 +437,8 @@
   -webkit-appearance: none;
 }
 
-#tokenizer option, optgroup {
+#tokenizer option,
+#tokenizer optgroup {
   color: rgb(0, 0, 0);
   -webkit-appearance: none;
 }
