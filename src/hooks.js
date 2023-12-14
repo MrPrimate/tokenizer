@@ -213,7 +213,12 @@ function fixUploadLocation() {
 
 
 function getActorSheetHeaderButtons(app, buttons) {
-  if (!game.user.can("FILES_UPLOAD") && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")) {
+  if (
+    // don't enable if user can't upload
+    !game.user.can("FILES_UPLOAD")
+    // and the player setting is disabled
+    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
+  ) {
     return;
   }
 
@@ -230,7 +235,12 @@ function getActorSheetHeaderButtons(app, buttons) {
 }
 
 function linkSheets() {
-  if (!game.user.can("FILES_UPLOAD") && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")) {
+  if (
+    // don't enable if user can't upload
+    !game.user.can("FILES_UPLOAD")
+    // and the player setting is disabled
+    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
+  ) {
     return;
   }
 
@@ -315,7 +325,14 @@ export function ready() {
 }
 
 Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
-  if (!game.user.isGM) return;
+  if (
+    // don't enable if user can't upload
+    !game.user.can("FILES_UPLOAD")
+    // and the player setting is disabled
+    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
+  ) {
+    return;
+  }
 
   entryOptions.push({
     name: "Tokenizer",
@@ -333,9 +350,12 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
     },
     icon: '<i class="fas fa-user-circle"></i>',
     condition: () => {
-      return game.user.can("FILES_UPLOAD");
+      return game.user.can("FILES_UPLOAD")
+        || !game.settings.get(CONSTANTS.MODULE_ID, "disable-player");
     }
   });
+
+  if (!game.user.isGM) return;
 
   entryOptions.push({
     name: `${CONSTANTS.MODULE_ID}.apply-prototype-to-scene`,
