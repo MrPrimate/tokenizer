@@ -1,6 +1,6 @@
 # Changelog
 
-# [4.2.9]
+# [4.2.9] [4.2.10]
 
 - JA language updates from doumoku
 - Slight tweaks t allow the Tokenizer menu to appear if player has permissions on actors tab.
