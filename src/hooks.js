@@ -14,9 +14,14 @@ export function init() {
 function getDataEditField() {
   let dataEditField;
   switch (game.system.id) {
-    case "yzecoriolis":
-      dataEditField = "system.keyArt";
+    case "yzecoriolis": {
+      if (isNewerVersion("3.2.0", game.system.version)) {
+        dataEditField = "system.keyArt";
+      } else {
+        dataEditField = "img";
+      }
       break;
+    }
     default:
       dataEditField = "img";
   }
