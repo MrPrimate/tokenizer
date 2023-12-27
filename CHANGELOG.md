@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.2.11]
+
+- Support for 3.2.0+ of Coriolis system.
+
 # [4.2.9] [4.2.10]
 
 - JA language updates from doumoku
