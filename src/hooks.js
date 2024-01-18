@@ -239,16 +239,26 @@ function getActorSheetHeaderButtons(app, buttons) {
   });
 }
 
-function linkSheets() {
-  if (
-    // don't enable if user can't upload
-    !game.user.can("FILES_UPLOAD")
-    // and the player setting is disabled
-    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
-  ) {
-    return;
-  }
+function linkTidySheets() {
+  const api = game.modules.get('tidy5e-sheet-kgar')?.api;
+  if (!api) return;
 
+  api.actorPortrait.registerMenuCommands([
+    {
+      label: game.i18n.localize("vtta-tokenizer.module-name"),
+      iconClass: "fas fa-user-circle",
+      tooltip: game.i18n.localize("vtta-tokenizer.label.open"),
+      enabled: (params) => params.actor.type !== "vehicle",
+      execute: (params) => {
+        // console.log(params);
+        const doc = (params.token) ? params : params.actor;
+        tokenizeDoc(doc);
+      },
+    },
+  ]);
+}
+
+function linkDefaultSheets() {
   let sheetNames = Object.values(CONFIG.Actor.sheetClasses)
     .reduce((arr, classes) => {
       return arr.concat(Object.values(classes).map((c) => c.cls));
@@ -305,6 +315,20 @@ function linkSheets() {
       }
     });
   });
+}
+
+function linkSheets() {
+  if (
+    // don't enable if user can't upload
+    !game.user.can("FILES_UPLOAD")
+    // and the player setting is disabled
+    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
+  ) {
+    return;
+  }
+
+  linkTidySheets();
+  linkDefaultSheets();
 }
 
 function exposeAPI() {

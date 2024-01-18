@@ -1,4 +1,5 @@
 {
+  "vtta-tokenizer.module-name": "Tokenizer",
   "vtta-tokenizer.reset-settings.name": "Reset Settings",
   "vtta-tokenizer.default-frame-npc.name": "Default NPC frame (hostile NPC's)",
   "vtta-tokenizer.default-frame-npc.hint": "A frame image stored on the Foundry server and that is used as a default frame.",
@@ -57,6 +58,7 @@
   "vtta-tokenizer.disable-thegreatnacho-frames.name": "Disable TheGreatNacho frames",
   "vtta-tokenizer.compendium.auto-tokenize": "Auto-Tokenize Compendium",
   "vtta-tokenizer.compendium.button": "Tokenize Compendium",
+  "vtta-tokenizer.label.open": "Open Tokenizer",
   "vtta-tokenizer.label.token": "Token",
   "vtta-tokenizer.label.avatar": "Avatar",
   "vtta-tokenizer.label.directory": "Directory",

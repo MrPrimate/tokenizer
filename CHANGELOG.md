@@ -1,5 +1,9 @@
 # Changelog
 
+# NEXT UP
+
+- Kgar Tidy 5e sheet support
+
 # [4.2.11]
 
 - Support for 3.2.0+ of Coriolis system.
