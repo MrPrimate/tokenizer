@@ -250,8 +250,11 @@ function linkTidySheets() {
       tooltip: game.i18n.localize("vtta-tokenizer.label.open"),
       enabled: (params) => params.actor.type !== "vehicle",
       execute: (params) => {
-        // console.log(params);
-        const doc = (params.token) ? params : params.actor;
+        const token = getProperty(params, "context.options.token");
+        const doc = token
+          ? { actor: params.actor, token }
+          : params.actor;
+        logger.debug("Calling Tokenizer via Tidy5e sheet", { params, token, doc });
         tokenizeDoc(doc);
       },
     },

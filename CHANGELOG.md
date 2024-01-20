@@ -1,6 +1,6 @@
 # Changelog
 
-# NEXT UP
+# [4.2.12]
 
 - Kgar Tidy 5e sheet support
 
