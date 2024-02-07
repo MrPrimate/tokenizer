@@ -1,6 +1,6 @@
 # Changelog
 
-# [4.2.12]
+# [4.2.13]
 
 - Kgar Tidy 5e sheet merge into Tidy Sheet support
 - 5e v3.0.0 Tokenizer will open regardless of if avatar or token is selected when editing the sheet.
