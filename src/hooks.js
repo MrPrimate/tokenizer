@@ -240,10 +240,10 @@ function getActorSheetHeaderButtons(app, buttons) {
 }
 
 function linkTidySheets() {
-  const api = game.modules.get('tidy5e-sheet-kgar')?.api;
+  const api = game.modules.get('tidy5e-sheet')?.api;
   if (!api) return;
 
-  api.actorPortrait.registerMenuCommands([
+  api.config.actorPortrait.registerMenuCommands([
     {
       label: game.i18n.localize("vtta-tokenizer.module-name"),
       iconClass: "fas fa-user-circle",
