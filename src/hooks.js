@@ -11,7 +11,7 @@ export function init() {
   registerSettings();
 }
 
-function getDataEditField() {
+function getAvatarKey() {
   let dataEditField;
   switch (game.system.id) {
     case "yzecoriolis": {
@@ -29,7 +29,7 @@ function getDataEditField() {
 }
 
 function getAvatarPath(actor) {
-  const key = getDataEditField();
+  const key = getAvatarKey();
   return getProperty(actor, key);
 }
 
@@ -67,7 +67,7 @@ async function updateActor(tokenizerResponse) {
 
   // updating the avatar filename
   const update = {};
-  const avatarKey = getDataEditField(tokenizerResponse.actor);
+  const avatarKey = getAvatarKey();
   update[avatarKey] = tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag;
 
   if (!tokenizerResponse.actor.prototypeToken.randomImg) {
@@ -278,10 +278,10 @@ function linkDefaultSheets() {
         const disableAvatarClick = disableAvatarClickUser === "global"
           ? disableAvatarClickGlobal
           : disableAvatarClickUser === "default";
-        const dataEditField = getDataEditField();
+        const dataEditField = getAvatarKey();
 
         $(html)
-        .find(`[data-edit="${dataEditField}"]`)
+        .find(`[data-edit="${dataEditField}"], [data-edit="prototypeToken.texture.src"]`)
         .each((index, element) => {
           // deactivating the original FilePicker click
           $(element).off("click");
