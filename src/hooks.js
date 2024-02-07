@@ -240,7 +240,7 @@ function getActorSheetHeaderButtons(app, buttons) {
 }
 
 function linkTidySheets() {
-  const api = game.modules.get('tidy5e-sheet-kgar')?.api;
+  const api = game.modules.get('tidy5e-sheet')?.api;
   if (!api) return;
 
   api.actorPortrait.registerMenuCommands([
