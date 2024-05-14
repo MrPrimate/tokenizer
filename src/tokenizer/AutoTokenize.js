@@ -12,7 +12,7 @@ export default class AutoTokenize extends FormApplication {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: "auto-tokenize",
       classes: ["tokenizer"],
       title: "Auto Tokenize",

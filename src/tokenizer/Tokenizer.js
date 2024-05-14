@@ -236,6 +236,7 @@ export default class Tokenizer extends FormApplication {
     this.tokenUploadDirectory = this.getOverRidePath(true) || this.getBaseUploadDirectory();
     this.avatarFileName = `${this.tokenOptions.name}.Avatar${this.nameSuffix}.${this.imageFormat}`;
     this.tokenFileName = `${this.tokenOptions.name}.Token${this.nameSuffix}.${this.imageFormat}`;
+    this.activeLayerSelectorElement = null;
   }
 
   /**
@@ -362,7 +363,7 @@ export default class Tokenizer extends FormApplication {
       const img = await Utils.download(url);
       const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth, game.settings.get(CONSTANTS.MODULE_ID, "portrait-size"));
       logger.debug("Setting Avatar dimensions to " + MAX_DIMENSION + "x" + MAX_DIMENSION);
-      this.Avatar = new View(MAX_DIMENSION, avatarView);
+      this.Avatar = new View(this, MAX_DIMENSION, avatarView);
       this.Avatar.addImageLayer(img);
 
       // Setting the height of the form to the desired auto height
@@ -695,11 +696,11 @@ export default class Tokenizer extends FormApplication {
     if (this.tokenOptions.isWildCard) {
       const header = document.getElementById("tokenizer-token-header");
       header.innerText = `${game.i18n.localize("vtta-tokenizer.label.token")} (${game.i18n.localize("vtta-tokenizer.label.Wildcard")})`;
-      this.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
+      this.Token = new View(this, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
       // load the default frame, if there is one set
       this._setTokenFrame();
     } else {
-      this.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
+      this.Token = new View(this, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
 
       // Add the actor image to the token view
       this._initToken(this.tokenOptions.tokenFilename);
@@ -712,7 +713,6 @@ export default class Tokenizer extends FormApplication {
 
 Hooks.on("renderTokenizer", (app) => {
   window.addEventListener("paste", async (e) => {
-    // e.preventDefault();
     game.canvas.layers.forEach((layer) => {
       layer._copy = [];
     });
@@ -720,8 +720,19 @@ Hooks.on("renderTokenizer", (app) => {
     app.pasteImage(e);
   });
   window.addEventListener("drop", async (e) => {
-    // e.preventDefault();
     e.stopPropagation();
     app.pasteImage(e);
   });
+  app._element[0].addEventListener("mousedown", async (e) => {
+    // this handles clearing if the selector pop ups when a non popup is clicked
+    if (!app.activeLayerSelectorElement) return;
+    if (!app.activeLayerSelectorElement.contains(e.target)
+     && !app.lastControlButtonClicked.contains(e.target)
+    ) {
+      e.preventDefault();
+      app.activeLayerSelectorElement.classList.remove("show");
+      app.activeLayerSelectorElement = null;
+      app.lastControlButtonClicked = null;
+    }
+  }, false);
 });

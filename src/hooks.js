@@ -15,7 +15,7 @@ function getAvatarKey() {
   let dataEditField;
   switch (game.system.id) {
     case "yzecoriolis": {
-      if (isNewerVersion("3.2.0", game.system.version)) {
+      if (foundry.utils.isNewerVersion("3.2.0", game.system.version)) {
         dataEditField = "system.keyArt";
       } else {
         dataEditField = "img";
@@ -30,7 +30,7 @@ function getAvatarKey() {
 
 function getAvatarPath(actor) {
   const key = getAvatarKey();
-  return getProperty(actor, key);
+  return foundry.utils.getProperty(actor, key);
 }
 
 /**
@@ -73,7 +73,7 @@ async function updateActor(tokenizerResponse) {
   if (!tokenizerResponse.actor.prototypeToken.randomImg) {
     // for non-wildcard tokens, we set the token img now
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
-    setProperty(update, "prototypeToken.texture.src", tokenPath);
+    foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
   } else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {
     // if it is a wildcard and it isn't get like one, we change that
     const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
@@ -100,7 +100,7 @@ async function updateActor(tokenizerResponse) {
 function getActorType(actor) {
   if (["character", "pc"].includes(actor.type)) {
     // forbidden lands support
-    if (getProperty(actor, "system.subtype.type") === "npc") {
+    if (foundry.utils.getProperty(actor, "system.subtype.type") === "npc") {
       return "npc";
     } else {
       return "pc";
@@ -175,7 +175,7 @@ export async function autoToken(actor, options) {
     updateActor: true,
     // tokenOffset: { position: { x: -35, y: -35 } },
   };
-  const mergedOptions = mergeObject(defaultOptions, options);
+  const mergedOptions = foundry.utils.mergeObject(defaultOptions, options);
   const tokenizer = new Tokenizer(mergedOptions, updateActor);
 
   // create mock elements to generate images in
@@ -250,7 +250,7 @@ function linkTidySheets() {
       tooltip: game.i18n.localize("vtta-tokenizer.label.open"),
       enabled: (params) => params.actor.type !== "vehicle",
       execute: (params) => {
-        const token = getProperty(params, "context.options.token");
+        const token = foundry.utils.getProperty(params, "context.options.token");
         const doc = token
           ? { actor: params.actor, token }
           : params.actor;

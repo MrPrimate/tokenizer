@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.3.0]
+
+- Support for v12 of Foundry
+- Improved clearing of pop up selectors (e.g. mask controls)
+
 # [4.2.13]
 
 - Kgar Tidy 5e sheet merge into Tidy Sheet support

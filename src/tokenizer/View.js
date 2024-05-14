@@ -6,7 +6,8 @@ import logger from '../libs/logger.js';
 import Color from '../libs/Color.js';
 
 export default class View {
-  constructor(dimension, element) {
+  constructor(tokenizer, dimension, element) {
+    this.tokenizer = tokenizer;
     // the canvas where the resulting image is rendered to
     this.canvas = document.createElement('canvas');
     this.canvas.width = dimension;
@@ -329,7 +330,7 @@ export default class View {
 
   #addLayerControls(layer, { masked, activate } = {}) {
     // add the control at the top of the control array
-    const control = new Control(layer, this.layers.length - 1);
+    const control = new Control(this.tokenizer, layer, this.layers.length - 1);
     this.controls.unshift(control);
 
     // add the control at the top of the control area, too

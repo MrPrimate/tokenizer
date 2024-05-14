@@ -46,7 +46,7 @@ class ImageBrowser extends FormApplication {
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: "tokenizer-image-browser",
       classes: ["imagebrowser"],
       title: "Image Browser",

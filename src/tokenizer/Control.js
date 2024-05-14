@@ -1,10 +1,37 @@
 import CONSTANTS from "../constants.js";
 
 export default class Control {
-  constructor(layer) {
-    // , layerId) {
+
+  toggleVisibleDiv(button, element) {
+    console.warn("click", {
+      button,
+      element,
+      buttonCheck: this.tokenizer.lastControlButtonClicked === button,
+      elementCheck: this.tokenizer.dismissClick === element, 
+    });
+
+    // this.tokenizer.activeLayerSelectorElement currently selected selector
+    // this.tokenizer.lastControlButtonClicked the last clicked selector button
+
+    // cases
+    // selector button clicked, show selector
+    // selector button clicked, dismiss selector
+    // - clicked back on button after selector dismissed by button click
+    // clicked inside selector, nothing
+    // clicked outside selector, dismiss selector
+    // - clicked back on button after selector dismissed by outside click
+    // click on another button, dismiss selector, show new selector
+
+    element.classList.toggle("show");
+    this.tokenizer.lastControlButtonClicked = button;
+    this.tokenizer.activeLayerSelectorElement = element.classList.contains("show")
+      ? element
+      : null;
+  }
+
+  constructor(tokenizer, layer) {
+    this.tokenizer = tokenizer;
     this.layer = layer;
-    // this.layerId = layerId;
     this.view = document.createElement('div');
     this.view.setAttribute('data-layer', this.layer.id);
     this.view.classList.add('view-layer-control');
@@ -90,7 +117,7 @@ export default class Control {
     this.maskControl.appendChild(maskButtonText);
 
     // send a mask event when clicked
-    this.maskControl.addEventListener('click', (event) => {
+    this.maskControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('mask', { detail: { layerId: this.layer.id } }));
     });
@@ -105,7 +132,7 @@ export default class Control {
     this.maskEditControl.appendChild(maskEditButtonText);
 
     // send a mask event when clicked
-    this.maskEditControl.addEventListener('click', (event) => {
+    this.maskEditControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('edit-mask', { detail: { layerId: this.layer.id } }));
     });
@@ -118,7 +145,7 @@ export default class Control {
     maskResetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
     this.maskResetControl.appendChild(maskResetButtonText);
 
-    this.maskResetControl.addEventListener('click', (event) => {
+    this.maskResetControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset-mask-layer', { detail: { layerId: this.layer.id } }));
     });
@@ -196,10 +223,10 @@ export default class Control {
     this.maskSelectorSpan.appendChild(blendMaskDiv);
 
     // send an activate event when clicked
-    this.masksControl.addEventListener('click', (event) => {
+    this.masksControl.addEventListener("click", (event) => {
       event.preventDefault();
-      this.maskSelectorSpan.classList.toggle("show");
-    });
+      this.toggleVisibleDiv(this.masksControl, this.maskSelectorSpan);
+    }, true);
 
     // blend mode controls
     let blendManagementSection = document.createElement('div');
@@ -227,7 +254,7 @@ export default class Control {
     this.visibleControl.appendChild(visibleButtonText);
 
     // send a mask event when clicked
-    this.visibleControl.addEventListener('click', (event) => {
+    this.visibleControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('visible', { detail: { layerId: this.layer.id } }));
     });
@@ -241,7 +268,7 @@ export default class Control {
     this.activeControl.appendChild(activeButtonText);
 
     // send an activate event when clicked
-    this.activeControl.addEventListener('click', (event) => {
+    this.activeControl.addEventListener("click", (event) => {
       event.preventDefault();
       if (this.activeControl.classList.contains('active')) {
         this.view.dispatchEvent(new CustomEvent('deactivate', { detail: { layerId: this.layer.id } }));
@@ -259,7 +286,7 @@ export default class Control {
     this.flipControl.appendChild(flipButtonText);
 
     // send an activate event when clicked
-    this.flipControl.addEventListener('click', (event) => {
+    this.flipControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('flip', { detail: { layerId: this.layer.id } }));
     });
@@ -273,7 +300,7 @@ export default class Control {
     this.resetControl.appendChild(resetButtonText);
 
     // send an activate event when clicked
-    this.resetControl.addEventListener('click', (event) => {
+    this.resetControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
@@ -287,7 +314,7 @@ export default class Control {
     this.centreLayerControl.appendChild(centreLayerText);
 
     // send an activate event when clicked
-    this.centreLayerControl.addEventListener('click', (event) => {
+    this.centreLayerControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('centre-layer', { detail: { layerId: this.layer.id } }));
     });
@@ -304,10 +331,10 @@ export default class Control {
     layerMovementText.classList.add('fas', 'fa-toolbox');
     layerMovementControl.appendChild(layerMovementText);
 
-    layerMovementControl.addEventListener('click', (event) => {
+    layerMovementControl.addEventListener("click", (event) => {
       event.preventDefault();
-      layerMovementSelectorDiv.classList.toggle("show");
-    });
+      this.toggleVisibleDiv(this.layerMovementControl, layerMovementSelectorDiv);
+    }, true);
 
     let buttonDiv = document.createElement("div");
     buttonDiv.classList.add("popup-selector");
@@ -334,7 +361,7 @@ export default class Control {
     scaleText.classList.add('fas', 'fa-compress');
     this.scaleControl.appendChild(scaleText);
 
-    this.scaleControl.addEventListener('click', (event) => {
+    this.scaleControl.addEventListener("click", (event) => {
       event.preventDefault();
       const percentage = parseFloat(this.scaleInput.value);
       if (isNaN(percentage)) {
@@ -369,7 +396,7 @@ export default class Control {
     duplicateButtonText.classList.add('fas', 'fa-clone');
     this.duplicateControl.appendChild(duplicateButtonText);
 
-    this.duplicateControl.addEventListener('click', (event) => {
+    this.duplicateControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('duplicate', {
@@ -386,7 +413,7 @@ export default class Control {
     deleteButtonText.classList.add('fas', 'fa-trash-alt');
     this.deleteControl.appendChild(deleteButtonText);
 
-    this.deleteControl.addEventListener('click', (event) => {
+    this.deleteControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('delete', {
@@ -416,7 +443,7 @@ export default class Control {
     this.colorSelectorProxy = document.createElement('div');
     this.colorSelectorProxy.title = game.i18n.localize("vtta-tokenizer.label.EditTint");
     this.colorSelectorProxy.classList.add('color-picker', 'transparent');
-    this.colorSelectorProxy.addEventListener('click', () => {
+    this.colorSelectorProxy.addEventListener("click", () => {
       this.colorSelector.click();
     });
 
@@ -440,7 +467,7 @@ export default class Control {
     clearButtonText.classList.add('fas', 'fa-minus-circle');
     this.clearColor.appendChild(clearButtonText);
 
-    this.clearColor.addEventListener('click', (event) => {
+    this.clearColor.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('color', {
@@ -457,7 +484,7 @@ export default class Control {
     this.getColor.appendChild(colorButtonText);
 
     // dispatch the request for color picking
-    this.getColor.addEventListener('click', (event) => {
+    this.getColor.addEventListener("click", (event) => {
       event.preventDefault();
       if (this.getColor.classList.contains('active')) {
         this.getColor.classList.remove('active');
@@ -492,7 +519,7 @@ export default class Control {
     this.moveUpControl.appendChild(moveUpButtonText);
 
     // moving up event dispatcher
-    this.moveUpControl.addEventListener('click', (event) => {
+    this.moveUpControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('move', {
@@ -510,7 +537,7 @@ export default class Control {
     this.moveDownControl.appendChild(moveDownButtonText);
 
     // moving down event dispatcher
-    this.moveDownControl.addEventListener('click', (event) => {
+    this.moveDownControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('move', {
@@ -551,10 +578,10 @@ export default class Control {
     this.opacitySliderSpan.appendChild(this.opacitySliderControl);
 
     // send an activate event when clicked
-    this.opacityControl.addEventListener('click', (event) => {
+    this.opacityControl.addEventListener("click", (event) => {
       event.preventDefault();
-      this.opacitySliderSpan.classList.toggle("show");
-    });
+      this.toggleVisibleDiv(this.opacityControl, this.opacitySliderSpan);
+    }, true);
 
     this.opacitySliderSpan.addEventListener('mouseleave', () => {
       this.opacitySliderSpan.classList.remove("show");
@@ -596,10 +623,10 @@ export default class Control {
     this.colorThresholdSliderControl.name = "color-threshold";
 
     // send an activate event when clicked
-    this.colorSelectionControl.addEventListener('click', (event) => {
+    this.colorSelectionControl.addEventListener("click", (event) => {
       event.preventDefault();
-      this.colorThresholdSliderSpan.classList.toggle("show");
-    });
+      this.toggleVisibleDiv(this.colorSelectionControl, this.colorThresholdSliderSpan);
+    }, true);
 
     this.colorThresholdSliderControl.addEventListener('input', (event) => {
       event.preventDefault();
@@ -619,7 +646,7 @@ export default class Control {
     this.getAlpha.appendChild(alphaButtonText);
 
     // dispatch the request for color picking
-    this.getAlpha.addEventListener('click', (event) => {
+    this.getAlpha.addEventListener("click", (event) => {
       event.preventDefault();
       if (this.getAlpha.classList.contains('active')) {
         this.getAlpha.classList.remove('active');
@@ -648,7 +675,7 @@ export default class Control {
     resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
     this.transparencyResetControl.appendChild(resetButtonText);
 
-    this.transparencyResetControl.addEventListener('click', (event) => {
+    this.transparencyResetControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset-transparency-level', { detail: { layerId: this.layer.id } }));
     });
@@ -661,7 +688,7 @@ export default class Control {
     magicLassoButtonText.classList.add('fa-thin', 'fa-lasso-sparkles', 'fa-regular');
     this.magicLassoControl.appendChild(magicLassoButtonText);
 
-    this.magicLassoControl.addEventListener('click', (event) => {
+    this.magicLassoControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('magic-lasso', { detail: { layerId: this.layer.id } }));
     });
@@ -703,7 +730,7 @@ export default class Control {
     this.colorTintSelectorProxy = document.createElement('div');
     this.colorTintSelectorProxy.title = game.i18n.localize("vtta-tokenizer.label.EditLayerTint");
     this.colorTintSelectorProxy.classList.add('color-picker', 'transparent');
-    this.colorTintSelectorProxy.addEventListener('click', () => {
+    this.colorTintSelectorProxy.addEventListener("click", () => {
       this.colorTintSelector.click();
     });
 
@@ -727,7 +754,7 @@ export default class Control {
     clearButtonText.classList.add('fas', 'fa-minus-circle');
     this.clearColorTint.appendChild(clearButtonText);
 
-    this.clearColorTint.addEventListener('click', (event) => {
+    this.clearColorTint.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('color-tint', {
@@ -750,7 +777,7 @@ export default class Control {
       button.title = game.i18n.format("vtta-tokenizer.label.ToggleLayer", { layerNum });
       button.innerHTML = layer.getLayerLabel(active);
 
-      button.addEventListener('click', (event) => {
+      button.addEventListener("click", (event) => {
         event.preventDefault();
         this.view.dispatchEvent(
           new CustomEvent('mask-layer', {

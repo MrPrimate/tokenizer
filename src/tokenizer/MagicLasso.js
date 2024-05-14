@@ -72,7 +72,7 @@ export class MagicLasso {
     this.colorSelector = document.getElementById("magic-lasso-color-selector");
     this.colorSelectorProxy = document.getElementById("magic-lasso-color-selector-proxy");
 
-    this.colorSelectorProxy.addEventListener('click', () => {
+    this.colorSelectorProxy.addEventListener("click", () => {
       this.colorSelector.click();
     });
 

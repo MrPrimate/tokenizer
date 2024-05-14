@@ -135,7 +135,7 @@ export default class Layer {
 
     newLayer.scale = this.scale;
     newLayer.rotation = this.rotation;
-    newLayer.position = deepClone(this.position);
+    newLayer.position = foundry.utils.deepClone(this.position);
     newLayer.center = this.center;
     newLayer.mirror = this.mirror;
     newLayer.flipped = this.flipped;
