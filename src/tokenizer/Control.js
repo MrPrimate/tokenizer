@@ -3,13 +3,6 @@ import CONSTANTS from "../constants.js";
 export default class Control {
 
   toggleVisibleDiv(button, element) {
-    console.warn("click", {
-      button,
-      element,
-      buttonCheck: this.tokenizer.lastControlButtonClicked === button,
-      elementCheck: this.tokenizer.dismissClick === element, 
-    });
-
     // this.tokenizer.activeLayerSelectorElement currently selected selector
     // this.tokenizer.lastControlButtonClicked the last clicked selector button
 
