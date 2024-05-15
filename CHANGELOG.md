@@ -2,7 +2,7 @@
 
 # [4.3.1]
 
-- Fix an issue with aut-tokenizer with v4.3.0
+- Fix an issue with auto-tokenizer with v4.3.0
 
 # [4.3.0]
 
