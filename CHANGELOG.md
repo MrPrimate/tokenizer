@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.1]
+
+- Fix an issue with aut-tokenizer with v4.3.0
+
 # [4.3.0]
 
 - Support for v12 of Foundry

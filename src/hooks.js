@@ -189,7 +189,7 @@ export async function autoToken(actor, options) {
   tokenizer.tokenFileName = targetFilename;
 
   // create a Token View
-  tokenizer.Token = new View(game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
+  tokenizer.Token = new View(tokenizer, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
   // Add the actor image and frame to the token view
   await tokenizer._initToken(tokenizer.tokenOptions.tokenFilename);
   // upload result to foundry
