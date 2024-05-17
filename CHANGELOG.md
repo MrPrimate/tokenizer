@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.2]
+
+- PT-BR language translation updates.
+
 # [4.3.1]
 
 - Fix an issue with auto-tokenizer with v4.3.0
