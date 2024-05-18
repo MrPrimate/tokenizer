@@ -188,6 +188,19 @@ export default class Tokenizer extends FormApplication {
     this._setTokenFrame(framePath, true);
   }
 
+  async handleMaskSelection(maskPath) {
+    if (maskPath && maskPath.trim() !== "") {
+      const options = DirectoryPicker.parse(maskPath);
+      try {
+        const img = await Utils.download(options.current);
+        this.Token.addImageLayer(img, { masked: true, onTop: true, maskFromImage: true, visible: false });
+      } catch (error) {
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadMask", { mask: options.current });
+        ui.notifications.error(errorMessage);
+      }
+    }
+  }
+
   getBaseUploadDirectory() {
     if (this.tokenType === "character") {
       return game.settings.get("vtta-tokenizer", "image-upload-directory");
@@ -389,8 +402,21 @@ export default class Tokenizer extends FormApplication {
 
     $("#tokenizer .file-picker-thumbs").click((event) => {
         event.preventDefault();
-        const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleFrameSelection.bind(this) });
-        picker.render(true);
+        const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
+
+        switch (eventTarget.dataset.type) {
+          case "mask": {
+            const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleMaskSelection.bind(this) });
+            picker.render(true);
+            break;
+          }
+          case "frame": {
+            const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleFrameSelection.bind(this) });
+            picker.render(true);
+            break;
+          }
+          // no default
+        }
     });
 
     $("#tokenizer .filePickerTarget").on("change", (event) => {

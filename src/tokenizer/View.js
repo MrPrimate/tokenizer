@@ -470,7 +470,7 @@ export default class View {
   }
 
   addImageLayer(img, { masked = false, activate = false, tintColor = null, tintLayer = false,
-    position = { x: null, y: null }, scale = null } = {}
+    position = { x: null, y: null }, scale = null, maskFromImage = false, visible = true } = {}
   ) {
     const imgSrc = Utils.isString(img.src) && !img.src.startsWith("data:image/png;base64")
       ? img.src
@@ -484,6 +484,8 @@ export default class View {
       tintLayer,
       position,
       scale,
+      maskFromImage,
+      visible,
     });
 
     const imgOptions = {
@@ -492,7 +494,9 @@ export default class View {
       canvasHeight: this.width,
       canvasWidth: this.height,
       tintColor: tintColor,
-      tintLayer: tintLayer
+      tintLayer: tintLayer,
+      maskFromImage,
+      visible,
     };
 
     const layer = Layer.fromImage(imgOptions);

@@ -38,7 +38,7 @@ export default class Layer {
     this.recalculateMask();
   }
 
-  constructor({ view, canvas, tintColor, tintLayer, img = null, color = null } = {}) {
+  constructor({ view, canvas, tintColor, tintLayer, img = null, color = null, maskFromImage = false, visible = true } = {}) {
     this.view = view;
     this.id = Utils.generateUUID();
     this.canvas = canvas;
@@ -85,6 +85,7 @@ export default class Layer {
     this.sourceMask = null;
     this.maskCompositeOperation = CONSTANTS.BLEND_MODES.SOURCE_IN;
     this.customMask = false;
+    this.maskFromImage = maskFromImage;
 
     // mask ids to apply to this layer
     this.appliedMaskIds = new Set();
@@ -92,7 +93,7 @@ export default class Layer {
 
     this.alpha = 1.0;
     this.compositeOperation = CONSTANTS.BLEND_MODES.SOURCE_OVER;
-    this.visible = true;
+    this.visible = visible;
 
     // initialize with color
     this.previousColor = null;
@@ -287,6 +288,24 @@ export default class Layer {
     return temp;
   }
 
+  createMaskFromImage() {
+    const mask = document.createElement("canvas");
+    mask.width = this.canvas.width;
+    mask.height = this.canvas.height;
+
+    mask
+      .getContext('2d')
+      .drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height);
+
+    const context = mask.getContext("2d");
+    context.fillStyle = "black";
+    context.globalCompositeOperation = "source-in";
+    // context.globalCompositeOperation = "destination-over";
+    context.fillRect(0, 0, mask.width, mask.height);
+
+    return mask;
+  }
+
   createMask() {
     if (!this.renderedMask) {
       this.renderedMask = document.createElement('canvas');
@@ -294,9 +313,11 @@ export default class Layer {
       this.renderedMask.height = this.source.height;
     }
     const rayMask = game.settings.get(CONSTANTS.MODULE_ID, "default-algorithm");
-    this.mask = rayMask
-      ? generateRayMask(this.canvas)
-      : this.createOriginalMask();
+    this.mask = this.maskFromImage
+      ? this.createMaskFromImage()
+      : rayMask
+        ? generateRayMask(this.canvas)
+        : this.createOriginalMask();
     const maskContext = this.renderedMask.getContext('2d');
     maskContext.resetTransform();
     maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
@@ -304,7 +325,7 @@ export default class Layer {
     this.sourceMask = Utils.cloneCanvas(this.mask);
   }
 
-  static fromImage({ view, img, canvasHeight, canvasWidth, tintColor, tintLayer } = {}) {
+  static fromImage({ view, img, canvasHeight, canvasWidth, tintColor, tintLayer, maskFromImage, visible } = {}) {
     const height = Math.max(1000, canvasHeight, img.naturalHeight, img.naturalWidth);
     const width = Math.max(1000, canvasWidth, img.naturalHeight, img.naturalWidth);
     const canvas = document.createElement("canvas");
@@ -340,7 +361,7 @@ export default class Layer {
         scaledHeight
       );
 
-    const layer = new Layer({ view, canvas, img, tintColor, tintLayer });
+    const layer = new Layer({ view, canvas, img, tintColor, tintLayer, maskFromImage, visible });
     // layer.createMask();
     layer.redraw();
     return layer;
