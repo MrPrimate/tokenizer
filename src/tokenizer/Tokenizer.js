@@ -243,16 +243,7 @@ export default class Tokenizer extends FormApplication {
       this.customMasks.push(mask);
       game.settings.set("vtta-tokenizer", "custom-masks", this.customMasks);
     }
-    if (maskPath && maskPath.trim() !== "") {
-      const options = DirectoryPicker.parse(maskPath);
-      try {
-        const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true, onTop: true, maskFromImage: true, visible: false });
-      } catch (error) {
-        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadMask", { mask: options.current });
-        ui.notifications.error(errorMessage);
-      }
-    }
+    this._setTokenMask(maskPath, true);
   }
 
   getBaseUploadDirectory() {
@@ -656,6 +647,10 @@ export default class Tokenizer extends FormApplication {
       if (this.addFrame) {
         logger.debug("Loading default token frame");
         await this._setTokenFrame();
+      }
+      if (this.addMask) {
+        logger.debug("Loading default token mask");
+        await this._setTokenMask();
       } 
     } catch (error) {
       if (!src || src === CONST.DEFAULT_TOKEN) {
@@ -737,6 +732,28 @@ export default class Tokenizer extends FormApplication {
         this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintFrame && !fileName });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current });
+        ui.notifications.error(errorMessage);
+      }
+    }
+  }
+
+  async _setTokenMask(fileName, fullPath = false) {
+    const defaultMaskPath = game.settings.get(CONSTANTS.MODULE_ID, "default-mask-layer");
+    const isDefault = fileName != defaultMaskPath.replace(/^\/|\/$/g, "");
+
+    const maskPath = fileName && !isDefault
+      ? `${game.settings.get(CONSTANTS.MODULE_ID, "masks-directory")}/${fileName}`
+      : fileName && isDefault
+        ? fileName.replace(/^\/|\/$/g, "")
+        : defaultMaskPath.replace(/^\/|\/$/g, "");
+        
+    if (maskPath && maskPath.trim() !== "") {
+      const options = DirectoryPicker.parse(fullPath ? fileName : maskPath);
+      try {
+        const img = await Utils.download(options.current);
+        this.Token.addImageLayer(img, { masked: true, onTop: true, maskFromImage: true, visible: false });
+      } catch (error) {
+        const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadMask", { mask: options.current });
         ui.notifications.error(errorMessage);
       }
     }
