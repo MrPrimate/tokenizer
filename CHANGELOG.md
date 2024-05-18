@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.3]
+
+- You can now add a mask layer - this will use the image as a mask layer taking all the non transparent pixels as the mask. Provided are two default masks, which helpfully match the size of the new dynamic ring provided in D&D 5e v3 and Foundry v12.
+
 # [4.3.2]
 
 - PT-BR language translation updates.
