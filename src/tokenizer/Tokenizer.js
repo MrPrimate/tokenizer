@@ -63,7 +63,7 @@ export default class Tokenizer extends FormApplication {
     logger.debug(`Checking for JColson Token Frames files in ${directoryPath}...`);
 
     const dir = DirectoryPicker.parse(directoryPath);
-    this.jColsonFrames = await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current);
+    this.jColsonFrames = await this.getDirectoryImageData(dir.activeSource, { bucket: dir.bucket }, dir.current);
 
     return this.jColsonFrames;
   }
@@ -128,9 +128,10 @@ export default class Tokenizer extends FormApplication {
     return defaultFrames;
   }
 
-  static generateFrameData(file, selected = false) {
+  static generateImageData(file, prefix = "", selected = false) {
     const labelSplit = file.split("/").pop().trim();
-    const label = labelSplit.replace(/^frame-/, "").replace(/[-_]/g, " ");
+    const regex = new RegExp(`^${prefix}-`);
+    const label = labelSplit.replace(regex, "").replace(/[-_]/g, " ");
     return {
       key: file,
       label: Utils.titleString(label).split(".")[0],
@@ -138,24 +139,24 @@ export default class Tokenizer extends FormApplication {
     };
   }
 
-  async getDirectoryFrameData(activeSource, options, path) {
+  async getDirectoryImageData(activeSource, options, path, type = "frame") {
     const fileList = await DirectoryPicker.browse(activeSource, path, options);
-    const folderFrames = fileList.files
+    const folderImages = fileList.files
       .filter((file) => Utils.endsWithAny(["png", "jpg", "jpeg", "gif", "webp", "webm", "bmp"], file))
       .map((file) => {
-        return Tokenizer.generateFrameData(file);
+        return Tokenizer.generateImageData(file, `${type}-`);
       });
 
-    let dirFrames = [];
+    let dirImages = [];
     if (fileList.dirs.length > 0) {
       for (let i = 0; i < fileList.dirs.length; i++) {
         const dir = fileList.dirs[i];
         // eslint-disable-next-line no-await-in-loop
-        const subDirFrames = await this.getDirectoryFrameData(activeSource, options, dir);
-        dirFrames.push(...subDirFrames);
+        const subDirImages = await this.getDirectoryImageData(activeSource, options, dir);
+        dirImages.push(...subDirImages);
       }
     }
-    const result = folderFrames.concat(dirFrames);
+    const result = folderImages.concat(dirImages);
     return result;
   }
 
@@ -164,7 +165,7 @@ export default class Tokenizer extends FormApplication {
     logger.debug(`Checking for files in ${directoryPath}...`);
     const dir = DirectoryPicker.parse(directoryPath);
     const folderFrames = (directoryPath && directoryPath.trim() !== "" && directoryPath.trim() !== "[data]")
-      ? await this.getDirectoryFrameData(dir.activeSource, { bucket: dir.bucket }, dir.current)
+      ? await this.getDirectoryImageData(dir.activeSource, { bucket: dir.bucket }, dir.current)
       : [];
 
     this.getOMFGFrames();
@@ -177,10 +178,24 @@ export default class Tokenizer extends FormApplication {
     return this.frames;
   }
 
+  async getMasks() {
+    const directoryPath = game.settings.get(CONSTANTS.MODULE_ID, "masks-directory");
+    logger.debug(`Checking for files in ${directoryPath}...`);
+    const dir = DirectoryPicker.parse(directoryPath);
+    const folderMasks = (directoryPath && directoryPath.trim() !== "" && directoryPath.trim() !== "[data]")
+      ? await this.getDirectoryImageData(dir.activeSource, { bucket: dir.bucket }, dir.current)
+      : [];
+
+    const masks = this.defaultMasks.concat(folderMasks, this.customMasks);
+
+    this.masks = masks;
+    return this.masks;
+  }
+
   async handleFrameSelection(framePath) {
     const frameInList = this.frames.some((frame) => frame.key === framePath);
     if (!frameInList) {
-      const frame = Tokenizer.generateFrameData(framePath);
+      const frame = Tokenizer.generateImageData(framePath, "frame-");
       this.frames.push(frame);
       this.customFrames.push(frame);
       game.settings.set("vtta-tokenizer", "custom-frames", this.customFrames);
@@ -188,7 +203,46 @@ export default class Tokenizer extends FormApplication {
     this._setTokenFrame(framePath, true);
   }
 
+  static getDefaultMasks() {
+    const defaultMask = game.settings.get(CONSTANTS.MODULE_ID, "default-mask-layer").replace(/^\/|\/$/g, "");
+
+    const defaultMasks = [
+      {
+        key: defaultMask,
+        label: game.i18n.localize("vtta-tokenizer.default-mask.name"),
+        selected: true,
+      },
+    ];
+
+    const foundryDefaultMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask.webp`.replace(/^\/|\/$/g, "");
+    if (defaultMask !== foundryDefaultMask) {
+      defaultMasks.push({
+        key: foundryDefaultMask,
+        label: game.i18n.localize("vtta-tokenizer.default-mask.foundry"),
+        selected: false,
+      });
+    }
+
+    const foundryDefaultTopMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-top-mask.webp`.replace(/^\/|\/$/g, "");
+    if (defaultMask !== foundryDefaultTopMask) {
+      defaultMasks.push({
+        key: foundryDefaultTopMask,
+        label: game.i18n.localize("vtta-tokenizer.default-mask.foundry"),
+        selected: false,
+      });
+    }
+
+    return defaultMasks;
+  }
+
   async handleMaskSelection(maskPath) {
+    const maskInList = this.masks.some((mask) => mask.key === maskPath);
+    if (!maskInList) {
+      const mask = Tokenizer.generateImageData(maskPath, "mask-");
+      this.masks.push(mask);
+      this.customMasks.push(mask);
+      game.settings.set("vtta-tokenizer", "custom-masks", this.customMasks);
+    }
     if (maskPath && maskPath.trim() !== "") {
       const options = DirectoryPicker.parse(maskPath);
       try {
@@ -232,13 +286,20 @@ export default class Tokenizer extends FormApplication {
     this.callback = callback;
     this.modifyAvatar = !game.settings.get(CONSTANTS.MODULE_ID, "token-only-toggle");
     this.modifyToken = true;
+    // frames
     this.defaultFrames = Tokenizer.getDefaultFrames();
     this.frames = [];
     this.omfgFrames = [];
     this.theGreatNachoFrames = [];
     this.jColsonFrames = [];
     this.customFrames = game.settings.get(CONSTANTS.MODULE_ID, "custom-frames");
-    this.addFrame = game.settings.get(CONSTANTS.MODULE_ID, "add-frame-default") || this.tokenOptions.auto;
+    this.addMask = game.settings.get(CONSTANTS.MODULE_ID, "add-mask-default");
+    // masks
+    this.defaultMasks = Tokenizer.getDefaultMasks();
+    this.masks = [];
+    this.customMasks = game.settings.get(CONSTANTS.MODULE_ID, "custom-masks");
+    this.addFrame = game.settings.get(CONSTANTS.MODULE_ID, "add-frame-default");
+    // colors
     this.defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
     this.tokenType = this.tokenOptions.type === "pc" ? "pc" : "npc";
     this.nameSuffix = this.tokenOptions.nameSuffix ? this.tokenOptions.nameSuffix : "";
@@ -269,6 +330,7 @@ export default class Tokenizer extends FormApplication {
 
   async getData() {
     const frames = await this.getFrames();
+    const masks = await this.getMasks();
     const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target");
     const pasteTargetName = Utils.titleString(pasteTarget);
 
@@ -277,9 +339,10 @@ export default class Tokenizer extends FormApplication {
       canUpload: game.user && game.user.can("FILES_UPLOAD"), // game.user.isTrusted || game.user.isGM,
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
       tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && game.modules.get("token-variants")?.active,
-      frames: frames,
-      pasteTarget: pasteTarget,
-      pasteTargetName: pasteTargetName,
+      frames,
+      masks,
+      pasteTarget,
+      pasteTargetName,
     };
   }
 
@@ -406,7 +469,7 @@ export default class Tokenizer extends FormApplication {
 
         switch (eventTarget.dataset.type) {
           case "mask": {
-            const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleMaskSelection.bind(this) });
+            const picker = new ImageBrowser(this.masks, { type: "image", callback: this.handleMaskSelection.bind(this) });
             picker.render(true);
             break;
           }

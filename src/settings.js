@@ -29,6 +29,32 @@ class ResetCustomFrames extends FormApplication {
   }
 }
 
+class ResetCustomMasks extends FormApplication {
+  static get defaultOptions() {
+    const options = super.defaultOptions;
+    options.id = "cleanup-custom-masks";
+    options.template = `${CONSTANTS.PATH}/templates/cleanup.hbs`;
+    return options;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get title() {
+    return "Reset Custom Masks";
+  }
+
+  /** @override */
+  // eslint-disable-next-line class-methods-use-this
+  async getData() {
+    return {};
+  }
+
+  /** @override */
+  // eslint-disable-next-line class-methods-use-this
+  async _updateObject() {
+    game.settings.set(CONSTANTS.MODULE_ID, "custom-masks", []);
+  }
+}
+
 export function registerSettings() {
   game.settings.register(CONSTANTS.MODULE_ID, "default-frame-pc", {
     name: `${CONSTANTS.MODULE_ID}.default-frame-pc.name`,
@@ -139,6 +165,22 @@ export function registerSettings() {
     scope: "client",
     config: true,
     type: ResetCustomFrames,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "custom-masks", {
+    scope: "client",
+    config: false,
+    type: Array,
+    default: [],
+  });
+
+  game.settings.registerMenu(CONSTANTS.MODULE_ID, "reset-custom-masks", {
+    name: `${CONSTANTS.MODULE_ID}.reset-custom-masks.name`,
+    hint: `${CONSTANTS.MODULE_ID}.reset-custom-masks.hint`,
+    label: `${CONSTANTS.MODULE_ID}.reset-custom-masks.name`,
+    scope: "client",
+    config: true,
+    type: ResetCustomMasks,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "image-upload-directory", {
@@ -324,6 +366,32 @@ export function registerSettings() {
     config: true,
     type: String,
     default: "",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "masks-directory", {
+    name: `${CONSTANTS.MODULE_ID}.masks-directory.name`,
+    hint: `${CONSTANTS.MODULE_ID}.masks-directory.hint`,
+    scope: "world",
+    config: true,
+    type: DirectoryPicker.Directory,
+    default: "",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "add-mask-default", {
+    name: `${CONSTANTS.MODULE_ID}.add-mask-default.name`,
+    hint: `${CONSTANTS.MODULE_ID}.add-mask-default.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-mask-layer", {
+    name: `${CONSTANTS.MODULE_ID}.default-mask-layer.name`,
+    scope: "world",
+    config: true,
+    type: ImagePicker.Img,
+    default: `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask.webp`,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "default-token-offset", {
