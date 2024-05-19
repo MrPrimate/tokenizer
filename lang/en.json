@@ -86,6 +86,7 @@
   "vtta-tokenizer.label.OK": "OK",
   "vtta-tokenizer.label.Confirm": "OK",
   "vtta-tokenizer.label.Cancel": "Cancel",
+  "vtta-tokenizer.label.Reset": "Reset",
   "vtta-tokenizer.label.LayerNumber": "Layer number",
   "vtta-tokenizer.label.ToggleBasicMask": "Toggle basic mask for this layer",
   "vtta-tokenizer.label.EditMask": "Edit mask",
@@ -170,5 +171,21 @@
   "vtta-tokenizer.MagicLasso.save": "[Enter] Close and save changes",
   "vtta-tokenizer.MagicLasso.close": "[ESC] Close and discard changes",
   "vtta-tokenizer.MagicLasso.transparent": "[Delete/D] Delete selected area/make it transparent",
-  "vtta-tokenizer.MagicLasso.fill": "[F] Fill with color"
+  "vtta-tokenizer.MagicLasso.fill": "[F] Fill with color",
+  "vtta-tokenizer.quick-settings": {
+    "label": "Quick Settings Selector",
+    "description": "Quickly apply changes for the type of tokens you wish to make",
+    "tokenring": {
+      "label": "Token Ring",
+      "description": "A token ring with a solid background colour"
+    },
+    "dynamicring": {
+      "label": "Dynamic Ring",
+      "description": "Use the dynamic ring mask, no background colour"
+    },
+    "nothing": {
+      "label": "Nothing",
+      "description": "No ring, mask or background colour"
+    }
+  }
 }
