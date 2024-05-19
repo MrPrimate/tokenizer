@@ -65,7 +65,203 @@ class ResetCustomMasks extends FormApplication {
   }
 }
 
+class QuickSettings extends FormApplication {
+  static get defaultOptions() {
+    const options = super.defaultOptions;
+    options.id = "quick-settings";
+    options.template = `${CONSTANTS.PATH}/templates/quick-settings.hbs`;
+    return options;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get title() {
+    return game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.label`);
+  }
+
+  /** @override */
+  // eslint-disable-next-line class-methods-use-this
+  async getData() {
+    return {
+      labels: {
+        description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.description`),
+        "tokenring-colour": {
+          label: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.tokenring-colour.label`),
+          description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.tokenring-colour.description`),
+        },
+        "tokenring-texture": {
+          label: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.tokenring-texture.label`),
+          description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.tokenring-texture.description`),
+        },
+        "tokenring-transparent": {
+          label: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.tokenring-transparent.label`),
+          description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.tokenring-transparent.description`),
+        },
+        dynamicring: {
+          label: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.dynamicring.label`),
+          description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.dynamicring.description`),
+        },
+        nothing: {
+          label: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.nothing.label`),
+          description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.nothing.description`),
+        }
+      }
+    };
+  }
+
+  /** @override */
+  // eslint-disable-next-line class-methods-use-this
+  async _updateObject(event) {
+    switch (event.submitter.id) {
+      case "tokenring-colour": {
+        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", true);
+        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        break;
+      }
+      case "tokenring-texture": {
+        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", true);
+        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        break;
+      }
+      case "tokenring-transparent": {
+        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        break;
+      }
+      case "dynamicring": {
+        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", true);
+        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        break;
+      }
+      case "nothing": {
+        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        break;
+      }
+      // no default
+    }
+    foundry.utils.debounce(window.location.reload(), 100);
+  }
+}
+
 export function registerSettings() {
+
+  game.settings.register(CONSTANTS.MODULE_ID, "custom-frames", {
+    scope: "client",
+    config: false,
+    type: Array,
+    default: [],
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "custom-masks", {
+    scope: "client",
+    config: false,
+    type: Array,
+    default: [],
+  });
+
+  // dialogues 
+  game.settings.registerMenu(CONSTANTS.MODULE_ID, "quick-settings", {
+    name: `${CONSTANTS.MODULE_ID}.quick-settings.label`,
+    hint: `${CONSTANTS.MODULE_ID}.quick-settings.description`,
+    label: `${CONSTANTS.MODULE_ID}.quick-settings.label`,
+    scope: "client",
+    config: true,
+    type: QuickSettings,
+  });
+
+  game.settings.registerMenu(CONSTANTS.MODULE_ID, "reset-custom-masks", {
+    name: `${CONSTANTS.MODULE_ID}.reset-custom-masks.name`,
+    hint: `${CONSTANTS.MODULE_ID}.reset-custom-masks.hint`,
+    label: `${CONSTANTS.MODULE_ID}.reset-custom-masks.name`,
+    scope: "client",
+    config: true,
+    type: ResetCustomMasks,
+  });
+
+  game.settings.registerMenu(CONSTANTS.MODULE_ID, "reset-custom-frames", {
+    name: `${CONSTANTS.MODULE_ID}.reset-custom-frames.name`,
+    hint: `${CONSTANTS.MODULE_ID}.reset-custom-frames.hint`,
+    label: `${CONSTANTS.MODULE_ID}.reset-custom-frames.name`,
+    scope: "client",
+    config: true,
+    type: ResetCustomFrames,
+  });
+
+  // results upload
+  game.settings.register(CONSTANTS.MODULE_ID, "image-upload-directory", {
+    name: `${CONSTANTS.MODULE_ID}.image-upload-directory.name`,
+    hint: `${CONSTANTS.MODULE_ID}.image-upload-directory.hint`,
+    scope: "world",
+    config: true,
+    type: DirectoryPicker.Directory,
+    default: "[data] tokenizer/pc-images",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "npc-image-upload-directory", {
+    name: `${CONSTANTS.MODULE_ID}.npc-image-upload-directory.name`,
+    hint: `${CONSTANTS.MODULE_ID}.npc-image-upload-directory.hint`,
+    scope: "world",
+    config: true,
+    type: DirectoryPicker.Directory,
+    default: "[data] tokenizer/npc-images",
+  });
+
+
+  // some common token settings
+  game.settings.register(CONSTANTS.MODULE_ID, "image-save-type", {
+    name: `${CONSTANTS.MODULE_ID}.image-save-type.name`,
+    hint: `${CONSTANTS.MODULE_ID}.image-save-type.hint`,
+    scope: "world",
+    config: true,
+    default: "webp",
+    choices: { webp: "*.webp", png: "*.png" },
+    type: String,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "token-size", {
+    name: `${CONSTANTS.MODULE_ID}.token-size.name`,
+    hint: `${CONSTANTS.MODULE_ID}.token-size.hint`,
+    scope: "player",
+    config: true,
+    type: Number,
+    default: 400,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "portrait-size", {
+    name: `${CONSTANTS.MODULE_ID}.portrait-size.name`,
+    hint: `${CONSTANTS.MODULE_ID}.portrait-size.hint`,
+    scope: "player",
+    config: true,
+    type: Number,
+    default: 400,
+  });
+
+  // frames
+
+  game.settings.register(CONSTANTS.MODULE_ID, "add-frame-default", {
+    name: `${CONSTANTS.MODULE_ID}.add-frame-default.name`,
+    hint: `${CONSTANTS.MODULE_ID}.add-frame-default.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
   game.settings.register(CONSTANTS.MODULE_ID, "default-frame-pc", {
     name: `${CONSTANTS.MODULE_ID}.default-frame-pc.name`,
     hint: `${CONSTANTS.MODULE_ID}.default-frame-pc.hint`,
@@ -93,15 +289,6 @@ export function registerSettings() {
     config: true,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint", {
-    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.name`,
-    hint: `${CONSTANTS.MODULE_ID}.default-frame-tint.hint`,
-    type: ImagePicker.Img,
-    default: `[data] ${CONSTANTS.PATH}img/plain-marble-frame-grey.png`,
-    scope: "world",
-    config: true,
-  });
-
   game.settings.register(CONSTANTS.MODULE_ID, "frame-directory", {
     name: `${CONSTANTS.MODULE_ID}.frame-directory.name`,
     hint: `${CONSTANTS.MODULE_ID}.frame-directory.hint`,
@@ -111,15 +298,6 @@ export function registerSettings() {
     default: "",
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "add-frame-default", {
-    name: `${CONSTANTS.MODULE_ID}.add-frame-default.name`,
-    hint: `${CONSTANTS.MODULE_ID}.add-frame-default.hint`,
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
-
   game.settings.register(CONSTANTS.MODULE_ID, "frame-tint", {
     name: `${CONSTANTS.MODULE_ID}.frame-tint.name`,
     hint: `${CONSTANTS.MODULE_ID}.frame-tint.hint`,
@@ -127,6 +305,15 @@ export function registerSettings() {
     config: true,
     type: Boolean,
     default: false,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint", {
+    name: `${CONSTANTS.MODULE_ID}.default-frame-tint.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-frame-tint.hint`,
+    type: ImagePicker.Img,
+    default: `[data] ${CONSTANTS.PATH}img/plain-marble-frame-grey.png`,
+    scope: "world",
+    config: true,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "default-frame-tint-pc", {
@@ -161,83 +348,105 @@ export function registerSettings() {
     default: "red",
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "custom-frames", {
-    scope: "client",
-    config: false,
-    type: Array,
-    default: [],
-  });
-
-  game.settings.registerMenu(CONSTANTS.MODULE_ID, "reset-custom-frames", {
-    name: `${CONSTANTS.MODULE_ID}.reset-custom-frames.name`,
-    hint: `${CONSTANTS.MODULE_ID}.reset-custom-frames.hint`,
-    label: `${CONSTANTS.MODULE_ID}.reset-custom-frames.name`,
-    scope: "client",
+  game.settings.register(CONSTANTS.MODULE_ID, "disable-omfg-frames", {
+    name: `${CONSTANTS.MODULE_ID}.disable-omfg-frames.name`,
+    scope: "player",
     config: true,
-    type: ResetCustomFrames,
+    type: Boolean,
+    default: false,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "custom-masks", {
-    scope: "client",
-    config: false,
-    type: Array,
-    default: [],
-  });
-
-  game.settings.registerMenu(CONSTANTS.MODULE_ID, "reset-custom-masks", {
-    name: `${CONSTANTS.MODULE_ID}.reset-custom-masks.name`,
-    hint: `${CONSTANTS.MODULE_ID}.reset-custom-masks.hint`,
-    label: `${CONSTANTS.MODULE_ID}.reset-custom-masks.name`,
-    scope: "client",
+  game.settings.register(CONSTANTS.MODULE_ID, "disable-jcolson-frames", {
+    name: `${CONSTANTS.MODULE_ID}.disable-jcolson-frames.name`,
+    scope: "player",
     config: true,
-    type: ResetCustomMasks,
+    type: Boolean,
+    default: false,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "image-upload-directory", {
-    name: `${CONSTANTS.MODULE_ID}.image-upload-directory.name`,
-    hint: `${CONSTANTS.MODULE_ID}.image-upload-directory.hint`,
-    scope: "world",
+  game.settings.register(CONSTANTS.MODULE_ID, "disable-thegreatnacho-frames", {
+    name: `${CONSTANTS.MODULE_ID}.disable-thegreatnacho-frames.name`,
+    scope: "player",
     config: true,
-    type: DirectoryPicker.Directory,
-    default: "[data] tokenizer/pc-images",
+    type: Boolean,
+    default: false,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "npc-image-upload-directory", {
-    name: `${CONSTANTS.MODULE_ID}.npc-image-upload-directory.name`,
-    hint: `${CONSTANTS.MODULE_ID}.npc-image-upload-directory.hint`,
-    scope: "world",
+  // colour layer
+  game.settings.register(CONSTANTS.MODULE_ID, "default-color-layer", {
+    name: `${CONSTANTS.MODULE_ID}.default-color-layer.name`,
+    scope: "player",
     config: true,
-    type: DirectoryPicker.Directory,
-    default: "[data] tokenizer/npc-images",
+    type: Boolean,
+    default: true,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "image-save-type", {
-    name: `${CONSTANTS.MODULE_ID}.image-save-type.name`,
-    hint: `${CONSTANTS.MODULE_ID}.image-save-type.hint`,
-    scope: "world",
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-color", {
+    name: `${CONSTANTS.MODULE_ID}.default-color.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-color.hint`,
+    scope: "player",
     config: true,
-    default: "webp",
-    choices: { webp: "*.webp", png: "*.png" },
     type: String,
+    default: "white",
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "token-size", {
-    name: `${CONSTANTS.MODULE_ID}.token-size.name`,
-    hint: `${CONSTANTS.MODULE_ID}.token-size.hint`,
-    scope: "player",
+  // Texture Layer
+
+  game.settings.register(CONSTANTS.MODULE_ID, "enable-default-texture-layer", {
+    name: `${CONSTANTS.MODULE_ID}.enable-default-texture-layer.name`,
+    hint: `${CONSTANTS.MODULE_ID}.enable-default-texture-layer.hint`,
+    scope: "world",
     config: true,
-    type: Number,
-    default: 400,
+    type: Boolean,
+    default: false,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "portrait-size", {
-    name: `${CONSTANTS.MODULE_ID}.portrait-size.name`,
-    hint: `${CONSTANTS.MODULE_ID}.portrait-size.hint`,
+  game.settings.register(CONSTANTS.MODULE_ID, "default-texture-layer", {
+    name: `${CONSTANTS.MODULE_ID}.default-texture-layer.name`,
+    scope: "world",
+    config: true,
+    type: ImagePicker.Img,
+    default: `[data] ${CONSTANTS.PATH}img/grey-texture.webp`,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-texture-layer-tint", {
+    name: `${CONSTANTS.MODULE_ID}.default-texture-layer-tint.name`,
+    hint: `${CONSTANTS.MODULE_ID}.default-texture-layer-tint.hint`,
     scope: "player",
     config: true,
-    type: Number,
-    default: 400,
+    type: String,
+    default: "",
   });
+
+  // MASKS
+  game.settings.register(CONSTANTS.MODULE_ID, "add-mask-default", {
+    name: `${CONSTANTS.MODULE_ID}.add-mask-default.name`,
+    hint: `${CONSTANTS.MODULE_ID}.add-mask-default.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "masks-directory", {
+    name: `${CONSTANTS.MODULE_ID}.masks-directory.name`,
+    hint: `${CONSTANTS.MODULE_ID}.masks-directory.hint`,
+    scope: "world",
+    config: true,
+    type: DirectoryPicker.Directory,
+    default: "",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "default-mask-layer", {
+    name: `${CONSTANTS.MODULE_ID}.default-mask-layer.name`,
+    scope: "world",
+    config: true,
+    type: ImagePicker.Img,
+    default: `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask.webp`,
+  });
+
+  // MISC
 
   game.settings.register(CONSTANTS.MODULE_ID, "title-link", {
     name: `${CONSTANTS.MODULE_ID}.title-link.name`,
@@ -309,99 +518,6 @@ export function registerSettings() {
     config: true,
     type: Boolean,
     default: true,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "disable-omfg-frames", {
-    name: `${CONSTANTS.MODULE_ID}.disable-omfg-frames.name`,
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "disable-jcolson-frames", {
-    name: `${CONSTANTS.MODULE_ID}.disable-jcolson-frames.name`,
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "disable-thegreatnacho-frames", {
-    name: `${CONSTANTS.MODULE_ID}.disable-thegreatnacho-frames.name`,
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "default-color", {
-    name: `${CONSTANTS.MODULE_ID}.default-color.name`,
-    hint: `${CONSTANTS.MODULE_ID}.default-color.hint`,
-    scope: "player",
-    config: true,
-    type: String,
-    default: "white",
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "default-color-layer", {
-    name: `${CONSTANTS.MODULE_ID}.default-color-layer.name`,
-    scope: "player",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "enable-default-texture-layer", {
-    name: `${CONSTANTS.MODULE_ID}.enable-default-texture-layer.name`,
-    hint: `${CONSTANTS.MODULE_ID}.enable-default-texture-layer.hint`,
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "default-texture-layer", {
-    name: `${CONSTANTS.MODULE_ID}.default-texture-layer.name`,
-    scope: "world",
-    config: true,
-    type: ImagePicker.Img,
-    default: `[data] ${CONSTANTS.PATH}img/grey-texture.webp`,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "default-texture-layer-tint", {
-    name: `${CONSTANTS.MODULE_ID}.default-texture-layer-tint.name`,
-    hint: `${CONSTANTS.MODULE_ID}.default-texture-layer-tint.hint`,
-    scope: "player",
-    config: true,
-    type: String,
-    default: "",
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "masks-directory", {
-    name: `${CONSTANTS.MODULE_ID}.masks-directory.name`,
-    hint: `${CONSTANTS.MODULE_ID}.masks-directory.hint`,
-    scope: "world",
-    config: true,
-    type: DirectoryPicker.Directory,
-    default: "",
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "add-mask-default", {
-    name: `${CONSTANTS.MODULE_ID}.add-mask-default.name`,
-    hint: `${CONSTANTS.MODULE_ID}.add-mask-default.hint`,
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_ID, "default-mask-layer", {
-    name: `${CONSTANTS.MODULE_ID}.default-mask-layer.name`,
-    scope: "world",
-    config: true,
-    type: ImagePicker.Img,
-    default: `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask.webp`,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "default-token-offset", {

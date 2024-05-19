@@ -174,13 +174,21 @@
   "vtta-tokenizer.MagicLasso.fill": "[F] Fill with color",
   "vtta-tokenizer.quick-settings": {
     "label": "Quick Settings Selector",
-    "description": "Quickly apply changes for the type of tokens you wish to make",
-    "tokenring": {
-      "label": "Token Ring",
+    "description": "Quickly apply changes for the type of tokens you wish to make. This will use the currently selected default image for the frame, texture layer, colours etc.",
+    "tokenring-colour": {
+      "label": "Token Ring Colour",
       "description": "A token ring with a solid background colour"
     },
+    "tokenring-texture": {
+      "label": "Token Ring Texture",
+      "description": "A token ring with a texture layer as background"
+    },
+    "tokenring-transparent": {
+      "label": "Token Ring Clear",
+      "description": "A token ring with no background"
+    },
     "dynamicring": {
-      "label": "Dynamic Ring",
+      "label": "Dynamic Token Ring",
       "description": "Use the dynamic ring mask, no background colour"
     },
     "nothing": {

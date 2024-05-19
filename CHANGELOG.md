@@ -3,6 +3,7 @@
 # [4.3.4]
 
 - PT-BR language translation updates for v4.3.3.
+- Add Quick Settings for quickly choosing the layers you want to add when opening tokenizer.
 
 # [4.3.3]
 
