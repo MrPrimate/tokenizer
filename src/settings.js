@@ -19,7 +19,12 @@ class ResetCustomFrames extends FormApplication {
   /** @override */
   // eslint-disable-next-line class-methods-use-this
   async getData() {
-    return {};
+    return {
+      labels: {
+        name: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-frames.name`),
+        list: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-frames.list`),
+      }
+    };
   }
 
   /** @override */
@@ -45,7 +50,12 @@ class ResetCustomMasks extends FormApplication {
   /** @override */
   // eslint-disable-next-line class-methods-use-this
   async getData() {
-    return {};
+    return {
+      labels: {
+        name: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-masks.name`),
+        list: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-masks.list`),
+      }
+    };
   }
 
   /** @override */
