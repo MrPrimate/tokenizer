@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.5]
+
+- Translation updates for Brazilian Portuguese and Japanese.
+
 # [4.3.4]
 
 - PT-BR language translation updates for v4.3.3.
