@@ -86,6 +86,7 @@
   "vtta-tokenizer.label.OK": "OK",
   "vtta-tokenizer.label.Confirm": "OK",
   "vtta-tokenizer.label.Cancel": "Cancelar",
+  "vtta-tokenizer.label.Reset": "Redefinir",
   "vtta-tokenizer.label.LayerNumber": "Número da Camada",
   "vtta-tokenizer.label.ToggleBasicMask": "Alternar máscara básica para esta camada",
   "vtta-tokenizer.label.EditMask": "Editar máscara",
@@ -126,6 +127,7 @@
   "vtta-tokenizer.reset-custom-frames.hint": "Limpar Lista de Bordas Personalizadas",
   "vtta-tokenizer.reset-custom-frames.list": "Redefinir Lista de Bordas Personalizadas",
   "vtta-tokenizer.masks-directory.name": "Diretório para Máscaras Personalizadas",
+  "vtta-tokenizer.masks-directory.hint": "A localização no servidor para verificar por imagens de máscaras.",
   "vtta-tokenizer.reset-custom-masks.name": "Redefinir Máscaras Personalizadas?",
   "vtta-tokenizer.reset-custom-masks.hint": "Limpar Lista de Máscaras Personalizadas",
   "vtta-tokenizer.reset-custom-masks.list": "Redefinir Lista de Máscaras Personalizadas",
@@ -169,5 +171,29 @@
   "vtta-tokenizer.MagicLasso.save": "[Enter] Fechar e salvar alterações",
   "vtta-tokenizer.MagicLasso.close": "[ESC] Fechar e descartar alterações",
   "vtta-tokenizer.MagicLasso.transparent": "[Delete/D] Exclua a área selecionada/torne-a transparente",
-  "vtta-tokenizer.MagicLasso.fill": "[F] Preencha com cor"
+  "vtta-tokenizer.MagicLasso.fill": "[F] Preencha com cor",
+  "vtta-tokenizer.quick-settings": {
+    "label": "Seletor de Configurações Rápidas",
+    "description": "Aplique mudanãs rápidas para os tipos de tokens que você quer criar. Isso usará a imagem padrão atual selecionada para a borda, camada de textura, cores, etc.",
+    "tokenring-colour": {
+      "label": "Cor do Anel do Token",
+      "description": "Um anel de token com uma cor de fundo sólida."
+    },
+    "tokenring-texture": {
+      "label": "Textura do Anel do Token",
+      "description": "Um anel de token com uma camada de textura de fundo."
+    },
+    "tokenring-transparent": {
+      "label": "Anel do Token Limpo",
+      "description": "Um anel de token sem fundo."
+    },
+    "dynamicring": {
+      "label": "Anel de Token Dinâmico",
+      "description": "Use a máscada de anel dinâmico, sem cor de fundo."
+    },
+    "nothing": {
+      "label": "Nada",
+      "description": "Sem anel, máscara ou cor de fundo."
+    }
+  }
 }
