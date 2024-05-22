@@ -334,6 +334,7 @@ export default class Tokenizer extends FormApplication {
       masks,
       pasteTarget,
       pasteTargetName,
+      modifyAvatar: this.modifyAvatar,
     };
   }
 

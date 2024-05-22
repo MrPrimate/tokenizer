@@ -9,7 +9,7 @@
                 <div class="title">
                     <div class="title-element"><h1>{{localize "vtta-tokenizer.label.avatar"}}</h1></div>
                     <div class="title-element">
-                        <button id="modify-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="modify-toggle">{{localize "vtta-tokenizer.label.Modify"}}&nbsp;&nbsp;<i id="modify-avatar-fas" class="fa-regular fa-square button-fas"></i></button>
+                        <button id="modify-avatar" type="button" class="box-button {{#unless modifyAvatar}}deselected{{/unless}}" data-target="avatar" data-type="modify-toggle">{{localize "vtta-tokenizer.label.Modify"}}&nbsp;&nbsp;<i id="modify-avatar-fas" class="{{#if modifyAvatar}}fas fa-square-check{{else}}fa-regular fa-square{{/if}} button-fas"></i></button>
                         <button id="paste-avatar" type="button" class="box-button deselected" data-target="avatar" data-type="paste-toggle">{{localize "vtta-tokenizer.label.PasteTarget"}}&nbsp;&nbsp;<i id="paste-avatar-fas" class="fa-regular fa-circle button-fas"></i></button>
                     </div>
                 </div>
