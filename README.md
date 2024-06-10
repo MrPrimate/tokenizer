@@ -222,3 +222,13 @@ You can pass in override options in an `options` map as the second argument:
 ```javascript
 await game.modules.get("vtta-tokenizer").api.autoToken(actor, { nameSuffix: "-name-suffix" });
 ```
+
+
+# Can I reset all the settings to defaults?
+
+```javascript
+game.settings.settings.forEach((s) => {
+  if (s.namespace !== "vtta-tokenizer") return;
+  game.settings.set(s.namespace, s.key, s.default);
+});
+```

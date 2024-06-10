@@ -641,7 +641,7 @@ export default class Tokenizer extends FormApplication {
         await this._addTokenTexture();
       }
       // if we add a frame by default offset the token image
-      const options = this.addFrame
+      const options = this.addFrame || this.addMask
         ? this.tokenOffset
         : {};
       this.Token.addImageLayer(img, options);

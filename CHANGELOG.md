@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.7]
+
+- Use image offset when just using a masking layer.
+
 # [4.3.6]
 
 - The Modify avatar checkbox would not respect the settings default when opening tokenizer.

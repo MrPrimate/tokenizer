@@ -117,6 +117,8 @@ class QuickSettings extends FormApplication {
         game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", true);
         game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
         game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
+        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
@@ -125,6 +127,8 @@ class QuickSettings extends FormApplication {
         game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
         game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
         game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", true);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
+        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
@@ -133,6 +137,8 @@ class QuickSettings extends FormApplication {
         game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
         game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
         game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
+        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
@@ -141,6 +147,8 @@ class QuickSettings extends FormApplication {
         game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
         game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", true);
         game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", -65);
+        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
@@ -150,6 +158,7 @@ class QuickSettings extends FormApplication {
         game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
         game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
         game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", 0);
         break;
       }
       // no default
@@ -208,7 +217,8 @@ export function registerSettings() {
     hint: `${CONSTANTS.MODULE_ID}.image-upload-directory.hint`,
     scope: "world",
     config: true,
-    type: DirectoryPicker.Directory,
+    type: String,
+    filePicker: "folder",
     default: "[data] tokenizer/pc-images",
   });
 
@@ -248,7 +258,7 @@ export function registerSettings() {
     scope: "player",
     config: true,
     type: Number,
-    default: 400,
+    default: 1000,
   });
 
   // frames
