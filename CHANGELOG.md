@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.8]
+
+- Enable Português (Brasil) in manifest :facepalm:
+
 # [4.3.7]
 
 - Use image offset when just using a masking layer.
