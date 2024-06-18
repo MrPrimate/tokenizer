@@ -195,5 +195,7 @@
       "label": "Nada",
       "description": "Sem anel, máscara ou cor de fundo."
     }
-  }
+  },
+  "vtta-tokenizer.auto-apply-dynamic-token-ring.name": "Aplicar Anel Dinâmico no Token?",
+  "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Habilita automaticamente o anel dinâmico em tokens editados."
 }
