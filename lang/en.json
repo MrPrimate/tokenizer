@@ -195,5 +195,7 @@
       "label": "Nothing",
       "description": "No ring, mask or background colour"
     }
-  }
+  },
+  "vtta-tokenizer.auto-apply-dynamic-token-ring.name": "Auto Apply Dynamic Token Ring?",
+  "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Automatically enable dyanmic token ring on edited tokens?"
 }

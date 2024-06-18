@@ -86,8 +86,25 @@ async function updateActor(tokenizerResponse) {
     update.token = {
       img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
     };
-
   } 
+
+  if (game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")) {
+    if (game.release.generation < 12) {
+      if (update.prototypeToken) {
+        foundry.utils.setProperty(update.prototypeToken, "flags.dnd5e.tokenRing.enabled", true);
+      }
+      if (update.token) {
+        foundry.utils.setProperty(update.token, "flags.dnd5e.tokenRing.enabled", true);
+      }
+    } else {
+      if (update.prototypeToken) {
+        foundry.utils.setProperty(update.prototypeToken, "ring.enabled", true);
+      }
+      if (update.token) {
+        foundry.utils.setProperty(update.token, "ring.enabled", true);
+      }
+    }
+  }
 
   logger.debug("Updating with", update);
   await tokenizerResponse.actor.update(update);
@@ -173,7 +190,6 @@ export async function autoToken(actor, options) {
     isWildCard: actor.prototypeToken.randomImg,
     auto: true,
     updateActor: true,
-    // tokenOffset: { position: { x: -35, y: -35 } },
   };
   const mergedOptions = foundry.utils.mergeObject(defaultOptions, options);
   const tokenizer = new Tokenizer(mergedOptions, updateActor);

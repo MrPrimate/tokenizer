@@ -113,52 +113,57 @@ class QuickSettings extends FormApplication {
   async _updateObject(event) {
     switch (event.submitter.id) {
       case "tokenring-colour": {
-        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", true);
-        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
-        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", true);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "tokenring-texture": {
-        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", true);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
-        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", true);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "tokenring-transparent": {
-        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
-        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "dynamicring": {
-        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", true);
-        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", -65);
-        game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", true);
+        await game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", -65);
+        await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
+        await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", true);
         // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "nothing": {
-        game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
-        game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", 0);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "add-mask-default", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "enable-default-texture-layer", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
+        await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", 0);
+        await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
         break;
       }
       // no default
@@ -356,6 +361,15 @@ export function registerSettings() {
     config: true,
     type: String,
     default: "red",
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", {
+    name: `${CONSTANTS.MODULE_ID}.auto-apply-dynamic-token-ring.name`,
+    hint: `${CONSTANTS.MODULE_ID}.auto-apply-dynamic-token-ring.hint`,
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: false,
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "disable-omfg-frames", {

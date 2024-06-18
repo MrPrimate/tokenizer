@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.3.9]
+
+- Fix for quick settings not always applying.
+- Setting to enable dynamic token ring settings when saving a tokenizer token.
+
 # [4.3.8]
 
 - Enable Português (Brasil) in manifest :facepalm:
