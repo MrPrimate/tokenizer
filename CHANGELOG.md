@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.3.10]
+
+- PT-BR language translation updates for v4.3.9.
+- Layer cloning will now preserve lasso changes.
+
 # [4.3.9]
 
 - Fix for quick settings not always applying.

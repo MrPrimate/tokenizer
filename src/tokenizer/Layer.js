@@ -110,53 +110,56 @@ export default class Layer {
     // this.tintColor = "#f59042";
   }
 
+  static fromLayer(layer) {
+    const newLayer = new Layer({
+      view: layer.view,
+      canvas: Utils.cloneCanvas(layer.canvas),
+      img: layer.img,
+      tintColor: layer.tintColor,
+      tintLayer: layer.tintLayer,
+      maskFromImage: layer.maskFromImage,
+      visible: layer.visible,
+      color: layer.color,
+    });
+
+    newLayer.colorLayer = layer.colorLayer;
+    newLayer.source = Utils.cloneCanvas(layer.source);
+    newLayer.canvas = Utils.cloneCanvas(layer.canvas);
+    newLayer.preview = Utils.cloneCanvas(layer.preview);
+    newLayer.original = Utils.cloneCanvas(layer.original);
+
+    newLayer.providesMask = layer.providesMask;
+
+    newLayer.scale = layer.scale;
+    newLayer.rotation = layer.rotation;
+    newLayer.position = foundry.utils.deepClone(layer.position);
+    newLayer.center = layer.center;
+    newLayer.mirror = layer.mirror;
+    newLayer.flipped = layer.flipped;
+    newLayer.visible = layer.visible;
+    newLayer.alpha = layer.alpha;
+
+    if (layer.mask) newLayer.mask = Utils.cloneCanvas(layer.mask);
+    if (layer.sourceMask) layer.sourceMask = Utils.cloneCanvas(layer.sourceMask);
+    if (layer.renderedMask) layer.renderedMask = Utils.cloneCanvas(layer.renderedMask);
+    newLayer.customMask = layer.customMask;
+    newLayer.customMaskLayers = layer.customMaskLayers;
+    newLayer.appliedMaskIds = new Set(layer.appliedMaskIds);
+
+    newLayer.compositeOperation = layer.compositeOperation;
+    newLayer.maskCompositeOperation = layer.maskCompositeOperation;
+    newLayer.maskFromImage = layer.maskFromImage;
+
+    newLayer.alphaPixelColors = new Set(layer.alphaPixelColors);
+    if (layer.previousAlphaPixelColors) newLayer.previousAlphaPixelColors = new Set(layer.previousAlphaPixelColors);
+
+    newLayer.redraw();
+    return newLayer;
+
+  }
+
   clone() {
-    const imgOptions = {
-      view: this.view,
-      img: this.img,
-      canvasHeight: this.source.height,
-      canvasWidth: this.source.width,
-      tintColor: this.tintColor,
-      tintLayer: this.tintLayer,
-    };
-
-    const colorOptions = {
-      view: this.view,
-      color: this.color,
-      canvasHeight: this.source.height,
-      canvasWidth: this.source.width,
-    };
-
-    const newLayer = this.img
-      ? Layer.fromImage(imgOptions)
-      : Layer.fromColor(colorOptions);
-
-    newLayer.providesMask = this.providesMask;
-    newLayer.active = false;
-
-    newLayer.scale = this.scale;
-    newLayer.rotation = this.rotation;
-    newLayer.position = foundry.utils.deepClone(this.position);
-    newLayer.center = this.center;
-    newLayer.mirror = this.mirror;
-    newLayer.flipped = this.flipped;
-    newLayer.visible = this.visible;
-    newLayer.alpha = this.alpha;
-
-    if (this.mask) newLayer.mask = Utils.cloneCanvas(this.mask);
-    if (this.sourceMask) this.sourceMask = Utils.cloneCanvas(this.sourceMask);
-    if (this.renderedMask) this.renderedMask = Utils.cloneCanvas(this.renderedMask);
-    newLayer.customMask = this.customMask;
-    newLayer.customMaskLayers = this.customMaskLayers;
-    newLayer.appliedMaskIds = new Set(this.appliedMaskIds);
-
-    newLayer.compositeOperation = this.compositeOperation;
-    newLayer.maskCompositeOperation = this.maskCompositeOperation;
-
-
-    newLayer.alphaPixelColors = new Set(this.alphaPixelColors);
-    if (this.previousAlphaPixelColors) newLayer.previousAlphaPixelColors = new Set(this.previousAlphaPixelColors);
-
+    const newLayer = Layer.fromLayer(this);
     return newLayer;
   }
 
