@@ -316,7 +316,6 @@ function linkDefaultSheets() {
             } else {
               // showing the filepicker
               const current = data.actor ? data.actor[dataEditField] : data[dataEditField];
-              const dir = Utils.dirPath(current);
               new FilePicker({
                 type: "image",
                 current,
@@ -326,7 +325,7 @@ function linkDefaultSheets() {
                 },
                 top: app.position.top + 40,
                 left: app.position.left + 10,
-              }).browse(dir);
+              }).browse();
             }
           });
         });
