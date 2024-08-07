@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.11]
+
+- When bypassing Tokenizer to use the Filepicker, s3 paths would become links.
+
 # [4.3.10]
 
 - PT-BR language translation updates for v4.3.9.
