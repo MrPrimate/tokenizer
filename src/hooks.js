@@ -441,6 +441,7 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
     condition: (li) => {
       const pack = $(li).attr("data-pack");
       const compendium = game.packs.get(pack);
+      if (!compendium) return false;
       const isActor = compendium.metadata.type === "Actor";
       return isActor;
     },

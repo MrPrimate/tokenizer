@@ -1,5 +1,10 @@
 # Changelog
 
+
+# [4.3.12]
+
+- When using the compendium search functions in pf2e right click on actor would fail.
+
 # [4.3.11]
 
 - When bypassing Tokenizer to use the Filepicker, s3 paths would not open location properly.
