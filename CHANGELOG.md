@@ -2,7 +2,7 @@
 
 # [4.3.11]
 
-- When bypassing Tokenizer to use the Filepicker, s3 paths would become links.
+- When bypassing Tokenizer to use the Filepicker, s3 paths would not open location properly.
 
 # [4.3.10]
 
