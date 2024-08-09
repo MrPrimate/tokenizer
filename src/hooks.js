@@ -399,7 +399,7 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
     condition: () => {
       return game.user.can("FILES_UPLOAD")
         || !game.settings.get(CONSTANTS.MODULE_ID, "disable-player");
-    }
+    },
   });
 
   if (!game.user.isGM) return;
@@ -421,7 +421,7 @@ Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
     icon: '<i class="fas fa-user-circle"></i>',
     condition: () => {
       return game.user.can("FILES_UPLOAD");
-    }
+    },
   });
 });
 

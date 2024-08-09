@@ -56,7 +56,7 @@ export class TokenizerSaveLocations extends FormApplication {
         name: game.i18n.localize("vtta-tokenizer.label.token"),
         directoryPath: this.tokenizer.tokenUploadDirectory,
         fileName: this.tokenizer.tokenFileName,
-      }
+      },
     ];
 
     return { type: this.data };
@@ -83,14 +83,14 @@ export class TokenizerSaveLocations extends FormApplication {
 
     if (directoryStatus.some((dir) => dir.isBad)) {
       $("tokenizer-directory-setup").text(
-        `Please set the image upload directory(s) to something other than the root.`
+        `Please set the image upload directory(s) to something other than the root.`,
       );
       $("#ddb-importer-folders").css("height", "auto");
       logger.error("Error setting Image directory", {
         directoryStatus,
       });
       throw new Error(
-        `Please set the image upload directory to something other than the root.`
+        `Please set the image upload directory to something other than the root.`,
       );
     } else if (directoryStatus.some((dir) => !dir.isValid)) {
       $("#munching-folder-setup").text(`Directory Validation Failed.`);

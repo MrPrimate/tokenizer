@@ -23,7 +23,7 @@ class ResetCustomFrames extends FormApplication {
       labels: {
         name: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-frames.name`),
         list: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-frames.list`),
-      }
+      },
     };
   }
 
@@ -54,7 +54,7 @@ class ResetCustomMasks extends FormApplication {
       labels: {
         name: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-masks.name`),
         list: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-masks.list`),
-      }
+      },
     };
   }
 
@@ -103,8 +103,8 @@ class QuickSettings extends FormApplication {
         nothing: {
           label: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.nothing.label`),
           description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.nothing.description`),
-        }
-      }
+        },
+      },
     };
   }
 

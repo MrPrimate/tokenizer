@@ -21,7 +21,7 @@ export class Masker {
           (2 * j * width) + (i % 2 ? 0 : width),
           i * width,
           width,
-          width
+          width,
         );
       }
     }
@@ -40,7 +40,7 @@ export class Masker {
         this.yOffset,
         this.xOffset,
         this.scaledWidth,
-        this.scaledHeight
+        this.scaledHeight,
       );
   }
 
@@ -59,7 +59,7 @@ export class Masker {
         this.yOffset,
         this.xOffset,
         this.scaledWidth,
-        this.scaledHeight
+        this.scaledHeight,
       );
   }
 
@@ -86,7 +86,7 @@ export class Masker {
       this.yOffset,
       this.xOffset,
       this.scaledWidth,
-      this.scaledHeight
+      this.scaledHeight,
     );
 
     this.maskContext.lineJoin = "round";
@@ -155,7 +155,7 @@ export class Masker {
     const rect = this.canvas.getBoundingClientRect();
     return {
       x: event.clientX - rect.left,
-      y: event.clientY - rect.top
+      y: event.clientY - rect.top,
     };
   }
 
@@ -217,7 +217,7 @@ export class Masker {
       point.y / this.ratio,
       this.brushSize / this.ratio,
       0,
-      2 * Math.PI
+      2 * Math.PI,
     );
     this.maskContext.fill();
     this.maskChanged = true;
@@ -242,7 +242,7 @@ export class Masker {
           else this.brushSize++;
           if (this.brushSize >= 100) this.brushSize = 100;
       }
-      }, { passive: false }
+      }, { passive: false },
     );
 
     this.canvas.addEventListener("mouseup", () => {
@@ -325,7 +325,7 @@ export class Masker {
       this.currentPoint.y / this.ratio,
       this.brushSize / this.ratio,
       0,
-      2 * Math.PI
+      2 * Math.PI,
     );
     context.fill();
 

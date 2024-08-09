@@ -193,7 +193,7 @@ export default class Control {
             image: blendControlElement.classList.contains("blend-control-image"),
             mask: blendControlElement.classList.contains("blend-control-mask"),
             blendMode: event.target.value,
-          }
+          },
         }));
       });
   
@@ -394,7 +394,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('duplicate', {
           detail: { layerId: this.layer.id },
-        })
+        }),
       );
     });
 
@@ -411,7 +411,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('delete', {
           detail: { layerId: this.layer.id },
-        })
+        }),
       );
     });
 
@@ -447,7 +447,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('color', {
           detail: { layerId: this.layer.id, color: event.target.value },
-        })
+        }),
       );
     });
 
@@ -465,7 +465,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('color', {
           detail: { layerId: this.layer.id, color: null },
-        })
+        }),
       );
     });
 
@@ -484,14 +484,14 @@ export default class Control {
         this.view.dispatchEvent(
           new CustomEvent('pick-color-end', {
             detail: { layerId: this.layer.id },
-          })
+          }),
         );
       } else {
         this.getColor.classList.add('active');
         this.view.dispatchEvent(
           new CustomEvent('pick-color-start', {
             detail: { layerId: this.layer.id },
-          })
+          }),
         );
       }
     });
@@ -517,7 +517,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('move', {
           detail: { layerId: this.layer.id, direction: 'up' },
-        })
+        }),
       );
     });
 
@@ -535,7 +535,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('move', {
           detail: { layerId: this.layer.id, direction: 'down' },
-        })
+        }),
       );
     });
     this.moveManagementSection.appendChild(this.moveUpControl);
@@ -646,14 +646,14 @@ export default class Control {
         this.view.dispatchEvent(
           new CustomEvent('pick-alpha-end', {
             detail: { layerId: this.layer.id },
-          })
+          }),
         );
       } else {
         this.getAlpha.classList.add('active');
         this.view.dispatchEvent(
           new CustomEvent('pick-alpha-start', {
             detail: { layerId: this.layer.id },
-          })
+          }),
         );
       }
     });
@@ -734,7 +734,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('color-tint', {
           detail: { layerId: this.layer.id, color: event.target.value },
-        })
+        }),
       );
     });
 
@@ -752,7 +752,7 @@ export default class Control {
       this.view.dispatchEvent(
         new CustomEvent('color-tint', {
           detail: { layerId: this.layer.id, color: null },
-        })
+        }),
       );
     });
   }
@@ -775,7 +775,7 @@ export default class Control {
         this.view.dispatchEvent(
           new CustomEvent('mask-layer', {
             detail: { layerId: this.layer.id, maskLayerId: layer.id },
-          })
+          }),
         );
       });
 

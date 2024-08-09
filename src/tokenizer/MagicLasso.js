@@ -31,7 +31,7 @@ export class MagicLasso {
           (2 * j * width) + (i % 2 ? 0 : width),
           i * width,
           width,
-          width
+          width,
         );
       }
     }
@@ -54,7 +54,7 @@ export class MagicLasso {
         this.yOffset,
         this.xOffset,
         this.scaledWidth,
-        this.scaledHeight
+        this.scaledHeight,
       );
   }
 
@@ -63,7 +63,7 @@ export class MagicLasso {
       0,
       0,
       this.canvas.width,
-      this.canvas.height
+      this.canvas.height,
     );
   }
 
@@ -273,7 +273,7 @@ export class MagicLasso {
         sign = sign < 0 ? sign / 5 : sign / 3;
         let threshold = Math.min(
           Math.max(this.colorThreshold + Math.floor(sign * len), 1),
-          255
+          255,
         );
         if (threshold != this.currentThreshold) {
           this.currentThreshold = threshold;

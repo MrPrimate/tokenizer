@@ -115,7 +115,7 @@ class ImageBrowser extends FormApplication {
               ? `[${fPicker.activeSource}:${fPicker.result.bucket}] ${imagePath}`
               : `[${fPicker.activeSource}] ${imagePath}`;
             this.callback(formattedPath);
-          }
+          },
     }).render();
     this.close();
   }
@@ -142,8 +142,8 @@ class ImageBrowser extends FormApplication {
           .append(
             this.assets.slice(
               this.assetInc * ImageBrowser.MAX_ASSETS,
-              (this.assetInc + 1) * ImageBrowser.MAX_ASSETS
-            )
+              (this.assetInc + 1) * ImageBrowser.MAX_ASSETS,
+            ),
           );
         this._reEnableListeners();
       }

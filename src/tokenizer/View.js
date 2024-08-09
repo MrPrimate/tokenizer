@@ -112,7 +112,7 @@ export default class View {
               0,
               0,
               this.width,
-              this.height
+              this.height,
             );
 
             this.canvas.toBlob((blob) => {
@@ -449,7 +449,7 @@ export default class View {
     this.#addLayerControls(layer, { masked, activate });
   }
 
-  addColorLayer({ masked = false, activate = false, color = null } = {}
+  addColorLayer({ masked = false, activate = false, color = null } = {},
   ) {
     logger.debug(`adding color layer with options`, {
       imgSrc: `colorLayer: ${color}`,
@@ -462,7 +462,7 @@ export default class View {
       view: this,
       color,
       width: this.width,
-      height: this.height
+      height: this.height,
     };
 
     const layer = Layer.fromColor(imgOptions);
@@ -470,7 +470,7 @@ export default class View {
   }
 
   addImageLayer(img, { masked = false, activate = false, tintColor = null, tintLayer = false,
-    position = { x: null, y: null }, scale = null, maskFromImage = false, visible = true } = {}
+    position = { x: null, y: null }, scale = null, maskFromImage = false, visible = true } = {},
   ) {
     const imgSrc = Utils.isString(img.src) && !img.src.startsWith("data:image/png;base64")
       ? img.src
@@ -904,7 +904,7 @@ export default class View {
           0,
           0,
           this.width,
-          this.height
+          this.height,
         );
       }
     }

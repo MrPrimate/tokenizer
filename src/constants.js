@@ -88,7 +88,7 @@ const CONSTANTS = {
       "⑲",
       "⑳",
     ],
-  }
+  },
 };
 
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_ID}/`;

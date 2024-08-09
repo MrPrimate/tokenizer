@@ -10,7 +10,7 @@ function getEnrichedPixel(imageData, point) {
       green: imageData.data[baseIndex + 1],
       blue: imageData.data[baseIndex + 2],
       alpha: imageData.data[baseIndex + 3],
-    }
+    },
   );
   return {
     x: point.x,

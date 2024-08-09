@@ -94,7 +94,7 @@ export default class Tokenizer extends FormApplication {
           ? game.i18n.localize("vtta-tokenizer.default-frame-npc.hostile")
           : game.i18n.localize("vtta-tokenizer.default-frame-npc.neutral"),
         selected: true,
-      }
+      },
     ];
 
     const foundryDefaultPCFrame = game.settings.settings.get("vtta-tokenizer.default-frame-pc").default.replace(/^\/|\/$/g, "");
@@ -611,7 +611,7 @@ export default class Tokenizer extends FormApplication {
         case "tokenVariants": {
           game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
             callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
-            searchType: eventTarget.dataset.target === "avatar" ? "Portrait" : "Token"
+            searchType: eventTarget.dataset.target === "avatar" ? "Portrait" : "Token",
           });
           break;
         }

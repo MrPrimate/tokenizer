@@ -83,7 +83,7 @@ class ImagePicker extends FilePicker {
           });
           // data-type="image" data-target="img"
           let pickerButton = $(
-            '<button type="button" class="file-picker" title="Pick image"><i class="fas fa-file-import fa-fw"></i></button>'
+            '<button type="button" class="file-picker" title="Pick image"><i class="fas fa-file-import fa-fw"></i></button>',
           );
           pickerButton.on("click", () => {
             picker.render(true);

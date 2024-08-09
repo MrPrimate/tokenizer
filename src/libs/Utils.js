@@ -2,7 +2,7 @@ import DirectoryPicker from "./DirectoryPicker.js";
 import logger from "./logger.js";
 
 const SKIPPING_WORDS = [
-  "the", "of", "at", "it", "a"
+  "the", "of", "at", "it", "a",
 ];
 
 export default class Utils {
@@ -229,7 +229,7 @@ export default class Utils {
             a = (a << 5) - a + b.charCodeAt(0);
             // eslint-disable-next-line no-bitwise
             return a & a;
-          }, 0)
+          }, 0),
         );
       });
     }
@@ -238,14 +238,14 @@ export default class Utils {
   static async makeSlug(name) {
     const toReplace
       = "а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я".split(
-        ","
+        ",",
       );
     const replacers
       = "a,b,v,g,d,e,yo,zh,z,i,y,k,l,m,n,o,p,r,s,t,u,f,kh,c,ch,sh,sch,_,y,_,e,yu,ya".split(
-        ","
+        ",",
       );
     const replaceDict = Object.fromEntries(
-      toReplace.map((_, i) => [toReplace[i], replacers[i]])
+      toReplace.map((_, i) => [toReplace[i], replacers[i]]),
     );
     const unicodeString = name
       .toLowerCase()

@@ -30,7 +30,7 @@ export default class AutoTokenize extends FormApplication {
     };
     return {
       data,
-      cssClass: "tokenizer-window"
+      cssClass: "tokenizer-window",
     };
 
   }
@@ -51,7 +51,7 @@ export default class AutoTokenize extends FormApplication {
       {
         classes: ["dialog", "auto-complete"],
         template: "modules/vtta-tokenizer/templates/auto-complete.hbs",
-      }
+      },
     ).render(true);
   }
 
@@ -86,8 +86,8 @@ export default class AutoTokenize extends FormApplication {
         game.i18n.format("vtta-tokenizer.auto.success", { packName: this.packName }), 
         {
           title: this.packName,
-          description: game.i18n.format("vtta-tokenizer.auto.success-content", { size: this.pack.index.size })
-        }
+          description: game.i18n.format("vtta-tokenizer.auto.success-content", { size: this.pack.index.size }),
+        },
       );
 
       this.close();

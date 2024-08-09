@@ -361,7 +361,7 @@ export default class Layer {
         yOffset,
         xOffset,
         scaledWidth,
-        scaledHeight
+        scaledHeight,
       );
 
     const layer = new Layer({ view, canvas, img, tintColor, tintLayer, maskFromImage, visible });
@@ -575,7 +575,7 @@ export default class Layer {
           0,
           0,
           this.canvas.width,
-          this.canvas.height
+          this.canvas.height,
         );
         context.globalCompositeOperation = this.maskCompositeOperation;
       }
@@ -595,7 +595,7 @@ export default class Layer {
           this.position.x,
           this.position.y,
           this.source.width * this.scale,
-          this.source.height * this.scale
+          this.source.height * this.scale,
         );
         this.applyTransparentPixels(cContext);
       }
