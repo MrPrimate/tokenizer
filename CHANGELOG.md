@@ -1,5 +1,8 @@
 # Changelog
 
+# [4.3.13]
+
+- Add some mask templates for grid scale dynamic rings.
 
 # [4.3.12]
 
