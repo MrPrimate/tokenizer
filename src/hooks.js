@@ -61,6 +61,26 @@ function launchTokenizer(options, callback) {
 
 }
 
+function updateDynamicRingData(update, path) {
+  if (game.release.generation < 12) {
+    if (update.prototypeToken) {
+      foundry.utils.setProperty(update.prototypeToken, "flags.dnd5e.tokenRing.enabled", true);
+    }
+    if (update.token) {
+      foundry.utils.setProperty(update.token, "flags.dnd5e.tokenRing.enabled", true);
+    }
+  } else {
+    if (update.prototypeToken) {
+      foundry.utils.setProperty(update.prototypeToken, "ring.enabled", true);
+      foundry.utils.setProperty(update.prototypeToken, "ring.subject.texture", path);
+    }
+    if (update.token) {
+      foundry.utils.setProperty(update.token, "ring.enabled", true);
+      foundry.utils.setProperty(update.token, "ring.subject.texture", path);
+    }
+  }
+}
+
 async function updateActor(tokenizerResponse) {
   logger.debug("Updating Actor, tokenizer data", tokenizerResponse);
   const dateTag = `${+new Date()}`;
@@ -70,10 +90,15 @@ async function updateActor(tokenizerResponse) {
   const avatarKey = getAvatarKey();
   update[avatarKey] = tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag;
 
+  const updateDynamicRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
+    || foundry.utils.getProperty(update.prototypeToken, "ring.enabled")
+    || foundry.utils.getProperty(update.token, "ring.enabled");
+
   if (!tokenizerResponse.actor.prototypeToken.randomImg) {
     // for non-wildcard tokens, we set the token img now
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
     foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
+    if (updateDynamicRing) updateDynamicRingData(update, tokenPath);
   } else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {
     // if it is a wildcard and it isn't get like one, we change that
     const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
@@ -86,24 +111,7 @@ async function updateActor(tokenizerResponse) {
     update.token = {
       img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
     };
-  } 
-
-  if (game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")) {
-    if (game.release.generation < 12) {
-      if (update.prototypeToken) {
-        foundry.utils.setProperty(update.prototypeToken, "flags.dnd5e.tokenRing.enabled", true);
-      }
-      if (update.token) {
-        foundry.utils.setProperty(update.token, "flags.dnd5e.tokenRing.enabled", true);
-      }
-    } else {
-      if (update.prototypeToken) {
-        foundry.utils.setProperty(update.prototypeToken, "ring.enabled", true);
-      }
-      if (update.token) {
-        foundry.utils.setProperty(update.token, "ring.enabled", true);
-      }
-    }
+    if (updateDynamicRing) updateDynamicRingData(update, `${options.current}/${actorName}.Token-*.${imageFormat}`);
   }
 
   logger.debug("Updating with", update);

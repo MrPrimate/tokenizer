@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.3.14]
+
+- If using dynamic token rings save token image to dynamic texture field as well as token field to allow proper scaling for grid scaled rings.
+
 # [4.3.13]
 
 - Add some mask templates for grid scale dynamic rings.

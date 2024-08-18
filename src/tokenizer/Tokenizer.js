@@ -232,23 +232,23 @@ export default class Tokenizer extends FormApplication {
       });
     }
 
-    const foundryGridMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask-grid.webp`.replace(/^\/|\/$/g, "");
-    if (defaultMask !== foundryGridMask) {
-      defaultMasks.push({
-        key: foundryGridMask,
-        label: game.i18n.localize("vtta-tokenizer.dynamic-grid-mask.foundry"),
-        selected: false,
-      });
-    }
+    // const foundryGridMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask-grid.webp`.replace(/^\/|\/$/g, "");
+    // if (defaultMask !== foundryGridMask) {
+    //   defaultMasks.push({
+    //     key: foundryGridMask,
+    //     label: game.i18n.localize("vtta-tokenizer.dynamic-grid-mask.foundry"),
+    //     selected: false,
+    //   });
+    // }
 
-    const foundryGridTopMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-top-mask-grid.webp`.replace(/^\/|\/$/g, "");
-    if (defaultMask !== foundryGridTopMask) {
-      defaultMasks.push({
-        key: foundryGridTopMask,
-        label: game.i18n.localize("vtta-tokenizer.dynamic-grid-top-mask.foundry"),
-        selected: false,
-      });
-    }
+    // const foundryGridTopMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-top-mask-grid.webp`.replace(/^\/|\/$/g, "");
+    // if (defaultMask !== foundryGridTopMask) {
+    //   defaultMasks.push({
+    //     key: foundryGridTopMask,
+    //     label: game.i18n.localize("vtta-tokenizer.dynamic-grid-top-mask.foundry"),
+    //     selected: false,
+    //   });
+    // }
 
     return defaultMasks;
   }
