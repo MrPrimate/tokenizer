@@ -1,5 +1,13 @@
 # Changelog
 
+# [4.3.16]
+
+- Prevent warning in install screen about author field.
+
+# [4.3.15]
+
+- Fix a incompatibility issue with Youtube Widget
+
 # [4.3.14]
 
 - If using dynamic token rings save token image to dynamic texture field as well as token field to allow proper scaling for grid scaled rings.

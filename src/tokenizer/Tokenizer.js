@@ -585,7 +585,7 @@ export default class Tokenizer extends FormApplication {
                       <form>
                       <div class="form-group">
                          <label>URL</label>
-                         <input id="url" type="text" name="url" placeholder="https://" data-dtype="String">
+                         <input id="tokenizerurl" type="text" name="tokenizerurl" placeholder="https://" data-dtype="String">
                       </div>
                       </form>`,
             buttons: {
@@ -598,7 +598,7 @@ export default class Tokenizer extends FormApplication {
                 icon: '<i class="fas fa-check"></i>',
                 label: game.i18n.localize("vtta-tokenizer.label.OK"),
                 callback: () => {
-                  Utils.download($("#url").val())
+                  Utils.download($("#tokenizerurl").val())
                     .then((img) => view.addImageLayer(img))
                     .catch((error) => {
                       logger.error("Error fetching image", error);
