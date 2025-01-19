@@ -197,5 +197,7 @@
     }
   },
   "vtta-tokenizer.auto-apply-dynamic-token-ring.name": "Auto Apply Dynamic Token Ring?",
-  "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Automatically enable dyanmic token ring on edited tokens?"
+  "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Automatically enable dyanmic token ring on edited tokens?",
+  "vtta-tokenizer.actor-id-in-name.name": "Append actor id to file name",
+  "vtta-tokenizer.actor-id-in-name.hint":"When modifying prototype tokens, append the actor id to the name (makes a unique file per actor rather than per actor name)"
 }

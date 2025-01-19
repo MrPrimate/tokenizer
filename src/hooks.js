@@ -137,6 +137,7 @@ function getActorType(actor) {
 }
 
 function tokenizeActor(actor) {
+  const addId = game.settings.get(CONSTANTS.MODULE_ID, "actor-id-in-name");
   const options = {
     actor: actor,
     name: actor.name,
@@ -145,6 +146,7 @@ function tokenizeActor(actor) {
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,
     isWildCard: actor.prototypeToken.randomImg,
+    nameSuffix: addId ? `.${actor._id}` : undefined,
   };
 
   launchTokenizer(options, updateActor);
@@ -160,7 +162,7 @@ function tokenizeSceneToken(doc) {
     disposition: doc.token.disposition,
     avatarFilename: getAvatarPath(doc.actor),
     tokenFilename: doc.token.texture.src,
-    nameSuffix: `${doc.token.id}`,
+    nameSuffix: `.${doc.token._id}`,
   };
 
   launchTokenizer(options, updateActor);

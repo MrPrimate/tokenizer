@@ -585,5 +585,14 @@ export function registerSettings() {
     default: "INFO",
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "actor-id-in-name", {
+    name: `${CONSTANTS.MODULE_ID}.actor-id-in-name.name`,
+    hint: `${CONSTANTS.MODULE_ID}.actor-id-in-name.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   logger.debug("Init complete");
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+# [Next Up]
+
+- Add option to append actor id to filename when editing the prototype token.
+
 # [4.3.16]
 
 - Prevent warning in install screen about author field.
