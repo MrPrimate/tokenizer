@@ -374,70 +374,8 @@ function exposeAPI() {
   game.modules.get(CONSTANTS.MODULE_ID).api = API;
 }
 
-export function ready() {
-  logger.info("Ready Hook Called");
-  fixUploadLocation();
-  linkSheets();
-  exposeAPI();
-}
-
-Hooks.on('getActorDirectoryEntryContext', (html, entryOptions) => {
-  if (
-    // don't enable if user can't upload
-    !game.user.can("FILES_UPLOAD")
-    // and the player setting is disabled
-    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
-  ) {
-    return;
-  }
-
-  entryOptions.push({
-    name: "Tokenizer",
-    callback: (li) => {
-      const docId = $(li).attr("data-document-id")
-        ? $(li).attr("data-document-id")
-        : $(li).attr("data-actor-id")
-          ? $(li).attr("data-actor-id")
-          : $(li).attr("data-entity-id");
-      if (docId) {
-        const doc = game.actors.get(docId);
-        logger.debug(`Tokenizing ${doc.name}`);
-        tokenizeActor(doc);
-      }
-    },
-    icon: '<i class="fas fa-user-circle"></i>',
-    condition: () => {
-      return game.user.can("FILES_UPLOAD")
-        || !game.settings.get(CONSTANTS.MODULE_ID, "disable-player");
-    },
-  });
-
+function addCompendiumContextOptions(contextOptions) {
   if (!game.user.isGM) return;
-
-  entryOptions.push({
-    name: `${CONSTANTS.MODULE_ID}.apply-prototype-to-scene`,
-    callback: (li) => {
-      const docId = $(li).attr("data-document-id")
-        ? $(li).attr("data-document-id")
-        : $(li).attr("data-actor-id")
-          ? $(li).attr("data-actor-id")
-          : $(li).attr("data-entity-id");
-      if (docId) {
-        const doc = game.actors.get(docId);
-        logger.debug(`Updating ${doc.name} scene tokens for:`, doc);
-        updateSceneTokenImg(doc);
-      }
-    },
-    icon: '<i class="fas fa-user-circle"></i>',
-    condition: () => {
-      return game.user.can("FILES_UPLOAD");
-    },
-  });
-});
-
-Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
-  if (!game.user.isGM) return;
-
   contextOptions.push({
     name: `${CONSTANTS.MODULE_ID}.compendium.auto-tokenize`,
     callback: (li) => {
@@ -457,6 +395,89 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
     },
     icon: '<i class="fas fa-user-circle"></i>',
   });
+}
+
+function addUpdateSceneTokensContext(contextOptions) {
+  if (!game.user.isGM) return;
+
+  contextOptions.push({
+    name: `${CONSTANTS.MODULE_ID}.apply-prototype-to-scene`,
+    callback: (li) => {
+      const docId = $(li).attr("data-entry-id")
+        ?? $(li).attr("data-document-id")
+        ?? $(li).attr("data-actor-id")
+        ?? $(li).attr("data-entity-id");
+      if (docId) {
+        const doc = game.actors.get(docId);
+        logger.debug(`Updating ${doc.name} scene tokens for:`, doc);
+        updateSceneTokenImg(doc);
+      }
+    },
+    icon: '<i class="fas fa-user-circle"></i>',
+    condition: () => {
+      return game.user.can("FILES_UPLOAD");
+    },
+  });
+}
+
+function addTokenizerContentOption(contextOptions) {
+  if (
+    // don't enable if user can't upload
+    !game.user.can("FILES_UPLOAD")
+    // and the player setting is disabled
+    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
+  ) {
+    return;
+  }
+
+  contextOptions.push({
+    name: "Tokenizer",
+    callback: (li) => {
+      console.warn(li);
+      const docId = $(li).attr("data-entry-id")
+        ?? $(li).attr("data-document-id")
+        ?? $(li).attr("data-actor-id")
+        ?? $(li).attr("data-entity-id");
+      if (docId) {
+        const doc = game.actors.get(docId);
+        logger.debug(`Tokenizing ${doc.name}`);
+        tokenizeActor(doc);
+      }
+    },
+    icon: '<i class="fas fa-user-circle"></i>',
+    condition: () => {
+      return game.user.can("FILES_UPLOAD")
+        || !game.settings.get(CONSTANTS.MODULE_ID, "disable-player");
+    },
+  });
+
+  console.warn(contextOptions);
+}
+
+export function ready() {
+  logger.info("Ready Hook Called");
+  fixUploadLocation();
+  linkSheets();
+  exposeAPI();
+}
+
+Hooks.on('getActorDirectoryEntryContext', (html, contextOptions) => {
+  addTokenizerContentOption(contextOptions);
+  addUpdateSceneTokensContext(contextOptions);
+});
+
+Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
+  addCompendiumContextOptions(contextOptions);
 });
 
 Hooks.on('getActorSheetHeaderButtons', getActorSheetHeaderButtons);
+
+
+Hooks.once('getEntryContextActorDirectory', (html, contextOptions) => {
+  addTokenizerContentOption(contextOptions);
+  addUpdateSceneTokensContext(contextOptions);
+});
+
+Hooks.once("getEntryContextCompendiumDirectory", (html, contextOptions) => {
+  addCompendiumContextOptions(contextOptions);
+});

@@ -1,7 +1,8 @@
 # Changelog
 
-# [Next Up]
+# [4.4.0]
 
+- Support v13 of Foundry.
 - Add option to append actor id to filename when editing the prototype token.
 
 # [4.3.16]

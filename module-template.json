@@ -8,10 +8,10 @@
   "manifest": "https://github.com/MrPrimate/tokenizer/releases/download/latest/module.json",
   "changelog": "https://github.com/MrPrimate/tokenizer/blob/master/CHANGELOG.md",
   "minimumCoreVersion": "10.282",
-  "compatibleCoreVersion": "12",
+  "compatibleCoreVersion": "13",
   "compatibility": {
     "minimum": "10.282",
-    "verified": 12
+    "verified": 13
   },
   "authors": [
     {
