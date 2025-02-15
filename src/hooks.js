@@ -433,7 +433,6 @@ function addTokenizerContentOption(contextOptions) {
   contextOptions.push({
     name: "Tokenizer",
     callback: (li) => {
-      console.warn(li);
       const docId = $(li).attr("data-entry-id")
         ?? $(li).attr("data-document-id")
         ?? $(li).attr("data-actor-id")
@@ -450,8 +449,6 @@ function addTokenizerContentOption(contextOptions) {
         || !game.settings.get(CONSTANTS.MODULE_ID, "disable-player");
     },
   });
-
-  console.warn(contextOptions);
 }
 
 export function ready() {
@@ -472,7 +469,7 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
 
 Hooks.on('getActorSheetHeaderButtons', getActorSheetHeaderButtons);
 
-
+// v13 hooks for context menus
 Hooks.once('getEntryContextActorDirectory', (html, contextOptions) => {
   addTokenizerContentOption(contextOptions);
   addUpdateSceneTokensContext(contextOptions);
