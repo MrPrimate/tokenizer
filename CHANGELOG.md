@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.4.1]
+
+- Remove debug statement.
+
 # [4.4.0]
 
 - Support v13 of Foundry.
