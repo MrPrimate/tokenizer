@@ -197,5 +197,7 @@
     }
   },
   "vtta-tokenizer.auto-apply-dynamic-token-ring.name": "Aplicar Anel Dinâmico no Token?",
-  "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Habilita automaticamente o anel dinâmico em tokens editados."
+  "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Habilita automaticamente o anel dinâmico em tokens editados.",
+  "vtta-tokenizer.actor-id-in-name.name": "Anexar ID do Ator ao Nome do Arquivo",
+  "vtta-tokenizer.actor-id-in-name.hint":"Ao modificar tokens de protótipo, anexe o ID do ator ao nome (cria um arquivo exclusivo por ator em vez de por nome de ator)"
 }
