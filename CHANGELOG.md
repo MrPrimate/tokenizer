@@ -1,5 +1,9 @@
 # Changelog
 
+# [Next Up]
+
+- Update pt-BR.json
+
 # [4.4.1]
 
 - Remove debug statement.
