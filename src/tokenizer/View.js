@@ -493,8 +493,8 @@ export default class View {
       img,
       canvasHeight: this.width,
       canvasWidth: this.height,
-      tintColor: tintColor,
-      tintLayer: tintLayer,
+      tintColor,
+      tintLayer,
       maskFromImage,
       visible,
     };

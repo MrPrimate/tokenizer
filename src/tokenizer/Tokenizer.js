@@ -788,7 +788,7 @@ export default class Tokenizer extends FormApplication {
       const options = DirectoryPicker.parse(fullPath ? fileName : tintLayerPath.replace(/^\/|\/$/g, ""));
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintLayerPath && !fileName });
+        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintLayerPath && tintColor });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadTexture", { texture: options.current });
         ui.notifications.error(errorMessage);

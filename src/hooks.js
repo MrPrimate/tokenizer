@@ -182,7 +182,8 @@ async function updateSceneTokenImg(actor) {
     const newToken = await actor.getTokenDocument();
     const tokenUpdate = {
       _id: t.id,
-      "texture.src": newToken.texture.src,
+      "texture": newToken.texture,
+      "ring": newToken.ring,
     };
     return tokenUpdate;
   }));

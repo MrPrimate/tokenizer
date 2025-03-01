@@ -3,6 +3,7 @@
 # [Next Up]
 
 - Update pt-BR.json
+- Fix a bug where the texture layer would be tinted neutral if set to apply on opening tokenizer.
 
 # [4.4.1]
 
