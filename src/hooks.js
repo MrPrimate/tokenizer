@@ -233,10 +233,14 @@ function fixUploadLocation() {
   // Set base character upload folder.
   const characterUploads = game.settings.get(CONSTANTS.MODULE_ID, "image-upload-directory");
   const npcUploads = game.settings.get(CONSTANTS.MODULE_ID, "npc-image-upload-directory");
+  const frameUploads = game.settings.get(CONSTANTS.MODULE_ID, "frame-directory");
+  const maskUploads = game.settings.get(CONSTANTS.MODULE_ID, "masks-directory");
 
   if (game.user.isGM) {
     DirectoryPicker.verifyPath(DirectoryPicker.parse(characterUploads));
     DirectoryPicker.verifyPath(DirectoryPicker.parse(npcUploads));
+    DirectoryPicker.verifyPath(DirectoryPicker.parse(frameUploads));
+    DirectoryPicker.verifyPath(DirectoryPicker.parse(maskUploads));
   }
 
   if (characterUploads != "" && npcUploads == "") game.settings.set(CONSTANTS.MODULE_ID, "npc-image-upload-directory", characterUploads);

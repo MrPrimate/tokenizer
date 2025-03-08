@@ -1,5 +1,4 @@
 import ImagePicker from "./libs/ImagePicker.js";
-import DirectoryPicker from "./libs/DirectoryPicker.js";
 import logger from "./libs/logger.js";
 import CONSTANTS from "./constants.js";
 
@@ -232,7 +231,8 @@ export function registerSettings() {
     hint: `${CONSTANTS.MODULE_ID}.npc-image-upload-directory.hint`,
     scope: "world",
     config: true,
-    type: DirectoryPicker.Directory,
+    type: String,
+    filePicker: "folder",
     default: "[data] tokenizer/npc-images",
   });
 
@@ -309,8 +309,9 @@ export function registerSettings() {
     hint: `${CONSTANTS.MODULE_ID}.frame-directory.hint`,
     scope: "world",
     config: true,
-    type: DirectoryPicker.Directory,
-    default: "",
+    type: String,
+    filePicker: "folder",
+    default: "[data] tokenizer/frames",
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "frame-tint", {
@@ -458,8 +459,9 @@ export function registerSettings() {
     hint: `${CONSTANTS.MODULE_ID}.masks-directory.hint`,
     scope: "world",
     config: true,
-    type: DirectoryPicker.Directory,
-    default: "",
+    type: String,
+    filePicker: "folder",
+    default: "[data] tokenizer/masks",
   });
 
   game.settings.register(CONSTANTS.MODULE_ID, "default-mask-layer", {
