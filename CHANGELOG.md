@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.4.3]
+
+- Italiano translation by @ GregoryWarn (Thank you)
+
 # [4.4.2]
 
 - Update pt-BR.json
