@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.4.4]
+
+- Updates for v13 context menu changes.
+
 # [4.4.3]
 
 - Italiano translation by @ GregoryWarn (Thank you)
