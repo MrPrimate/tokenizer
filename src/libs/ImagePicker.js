@@ -4,7 +4,9 @@ import DirectoryPicker from "./DirectoryPicker.js";
  * Game Settings: ImagePicker
  */
 
-class ImagePicker extends FilePicker {
+const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+
+class ImagePicker extends FPClass {
   constructor(options = {}) {
     super(options);
   }
@@ -24,7 +26,7 @@ class ImagePicker extends FilePicker {
 
   static async uploadToPath(path, file) {
     const options = DirectoryPicker.parse(path);
-    return FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket });
+    return FPClass.upload(options.activeSource, options.current, file, { bucket: options.bucket });
   }
 
   // returns the type "Img" for rendering the SettingsConfig

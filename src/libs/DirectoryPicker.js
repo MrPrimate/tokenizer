@@ -5,8 +5,9 @@
 import logger from "../libs/logger.js";
 import Utils from "./Utils.js";
 
+const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
 
-class DirectoryPicker extends FilePicker {
+class DirectoryPicker extends FPClass {
   constructor(options = {}) {
     super(options);
   }
@@ -26,7 +27,7 @@ class DirectoryPicker extends FilePicker {
 
   static async uploadToPath(path, file) {
     const options = DirectoryPicker.parse(path);
-    return FilePicker.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false });
+    return FPClass.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false });
   }
 
   // returns the type "Directory" for rendering the SettingsConfig
@@ -137,7 +138,7 @@ class DirectoryPicker extends FilePicker {
     if (typeof ForgeVTT !== "undefined" && ForgeVTT?.usingTheForge) {
       return DirectoryPicker.forgeCreateDirectory(target);
     }
-    return FilePicker.createDirectory(source, target, options);
+    return FPClass.createDirectory(source, target, options);
   }
 
   /**

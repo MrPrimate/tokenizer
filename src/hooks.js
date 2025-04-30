@@ -62,21 +62,24 @@ function launchTokenizer(options, callback) {
 }
 
 function updateDynamicRingData(update, path) {
+  const setRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
+    || foundry.utils.getProperty(update.prototypeToken, "ring.enabled")
+    || foundry.utils.getProperty(update.token, "ring.enabled");
   if (game.release.generation < 12) {
     if (update.prototypeToken) {
-      foundry.utils.setProperty(update.prototypeToken, "flags.dnd5e.tokenRing.enabled", true);
+      foundry.utils.setProperty(update.prototypeToken, "flags.dnd5e.tokenRing.enabled", setRing);
     }
     if (update.token) {
-      foundry.utils.setProperty(update.token, "flags.dnd5e.tokenRing.enabled", true);
+      foundry.utils.setProperty(update.token, "flags.dnd5e.tokenRing.enabled", setRing);
     }
   } else {
     if (update.prototypeToken) {
-      foundry.utils.setProperty(update.prototypeToken, "ring.enabled", true);
-      foundry.utils.setProperty(update.prototypeToken, "ring.subject.texture", path);
+      foundry.utils.setProperty(update.prototypeToken, "ring.enabled", setRing);
+      if (setRing) foundry.utils.setProperty(update.prototypeToken, "ring.subject.texture", path);
     }
     if (update.token) {
-      foundry.utils.setProperty(update.token, "ring.enabled", true);
-      foundry.utils.setProperty(update.token, "ring.subject.texture", path);
+      foundry.utils.setProperty(update.token, "ring.enabled", setRing);
+      if (setRing) foundry.utils.setProperty(update.token, "ring.subject.texture", path);
     }
   }
 }
@@ -90,15 +93,11 @@ async function updateActor(tokenizerResponse) {
   const avatarKey = getAvatarKey();
   update[avatarKey] = tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag;
 
-  const updateDynamicRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
-    || foundry.utils.getProperty(update.prototypeToken, "ring.enabled")
-    || foundry.utils.getProperty(update.token, "ring.enabled");
-
   if (!tokenizerResponse.actor.prototypeToken.randomImg) {
     // for non-wildcard tokens, we set the token img now
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
     foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
-    if (updateDynamicRing) updateDynamicRingData(update, tokenPath);
+    updateDynamicRingData(update, tokenPath);
   } else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {
     // if it is a wildcard and it isn't get like one, we change that
     const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
@@ -111,7 +110,7 @@ async function updateActor(tokenizerResponse) {
     update.token = {
       img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
     };
-    if (updateDynamicRing) updateDynamicRingData(update, `${options.current}/${actorName}.Token-*.${imageFormat}`);
+    updateDynamicRingData(update, `${options.current}/${actorName}.Token-*.${imageFormat}`);
   }
 
   logger.debug("Updating with", update);
@@ -475,11 +474,11 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
 Hooks.on('getActorSheetHeaderButtons', getActorSheetHeaderButtons);
 
 // v13 hooks for context menus
-Hooks.once('getEntryContextActorDirectory', (html, contextOptions) => {
+Hooks.once('getActorContextOptions', (html, contextOptions) => {
   addTokenizerContentOption(contextOptions);
   addUpdateSceneTokensContext(contextOptions);
 });
 
-Hooks.once("getEntryContextCompendiumDirectory", (html, contextOptions) => {
+Hooks.once("getCompendiumContextOptions", (html, contextOptions) => {
   addCompendiumContextOptions(contextOptions);
 });
