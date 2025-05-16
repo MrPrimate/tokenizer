@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.5.0]
+
+- This version of Tokenizer requires Foundry 12 or higher.
+- Fixes for custom name picker not working on v13.
+
 # [4.4.4]
 
 - Updates for v13 context menu changes.

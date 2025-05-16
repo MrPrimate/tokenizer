@@ -8,32 +8,12 @@ import Utils from "./Utils.js";
 const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
 
 class DirectoryPicker extends FPClass {
-  constructor(options = {}) {
-    super(options);
-  }
-
-  _onSubmit(event) {
-    event.preventDefault();
-    const path = event.target.target.value;
-    const activeSource = this.activeSource;
-    const bucket = event.target.bucket ? event.target.bucket.value : null;
-    this.field.value = DirectoryPicker.format({
-      activeSource,
-      bucket,
-      path,
-    });
-    this.close();
-  }
 
   static async uploadToPath(path, file) {
     const options = DirectoryPicker.parse(path);
     return FPClass.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false });
   }
 
-  // returns the type "Directory" for rendering the SettingsConfig
-  static Directory(val) {
-    return val === null ? '' : String(val);
-  }
 
   // formats the data into a string for saving it as a GameSetting
   static format(value) {
@@ -84,39 +64,6 @@ class DirectoryPicker extends FPClass {
     }
   }
 
-  // Adds a FilePicker-Simulator-Button next to the input fields
-  static processHtml(html) {
-    $(html)
-      .find(`input[data-dtype="TokenizerDirectory"]`)
-      .each((index, element) => {
-        // $(element).prop("readonly", true);
-
-        if (!$(element).next().length) {
-          logger.debug("Adding Picker Button");
-          let picker = new DirectoryPicker({
-            field: $(element)[0],
-            ...DirectoryPicker.parse($(element).val()),
-          });
-          let pickerButton = $(
-            '<button type="button" class="file-picker" data-type="imagevideo" data-target="img" title="Pick directory"><i class="fas fa-file-import fa-fw"></i></button>',
-          );
-          pickerButton.on("click", () => {
-            picker.render(true);
-          });
-          $(element).parent().append(pickerButton);
-        }
-      });
-  }
-
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // remove unnecessary elements
-    $(html).find("ol.files-list").remove();
-    $(html).find("footer div").remove();
-    $(html).find("footer button").text("Select Directory");
-  }
 
   static async forgeCreateDirectory(target) {
     if (!target) return;
@@ -174,11 +121,41 @@ class DirectoryPicker extends FPClass {
 
     return true;
   }
-}
 
-// eslint-disable-next-line no-unused-vars
-Hooks.on("renderSettingsConfig", (app, html, user) => {
-  DirectoryPicker.processHtml(html);
-});
+  static async getForgeUrl(directoryPath, filename) {
+    const dir = DirectoryPicker.parse(directoryPath);
+    const prefix = ForgeVTT.ASSETS_LIBRARY_URL_PREFIX + await ForgeAPI.getUserId();
+    return `${prefix}/${dir.current}/${filename}`;
+    
+  }
+
+  static async getFileUrl(directoryPath, filename) {
+    let uri;
+    try {
+      if (typeof ForgeVTT !== "undefined" && ForgeVTT?.usingTheForge) {
+        uri = await DirectoryPicker.getForgeUrl(directoryPath, filename);
+        return uri;
+      } else {
+        const dir = DirectoryPicker.parse(directoryPath);
+        if (dir.activeSource == "data") {
+          // Local on-server file system
+          uri = dir.current + "/" + filename;
+        } else if (dir.activeSource == "forgevtt") {
+          const status = ForgeAPI.lastStatus || (await ForgeAPI.status());
+          const userId = status.user;
+          uri = `https://assets.forge-vtt.com/${userId}/${dir.current}/${filename}`;
+        } else if (dir.activeSource == "s3") {
+          // S3 Bucket
+          uri = `https://${dir.bucket}.${game.data.files.s3.endpoint.hostname}/${dir.current}/${filename}`;
+        } else {
+          logger.error("Tokenizer cannot handle files stored in that location", dir);
+        }
+      }
+    } catch (exception) {
+      throw new Error(`Unable to determine file URL for directoryPath "${directoryPath}" and filename "${filename}"`);
+    }
+    return encodeURI(uri);
+  }
+}
 
 export default DirectoryPicker;

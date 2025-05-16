@@ -104,7 +104,8 @@ class ImageBrowser extends FormApplication {
       ? "[data] modules/vtta-tokenizer/img"
       : directoryPath;
     const dir = DirectoryPicker.parse(usePath);
-    new FilePicker({
+    const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+    new FPClass({
           type: 'image',
           displayMode: 'tiles',
           source: dir.activeSource,

@@ -1,0 +1,17 @@
+<div>
+  {{#each type}}
+    <h2>{{this.name}}</h2>
+    <h4>{{localize "vtta-tokenizer.label.directory"}}</h4>
+    <div class="form-content" style="display: flex">
+      <input class="tokenizer-config" type="text" data-dtype="TokenizerDirectory" name="{{this.key}}UploadDirectory" readonly style="flex: 0 1 auto" value="{{this.directoryPath}}" />
+      <button type="button" data-action="selectDirectory" id="button-{{this.key}}" class="ddb-importer-folder-picker" data-target="{{this.key}}UploadDirectory" title="Pick directory"><i class="fas fa-file-import fa-fw"></i></button>
+    </div>
+    <h4>{{localize "vtta-tokenizer.label.file-name"}}</h4>
+    <div class="form-content" style="display: flex">
+      <input class="tokenizer-config" type="text" name="{{this.key}}FileName" style="flex: 0 1 auto" value="{{this.fileName}}" />
+      <button type="button" data-action="selectDirectory" id="button-{{this.key}}" class="ddb-importer-folder-picker" data-target="{{this.key}}FileName" title="Pick directory"><i class="fas fa-file-import fa-fw"></i></button>
+    </div>
+    <hr>
+  {{/each}}
+</div>
+

@@ -390,7 +390,8 @@ export default class Tokenizer extends FormApplication {
           ? this.tokenOptions.tokenFilename
           : `${this.tokenOptions.tokenFilename}.${this.imageFormat}`;
 
-      const browser = await FilePicker.browse(dirOptions.activeSource, tokenWildcard, {
+      const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+      const browser = await FPClass.browse(dirOptions.activeSource, tokenWildcard, {
         wildcard: true,
       });
 

@@ -330,7 +330,8 @@ function linkDefaultSheets() {
             } else {
               // showing the filepicker
               const current = data.actor ? data.actor[dataEditField] : data[dataEditField];
-              new FilePicker({
+              const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+              new FPClass({
                 type: "image",
                 current,
                 callback: (path) => {

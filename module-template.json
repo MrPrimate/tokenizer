@@ -7,10 +7,8 @@
   "download": "https://github.com/MrPrimate/tokenizer/releases/download/VERSION/vtta-tokenizer.zip",
   "manifest": "https://github.com/MrPrimate/tokenizer/releases/download/latest/module.json",
   "changelog": "https://github.com/MrPrimate/tokenizer/blob/master/CHANGELOG.md",
-  "minimumCoreVersion": "10.282",
-  "compatibleCoreVersion": "13",
   "compatibility": {
-    "minimum": "10.282",
+    "minimum": "12",
     "verified": 13
   },
   "authors": [
