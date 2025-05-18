@@ -430,7 +430,7 @@ export default class Control {
     // the color picker element, which is hidden
     this.colorSelector = document.createElement('input');
     this.colorSelector.type = 'color';
-    this.colorSelector.value = '#000000FF';
+    this.colorSelector.value = '#00000FF';
 
     // a nicer looking proxy for the color picker
     this.colorSelectorProxy = document.createElement('div');
@@ -717,7 +717,7 @@ export default class Control {
     // the color picker element, which is hidden
     this.colorTintSelector = document.createElement('input');
     this.colorTintSelector.type = 'color';
-    this.colorTintSelector.value = '#000000FF';
+    this.colorTintSelector.value = '#00000FF';
 
     // a nicer looking proxy for the color picker
     this.colorTintSelectorProxy = document.createElement('div');

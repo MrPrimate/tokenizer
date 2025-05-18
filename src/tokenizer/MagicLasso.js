@@ -177,7 +177,7 @@ export class MagicLasso {
       }
     });
 
-    const blurRadius = document.getElementById("vtta-blur-radius");
+    const blurRadius = document.getElementById("tokenizer-blur-radius");
     blurRadius.addEventListener("onchange", (event) => {
       this.onRadiusChange(event);
     });
@@ -324,11 +324,11 @@ export class MagicLasso {
   }
 
   showThreshold() {
-    document.getElementById("vtta-threshold").innerHTML = `Threshold: ${this.currentThreshold}`;
+    document.getElementById("tokenizer-threshold").innerHTML = `Threshold: ${this.currentThreshold}`;
   }
 
   showBlur() {
-    document.getElementById("vtta-blur-radius").value = this.blurRadius;
+    document.getElementById("tokenizer-blur-radius").value = this.blurRadius;
   }
 
   drawMask(x, y) {

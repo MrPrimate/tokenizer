@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.5.1]
+
+- Some CSS corrections for changes in v13 that broke some UI elements.
+
 # [4.5.0]
 
 - This version of Tokenizer requires Foundry 12 or higher.
