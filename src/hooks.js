@@ -118,6 +118,14 @@ async function updateActor(tokenizerResponse) {
   // if there is a scene token, lets update it
   if (tokenizerResponse.token) {
     tokenizerResponse.token.update(update.prototypeToken);
+  } else if (canvas.ready) {
+    const tokens = tokenizerResponse.actor.getActiveTokens(true);
+    const tokenUpdates = tokens.map((t) => {
+      const data = foundry.utils.deepClone(update.prototypeToken);
+      data._id = t.id;
+      return data;
+    });
+    await canvas.scene.updateEmbeddedDocuments("Token", tokenUpdates, { diff: false, recursive: false });
   }
 }
 

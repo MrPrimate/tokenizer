@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.5.2]
+
+- In v13 linked tokens edited from the canvas did not update the image on the canvas.
+
 # [4.5.1]
 
 - Some CSS corrections for changes in v13 that broke some UI elements.
