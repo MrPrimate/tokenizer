@@ -1,6 +1,5 @@
 {
   "id": "vtta-tokenizer",
-  "name": "vtta-tokenizer",
   "title": "Tokenizer",
   "description": "Tiny yet capable in-game token editor",
   "version": "VERSION",

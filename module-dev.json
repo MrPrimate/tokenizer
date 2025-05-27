@@ -8,8 +8,8 @@
   "manifest": "https://raw.githubusercontent.com/MrPrimate/tokenizer/master/module-dev.json",
   "changelog": "https://github.com/MrPrimate/tokenizer/blob/master/CHANGELOG.md",
   "compatibility": {
-    "minimum": "10.282",
-    "verified": 12
+    "minimum": "12",
+    "verified": 13
   },
   "authors": [
     {
