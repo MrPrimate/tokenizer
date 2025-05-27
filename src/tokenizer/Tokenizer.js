@@ -646,6 +646,31 @@ export default class Tokenizer extends FormApplication {
     super.activateListeners(html);
   }
 
+  async _addBaseTokenLayers() {
+    if (game.settings.get(CONSTANTS.MODULE_ID, "default-color-layer")) {
+      this.Token.addColorLayer({ color: this.defaultColor });
+    }
+    if (game.settings.get(CONSTANTS.MODULE_ID, "enable-default-texture-layer")) {
+      await this._addTokenTexture();
+    }
+  }
+
+  async _addHigherTokenLayers() {
+    if (this.addFrame) {
+      logger.debug("Loading default token frame");
+      await this._setTokenFrame();
+    }
+    if (this.addMask) {
+      logger.debug("Loading default token mask");
+      await this._setTokenMask();
+    }
+  }
+
+  async _initWildCardToken() {
+    await this._addBaseTokenLayers();
+    await this._addHigherTokenLayers();
+  }
+
   async _initToken(src) {
     let imgSrc = src ?? CONST.DEFAULT_TOKEN;
     try {
@@ -653,25 +678,13 @@ export default class Tokenizer extends FormApplication {
       const img = await Utils.download(imgSrc);
       logger.debug("Got image", img);
 
-      if (game.settings.get(CONSTANTS.MODULE_ID, "default-color-layer")) {
-        this.Token.addColorLayer({ color: this.defaultColor });
-      }
-      if (game.settings.get(CONSTANTS.MODULE_ID, "enable-default-texture-layer")) {
-        await this._addTokenTexture();
-      }
+      await this._addBaseTokenLayers();
       // if we add a frame by default offset the token image
       const options = this.addFrame || this.addMask
         ? this.tokenOffset
         : {};
       this.Token.addImageLayer(img, options);
-      if (this.addFrame) {
-        logger.debug("Loading default token frame");
-        await this._setTokenFrame();
-      }
-      if (this.addMask) {
-        logger.debug("Loading default token mask");
-        await this._setTokenMask();
-      } 
+      await this._addHigherTokenLayers();
     } catch (error) {
       if (!src || src === CONST.DEFAULT_TOKEN) {
         logger.error(`Failed to load fallback token: "${imgSrc}"`);
@@ -824,7 +837,7 @@ export default class Tokenizer extends FormApplication {
       header.innerText = `${game.i18n.localize("vtta-tokenizer.label.token")} (${game.i18n.localize("vtta-tokenizer.label.Wildcard")})`;
       this.Token = new View(this, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
       // load the default frame, if there is one set
-      this._setTokenFrame();
+      this._initWildCardToken();
     } else {
       this.Token = new View(this, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
 
