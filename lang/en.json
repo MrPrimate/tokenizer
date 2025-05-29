@@ -198,6 +198,10 @@
   },
   "vtta-tokenizer.auto-apply-dynamic-token-ring.name": "Auto Apply Dynamic Token Ring?",
   "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Automatically enable dyanmic token ring on edited tokens?",
+  "vtta-tokenizer.force-disable-dynamic-token-ring.name": "Force Disable Dynamic Token Ring?",
+  "vtta-tokenizer.force-disable-dynamic-token-ring.hint": "Force disable dynamic token ring on edited tokens?",
+  "vtta-tokenizer.reset-scaling.name": "Reset Token Scaling",
+  "vtta-tokenizer.reset-scaling.hint": "Reset the scaling of the token to the default value when saving.",
   "vtta-tokenizer.actor-id-in-name.name": "Append actor id to file name",
   "vtta-tokenizer.actor-id-in-name.hint":"When modifying prototype tokens, append the actor id to the name (makes a unique file per actor rather than per actor name)"
 }

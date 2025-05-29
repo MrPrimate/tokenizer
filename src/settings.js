@@ -266,6 +266,15 @@ export function registerSettings() {
     default: 1000,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "reset-scaling", {
+    name: `${CONSTANTS.MODULE_ID}.reset-scaling.name`,
+    hint: `${CONSTANTS.MODULE_ID}.reset-scaling.hint`,
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   // frames
 
   game.settings.register(CONSTANTS.MODULE_ID, "add-frame-default", {
@@ -367,6 +376,15 @@ export function registerSettings() {
   game.settings.register(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", {
     name: `${CONSTANTS.MODULE_ID}.auto-apply-dynamic-token-ring.name`,
     hint: `${CONSTANTS.MODULE_ID}.auto-apply-dynamic-token-ring.hint`,
+    scope: "player",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register(CONSTANTS.MODULE_ID, "force-disable-dynamic-token-ring", {
+    name: `${CONSTANTS.MODULE_ID}.force-disable-dynamic-token-ring.name`,
+    hint: `${CONSTANTS.MODULE_ID}.force-disable-dynamic-token-ring.hint`,
     scope: "player",
     config: true,
     type: Boolean,

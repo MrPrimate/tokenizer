@@ -65,22 +65,33 @@ function updateDynamicRingData(update, path) {
   const setRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
     || foundry.utils.getProperty(update.prototypeToken, "ring.enabled")
     || foundry.utils.getProperty(update.token, "ring.enabled");
-  if (game.release.generation < 12) {
-    if (update.prototypeToken) {
-      foundry.utils.setProperty(update.prototypeToken, "flags.dnd5e.tokenRing.enabled", setRing);
-    }
-    if (update.token) {
-      foundry.utils.setProperty(update.token, "flags.dnd5e.tokenRing.enabled", setRing);
-    }
+
+  if (game.settings.get(CONSTANTS.MODULE_ID, "force-disable-dynamic-token-ring")) {
+    foundry.utils.setProperty(update.prototypeToken, "ring.enabled", false);
   } else {
-    if (update.prototypeToken) {
-      foundry.utils.setProperty(update.prototypeToken, "ring.enabled", setRing);
-      if (setRing) foundry.utils.setProperty(update.prototypeToken, "ring.subject.texture", path);
+    foundry.utils.setProperty(update.prototypeToken, "ring.enabled", setRing);
+    if (setRing) {
+      foundry.utils.setProperty(update.prototypeToken, "ring.subject.texture", path); 
     }
-    if (update.token) {
-      foundry.utils.setProperty(update.token, "ring.enabled", setRing);
-      if (setRing) foundry.utils.setProperty(update.token, "ring.subject.texture", path);
+    if (setRing && game.settings.get(CONSTANTS.MODULE_ID, "reset-scaling")) {
+      foundry.utils.setProperty(update.prototypeToken, "ring.subject.scale", 1); 
     }
+  }
+
+}
+
+
+function adjustScaling(tokenData) {
+  if (game.settings.get(CONSTANTS.MODULE_ID, "reset-scaling")) {
+    // if the user has set the scaling to be reset, we do that
+    tokenData.prototypeToken.texture.scaleX = 1;
+    tokenData.prototypeToken.texture.scaleY = 1;
+    tokenData.prototypeToken.texture.offsetY = 0;
+    tokenData.prototypeToken.texture.offsetY = 0;
+    tokenData.prototypeToken.texture.rotation = 0;
+    tokenData.prototypeToken.texture.anchorX = 0;
+    tokenData.prototypeToken.texture.anchorY = 0;
+    tokenData.prototypeToken.texture.fit = "contain";
   }
 }
 
@@ -112,6 +123,8 @@ async function updateActor(tokenizerResponse) {
     };
     updateDynamicRingData(update, `${options.current}/${actorName}.Token-*.${imageFormat}`);
   }
+
+  adjustScaling(update);
 
   logger.debug("Updating with", update);
   await tokenizerResponse.actor.update(update);
