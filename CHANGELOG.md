@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.5.3]
+
+- If opening a wildcard token, several default layers would not be added.
+- Add character sheet context menu option in v13.
+
 # [4.5.2]
 
 - In v13 linked tokens edited from the canvas did not update the image on the canvas.

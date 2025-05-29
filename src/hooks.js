@@ -176,10 +176,40 @@ function tokenizeSceneToken(doc) {
 
 }
 
+function tokenizeSceneTokenV2(doc) {
+  console.warn("Tokenizing Scene Token V2", doc);
+  const options = {
+    actor: doc,
+    token: doc.token,
+    name: doc.token.name,
+    type: getActorType(doc),
+    disposition: doc.token.disposition,
+    avatarFilename: getAvatarPath(doc),
+    tokenFilename: doc.token.texture.src,
+    nameSuffix: `.${doc.token._id}`,
+  };
+
+  launchTokenizer(options, updateActor);
+
+}
+
+
 function tokenizeDoc(doc) {
   if (doc.token) {
     tokenizeSceneToken(doc);
   } else {  
+    tokenizeActor(doc);
+  }
+}
+
+function tokenizeDocV2() {
+  // eslint-disable-next-line no-invalid-this
+  const doc = this.document;
+
+  if (doc.token) {
+    // eslint-disable-next-line no-invalid-this
+    tokenizeSceneTokenV2(this.actor);
+  } else {
     tokenizeActor(doc);
   }
 }
@@ -274,6 +304,25 @@ function getActorSheetHeaderButtons(app, buttons) {
     icon: "far fa-user-circle",
     class: CONSTANTS.MODULE_ID,
     onclick: () => tokenizeDoc(doc),
+  });
+}
+
+function getActorSheetHeaderButtonsV2(config, buttons) {
+  if (!(config.document instanceof Actor)) return;
+  if (
+    // don't enable if user can't upload
+    !game.user.can("FILES_UPLOAD")
+    // and the player setting is disabled
+    && game.settings.get(CONSTANTS.MODULE_ID, "disable-player")
+  ) {
+    return;
+  }
+
+  config.options.actions["tokenizer"] = tokenizeDocV2;
+  buttons.push({
+    label: "Tokenizer",
+    icon: "far fa-user-circle",
+    action: "tokenizer",
   });
 }
 
@@ -481,6 +530,7 @@ Hooks.on("getCompendiumDirectoryEntryContext", (html, contextOptions) => {
 });
 
 Hooks.on('getActorSheetHeaderButtons', getActorSheetHeaderButtons);
+Hooks.on("getHeaderControlsApplicationV2", getActorSheetHeaderButtonsV2);
 
 // v13 hooks for context menus
 Hooks.once('getActorContextOptions', (html, contextOptions) => {
