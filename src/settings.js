@@ -614,5 +614,14 @@ export function registerSettings() {
     default: false,
   });
 
+  game.settings.register(CONSTANTS.MODULE_ID, "check-for-wildcard-asterix", {
+    name: `${CONSTANTS.MODULE_ID}.check-for-wildcard-asterix.name`,
+    hint: `${CONSTANTS.MODULE_ID}.check-for-wildcard-asterix.hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   logger.debug("Init complete");
 }

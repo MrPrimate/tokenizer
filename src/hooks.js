@@ -89,8 +89,8 @@ function adjustScaling(tokenData) {
     tokenData.prototypeToken.texture.offsetY = 0;
     tokenData.prototypeToken.texture.offsetY = 0;
     tokenData.prototypeToken.texture.rotation = 0;
-    tokenData.prototypeToken.texture.anchorX = 0;
-    tokenData.prototypeToken.texture.anchorY = 0;
+    tokenData.prototypeToken.texture.anchorX = 0.5;
+    tokenData.prototypeToken.texture.anchorY = 0.5;
     tokenData.prototypeToken.texture.fit = "contain";
   }
 }
@@ -104,10 +104,11 @@ async function updateActor(tokenizerResponse) {
   const avatarKey = getAvatarKey();
   update[avatarKey] = tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag;
 
-  if (!tokenizerResponse.actor.prototypeToken.randomImg) {
+  if (!tokenizerResponse.isWildCard) {
     // for non-wildcard tokens, we set the token img now
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
     foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
+    foundry.utils.setProperty(update, "prototypeToken.randomImg", false);
     updateDynamicRingData(update, tokenPath);
   } else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {
     // if it is a wildcard and it isn't get like one, we change that
@@ -156,6 +157,16 @@ function getActorType(actor) {
   
 }
 
+function getWildCard(actor) {
+  const isWildCard = actor.prototypeToken.randomImg;
+  if (!isWildCard) return false;
+
+  const asterix = game.settings.get(CONSTANTS.MODULE_ID, "check-for-wildcard-asterix");
+  if (!asterix) return isWildCard;
+
+  return actor.prototypeToken.texture.src.includes("*");
+}
+
 function tokenizeActor(actor) {
   const addId = game.settings.get(CONSTANTS.MODULE_ID, "actor-id-in-name");
   const options = {
@@ -165,7 +176,7 @@ function tokenizeActor(actor) {
     disposition: actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,
-    isWildCard: actor.prototypeToken.randomImg,
+    isWildCard: getWildCard(actor),
     nameSuffix: addId ? `.${actor._id}` : undefined,
   };
 
@@ -190,7 +201,6 @@ function tokenizeSceneToken(doc) {
 }
 
 function tokenizeSceneTokenV2(doc) {
-  console.warn("Tokenizing Scene Token V2", doc);
   const options = {
     actor: doc,
     token: doc.token,
@@ -248,7 +258,7 @@ export async function autoToken(actor, options) {
     disposition: actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
     tokenFilename: actor.prototypeToken.texture.src,
-    isWildCard: actor.prototypeToken.randomImg,
+    isWildCard: getWildCard(actor),
     auto: true,
     updateActor: true,
   };
