@@ -5,7 +5,7 @@
 - If opening a wildcard token, several default layers would not be added.
 - Add character sheet context menu option in v13.
 - A reset token scaling, and force disable dynamic token ring setting is now available. Useful to check if you are editing tokens that have been created with Art/Token packs such as the excellent Pathfinder Token modules.
-- A "Check for Wildcard Asterix?" setting introduced which will check for the presence of wildcard asterix symbol in the token name if iswildcard is checked, and if not found will treat as normal token. Useful to check if you are editing tokens that have been created with Art/Token packs such as the excellent Pathfinder Token modules.
+- A "Check for Wildcard asterisk?" setting introduced which will check for the presence of wildcard asterisk symbol in the token name if iswildcard is checked, and if not found will treat as normal token. Useful to check if you are editing tokens that have been created with Art/Token packs such as the excellent Pathfinder Token modules.
 
 # [4.5.2]
 

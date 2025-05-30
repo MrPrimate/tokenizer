@@ -614,9 +614,9 @@ export function registerSettings() {
     default: false,
   });
 
-  game.settings.register(CONSTANTS.MODULE_ID, "check-for-wildcard-asterix", {
-    name: `${CONSTANTS.MODULE_ID}.check-for-wildcard-asterix.name`,
-    hint: `${CONSTANTS.MODULE_ID}.check-for-wildcard-asterix.hint`,
+  game.settings.register(CONSTANTS.MODULE_ID, "check-for-wildcard-asterisk", {
+    name: `${CONSTANTS.MODULE_ID}.check-for-wildcard-asterisk.name`,
+    hint: `${CONSTANTS.MODULE_ID}.check-for-wildcard-asterisk.hint`,
     scope: "world",
     config: true,
     type: Boolean,

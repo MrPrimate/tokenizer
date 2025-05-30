@@ -161,8 +161,8 @@ function getWildCard(actor) {
   const isWildCard = actor.prototypeToken.randomImg;
   if (!isWildCard) return false;
 
-  const asterix = game.settings.get(CONSTANTS.MODULE_ID, "check-for-wildcard-asterix");
-  if (!asterix) return isWildCard;
+  const asterisk = game.settings.get(CONSTANTS.MODULE_ID, "check-for-wildcard-asterisk");
+  if (!asterisk) return isWildCard;
 
   return actor.prototypeToken.texture.src.includes("*");
 }
