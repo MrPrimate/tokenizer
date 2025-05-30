@@ -198,6 +198,12 @@
   },
   "vtta-tokenizer.auto-apply-dynamic-token-ring.name": "Applicare automaticamente l'Anello Token Dinamico?",
   "vtta-tokenizer.auto-apply-dynamic-token-ring.hint": "Abilitare automaticamente l'anello token dinamico sui token modificati?",
+  "vtta-tokenizer.force-disable-dynamic-token-ring.name": "Forzare disattivazione del token ring dinamico?",
+  "vtta-tokenizer.force-disable-dynamic-token-ring.hint": "Forza la disattivazione del token ring dinamico sui token modificati?",
+  "vtta-tokenizer.check-for-wildcard-asterisk.name": "Controllare l'asterisco jolly?",
+  "vtta-tokenizer.check-for-wildcard-asterisk.hint": "Controlla la presenza di un asterisco jolly nel nome del token quando il carattere jolly è selezionato, se non viene trovato, verrà trattato come un token normale.",
+  "vtta-tokenizer.reset-scaling.name": "Ripristina Ridimensionamento Token",
+  "vtta-tokenizer.reset-scaling.hint": "Ripristina il ridimensionamento del token al valore predefinito durante il salvataggio.",
   "vtta-tokenizer.actor-id-in-name.name": "Aggiungere l'ID attore al nome del file",
   "vtta-tokenizer.actor-id-in-name.hint": "Quando si modificano i token prototipo, aggiungere l'ID dell'attore al nome (crea un file unico per ogni attore invece che per nome dell'attore)"
 }
