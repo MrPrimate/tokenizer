@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.5.4]
+
+- pt-BRT updates by Kharmans.
+- Correct asterisk setting typo.
+
 # [4.5.3]
 
 - If opening a wildcard token, several default layers would not be added.
