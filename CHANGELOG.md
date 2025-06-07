@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.5.5]
+
+- Italian translation updates by GregoryWarn
+
 # [4.5.4]
 
 - pt-BRT updates by Kharmans.
