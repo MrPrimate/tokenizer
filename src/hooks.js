@@ -61,20 +61,20 @@ function launchTokenizer(options, callback) {
 
 }
 
-function updateDynamicRingData(update, path) {
+function updateDynamicRingData(updateTokenData, path) {
   const setRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
-    || foundry.utils.getProperty(update.prototypeToken, "ring.enabled")
-    || foundry.utils.getProperty(update.token, "ring.enabled");
+    || foundry.utils.getProperty(updateTokenData, "ring.enabled");
+
 
   if (game.settings.get(CONSTANTS.MODULE_ID, "force-disable-dynamic-token-ring")) {
-    foundry.utils.setProperty(update.prototypeToken, "ring.enabled", false);
+    foundry.utils.setProperty(updateTokenData, "ring.enabled", false);
   } else {
-    foundry.utils.setProperty(update.prototypeToken, "ring.enabled", setRing);
+    foundry.utils.setProperty(updateTokenData, "ring.enabled", setRing);
     if (setRing) {
-      foundry.utils.setProperty(update.prototypeToken, "ring.subject.texture", path); 
+      foundry.utils.setProperty(updateTokenData, "ring.subject.texture", path); 
     }
     if (setRing && game.settings.get(CONSTANTS.MODULE_ID, "reset-scaling")) {
-      foundry.utils.setProperty(update.prototypeToken, "ring.subject.scale", 1); 
+      foundry.utils.setProperty(updateTokenData, "ring.subject.scale", 1); 
     }
   }
 
@@ -82,16 +82,16 @@ function updateDynamicRingData(update, path) {
 
 
 function adjustScaling(tokenData) {
-  if (game.settings.get(CONSTANTS.MODULE_ID, "reset-scaling")) {
+  if (game.settings.get(CONSTANTS.MODULE_ID, "reset-scaling") && tokenData.texture) {
     // if the user has set the scaling to be reset, we do that
-    tokenData.prototypeToken.texture.scaleX = 1;
-    tokenData.prototypeToken.texture.scaleY = 1;
-    tokenData.prototypeToken.texture.offsetY = 0;
-    tokenData.prototypeToken.texture.offsetY = 0;
-    tokenData.prototypeToken.texture.rotation = 0;
-    tokenData.prototypeToken.texture.anchorX = 0.5;
-    tokenData.prototypeToken.texture.anchorY = 0.5;
-    tokenData.prototypeToken.texture.fit = "contain";
+    tokenData.texture.scaleX = 1;
+    tokenData.texture.scaleY = 1;
+    tokenData.texture.offsetY = 0;
+    tokenData.texture.offsetY = 0;
+    tokenData.texture.rotation = 0;
+    tokenData.texture.anchorX = 0.5;
+    tokenData.texture.anchorY = 0.5;
+    tokenData.texture.fit = "contain";
   }
 }
 
@@ -109,26 +109,26 @@ async function updateActor(tokenizerResponse) {
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
     foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
     foundry.utils.setProperty(update, "prototypeToken.randomImg", false);
-    updateDynamicRingData(update, tokenPath);
-  } else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {
-    // if it is a wildcard and it isn't get like one, we change that
-    const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
-    const options = DirectoryPicker.parse(tokenizerResponse.tokenUploadDirectory);
+    updateDynamicRingData(update.prototypeToken, tokenPath);
+    adjustScaling(update.prototypeToken);
+  } 
+  // else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {
+  //   // if it is a wildcard and it isn't set like one, we change that
+  //   const actorName = tokenizerResponse.actor.name.replace(/[^\w.]/gi, "_").replace(/__+/g, "");
+  //   const options = DirectoryPicker.parse(tokenizerResponse.tokenUploadDirectory);
 
-    // set it to a wildcard we can actually use
-    const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
-    const message = game.i18n.format("vtta-tokenizer.notification.wildcard", { path: tokenizerResponse.actor.prototypeToken.texture.src });
-    ui.notifications.info(message);
-    update.token = {
-      img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
-    };
-    updateDynamicRingData(update, `${options.current}/${actorName}.Token-*.${imageFormat}`);
-  }
-
-  adjustScaling(update);
+  //   // set it to a wildcard we can actually use
+  //   const imageFormat = game.settings.get(CONSTANTS.MODULE_ID, "image-save-type");
+  //   const message = game.i18n.format("vtta-tokenizer.notification.wildcard", { path: tokenizerResponse.actor.prototypeToken.texture.src });
+  //   ui.notifications.info(message);
+  //   update.token = {
+  //     img: `${options.current}/${actorName}.Token-*.${imageFormat}`,
+  //   };
+  // }
 
   logger.debug("Updating with", update);
   await tokenizerResponse.actor.update(update);
+  if (!update.prototypeToken) return;
   // if there is a scene token, lets update it
   if (tokenizerResponse.token) {
     tokenizerResponse.token.update(update.prototypeToken);

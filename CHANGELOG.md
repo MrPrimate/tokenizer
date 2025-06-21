@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.5.6]
+
+- Resolve some issues with tokenrings and wildcard tokens.
+
 # [4.5.5]
 
 - Italian translation updates by GregoryWarn
