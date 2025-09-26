@@ -223,6 +223,16 @@ You can pass in override options in an `options` map as the second argument:
 await game.modules.get("vtta-tokenizer").api.autoToken(actor, { nameSuffix: "-name-suffix" });
 ```
 
+## How can I auto Tokeize all selected tokens on a scene?
+
+The following macro will tokenize all the tokens on a scene using your default settings.
+
+```javascript
+for (const t of canvas.tokens.controlled) {
+  await game.modules.get("vtta-tokenizer").api.autoToken(t);
+}
+```
+
 
 # Can I reset all the settings to defaults?
 
