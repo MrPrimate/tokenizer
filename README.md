@@ -225,7 +225,7 @@ await game.modules.get("vtta-tokenizer").api.autoToken(actor, { nameSuffix: "-na
 
 ## How can I auto Tokeize all selected tokens on a scene?
 
-The following macro will tokenize all the tokens on a scene using your default settings.
+The following macro will tokenize all the selected tokens on a scene using your default settings.
 
 ```javascript
 for (const t of canvas.tokens.controlled) {
