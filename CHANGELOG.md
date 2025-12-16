@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.5.7]
+
+- JP translation improvements from Ryotai.
+- When calling autotokenizer with wildcard tokens on a scene, it would fail. @antkeeper
+
 # [4.5.6]
 
 - Resolve some issues with tokenrings and wildcard tokens.

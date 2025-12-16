@@ -250,19 +250,23 @@ async function updateSceneTokenImg(actor) {
   if (updates.length) canvas.scene.updateEmbeddedDocuments("Token", updates);
 }
 
-export async function autoToken(actor, options) {
+export async function autoToken(actor, options = {}) {
   const defaultOptions = {
     actor: actor,
     name: actor.name,
     type: getActorType(actor),
-    disposition: actor.prototypeToken.disposition,
+    disposition: actor.token?.disposition ?? actor.prototypeToken.disposition,
     avatarFilename: getAvatarPath(actor),
-    tokenFilename: actor.prototypeToken.texture.src,
+    tokenFilename: actor.token?.texture?.src ?? actor.prototypeToken.texture.src,
     isWildCard: getWildCard(actor),
     auto: true,
     updateActor: true,
   };
   const mergedOptions = foundry.utils.mergeObject(defaultOptions, options);
+  console.warn(`Tokenizer options for ${actor.name}:`, {
+    mergedOptions,
+    actor,
+  });
   const tokenizer = new Tokenizer(mergedOptions, updateActor);
 
   // create mock elements to generate images in
