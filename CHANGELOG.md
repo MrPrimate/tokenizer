@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.6.0]
+
+- v13 support only
+- Change to click interception of character sheets to better fallback to default filepicker handler that might have been altered for systems.
+
 # [4.5.7]
 
 - JP translation improvements from Ryotai.
