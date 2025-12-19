@@ -263,7 +263,7 @@ export async function autoToken(actor, options = {}) {
     updateActor: true,
   };
   const mergedOptions = foundry.utils.mergeObject(defaultOptions, options);
-  console.warn(`Tokenizer options for ${actor.name}:`, {
+  logger.debug(`Tokenizer options for ${actor.name}:`, {
     mergedOptions,
     actor,
   });
@@ -384,52 +384,33 @@ function linkDefaultSheets() {
 
   // register tokenizer on all character (npc and pc) sheets
   sheetNames.forEach((sheetName) => {
-    Hooks.on("render" + sheetName, (app, html, data) => {
-      if (game.user) {
-        const doc = (app.token) ? app : app.document;
-        const disableAvatarClickGlobal = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click");
-        const disableAvatarClickUser = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click-user");
-        const disableAvatarClick = disableAvatarClickUser === "global"
-          ? disableAvatarClickGlobal
-          : disableAvatarClickUser === "default";
-        const dataEditField = getAvatarKey();
+    Hooks.on("render" + sheetName, (app, html, _data) => {
+      if (!game.user) return;
+      const dataEditField = getAvatarKey();
+      const element = html.querySelector(`[data-edit="${dataEditField}"], [data-edit="prototypeToken.texture.src"]`);
 
-        $(html)
-        .find(`[data-edit="${dataEditField}"], [data-edit="prototypeToken.texture.src"]`)
-        .each((index, element) => {
-          // deactivating the original FilePicker click
-          $(element).off("click");
+      if (!element) return;
 
-          // replace it with Tokenizer OR FilePicker click
-          $(element).on("click", (event) => {
+      const doc = (app.token) ? app : app.document;
+      const disableAvatarClickGlobal = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click");
+      const disableAvatarClickUser = game.settings.get(CONSTANTS.MODULE_ID, "disable-avatar-click-user");
+      const disableAvatarClick = disableAvatarClickUser === "global"
+        ? disableAvatarClickGlobal
+        : disableAvatarClickUser === "default";
 
-            const launchTokenizer
-              = (!disableAvatarClick && !event.shiftKey) // avatar click not disabled, and not shift key
-              || (disableAvatarClick && event.shiftKey); // avatar click disabled, and shift key
+      element.addEventListener('click', (event) => {
+        const launchTokenizer
+          = (!disableAvatarClick && !event.shiftKey) // avatar click not disabled, and not shift key
+          || (disableAvatarClick && event.shiftKey); // avatar click disabled, and shift key
 
-            if (launchTokenizer) {
-              event.stopPropagation();
-              tokenizeDoc(doc);
-              event.preventDefault();
-            } else {
-              // showing the filepicker
-              const current = data.actor ? data.actor[dataEditField] : data[dataEditField];
-              const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
-              new FPClass({
-                type: "image",
-                current,
-                callback: (path) => {
-                  event.currentTarget.src = path;
-                  app._onSubmit(event);
-                },
-                top: app.position.top + 40,
-                left: app.position.left + 10,
-              }).browse();
-            }
-          });
-        });
-        
-      }
+        if (launchTokenizer) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          tokenizeDoc(doc);
+        }
+        // Otherwise, let it bubble/propagate normally to existing handlers
+      }, true); // 'true' = capture phase, runs before other handlers
     });
   });
 }
