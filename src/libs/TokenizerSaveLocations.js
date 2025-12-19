@@ -3,7 +3,7 @@ import CONSTANTS from "../constants.js";
 import DirectoryPicker from "./DirectoryPicker.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-const FPClass = foundry.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+const FPClass = foundry.applications.apps.FilePicker.implementation;
 
 
 export class TokenizerSaveLocations extends HandlebarsApplicationMixin(ApplicationV2) {

@@ -193,7 +193,7 @@ export default class Utils {
 
     logger.debug(`Uploading ${fileName}`, { directoryPath, fileName, options });
 
-    const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+    const FPClass = foundry.applications.apps.FilePicker.implementation;
     const result = await FPClass.upload(options.activeSource, options.current, file, { bucket: options.bucket }, { notify: false });
 
     return result.path;

@@ -5,7 +5,7 @@
 import logger from "../libs/logger.js";
 import Utils from "./Utils.js";
 
-const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+const FPClass = foundry.applications.apps.FilePicker.implementation;
 
 class DirectoryPicker extends FPClass {
 

@@ -4,7 +4,7 @@ import DirectoryPicker from "./DirectoryPicker.js";
  * Game Settings: ImagePicker
  */
 
-const FPClass = foundry?.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+const FPClass = foundry.applications.apps.FilePicker.implementation;
 
 class ImagePicker extends FPClass {
   constructor(options = {}) {
