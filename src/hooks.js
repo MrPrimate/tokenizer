@@ -387,8 +387,11 @@ function linkDefaultSheets() {
     Hooks.on("render" + sheetName, (app, html, _data) => {
       if (!game.user) return;
       const dataEditField = getAvatarKey();
-      const element = html.querySelector(`[data-edit="${dataEditField}"], [data-edit="prototypeToken.texture.src"]`);
+      const key = html[0] instanceof HTMLDivElement
+        ? html[0]
+        : html;
 
+      const element = key.querySelector(`[data-edit="${dataEditField}"], [data-edit="prototypeToken.texture.src"]`);
       if (!element) return;
 
       const doc = (app.token) ? app : app.document;

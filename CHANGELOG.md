@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.6.1]
+
+- Fix for systems still using V1 Apps for character sheets (sorry PF2e crew!)
+
 # [4.6.0]
 
 - v13 support only
