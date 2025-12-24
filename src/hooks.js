@@ -387,7 +387,7 @@ function linkDefaultSheets() {
     Hooks.on("render" + sheetName, (app, html, _data) => {
       if (!game.user) return;
       const dataEditField = getAvatarKey();
-      const key = html[0] instanceof HTMLDivElement
+      const key = html[0] instanceof HTMLDivElement || html[0] instanceof HTMLFormElement
         ? html[0]
         : html;
 

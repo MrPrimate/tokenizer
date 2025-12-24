@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.6.2]
+
+- Fixes for PF1e failures when re-rendering sheet after token is edited.
+
 # [4.6.1]
 
 - Fix for systems still using V1 Apps for character sheets (sorry PF2e crew!)
