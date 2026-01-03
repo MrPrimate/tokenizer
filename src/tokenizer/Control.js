@@ -32,7 +32,7 @@ export default class Control {
     const idSection = document.createElement("div");
     idSection.name = "layer-id-num";
     idSection.title = game.i18n.localize("vtta-tokenizer.label.LayerNumber");
-    idSection.classList.add("section");
+    idSection.classList.add("section", "number");
     this.idNumber = document.createElement("div");
     this.idNumber.innerHTML = this.layer.getLayerLabel();
 

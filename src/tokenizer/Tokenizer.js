@@ -95,6 +95,11 @@ export default class Tokenizer extends FormApplication {
           : game.i18n.localize("vtta-tokenizer.default-frame-npc.neutral"),
         selected: true,
       },
+      {
+        key: "[data] modules/vtta-tokenizer/img/shadowdark-frame.png",
+        label: game.i18n.localize("vtta-tokenizer.shadowdark-frame.name"),
+        selected: false,
+      },
     ];
 
     const foundryDefaultPCFrame = game.settings.settings.get("vtta-tokenizer.default-frame-pc").default.replace(/^\/|\/$/g, "");

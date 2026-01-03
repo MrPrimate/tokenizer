@@ -15,6 +15,7 @@
   "vtta-tokenizer.default-frame-npc.other": "Default NPC Frame (Other)",
   "vtta-tokenizer.default-frame-tint.name": "Default Tint Frame",
   "vtta-tokenizer.default-frame-tint.hint": "A frame image stored on the Foundry server and that is used as a default tint frame.",
+  "vtta-tokenizer.shadowdark-frame.name": "Shadowdark Frame",
   "vtta-tokenizer.frame-tint.name": "Frame tint mode?",
   "vtta-tokenizer.frame-tint.hint": "If selected, a neutral frame will be applied, then a tint colour applied to it",
   "vtta-tokenizer.default-frame-tint.pc": "Default frame tint color for PC's",

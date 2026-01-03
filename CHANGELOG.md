@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.6.3]
+
+- Include the frame/ring from the Shadowdark Community Tokens pack. Thanks to @PrototypeESBU
+
 # [4.6.2]
 
 - Fixes for PF1e failures when re-rendering sheet after token is edited.

@@ -77,6 +77,13 @@
   border: thin solid rgb(149, 159, 168);
   background-color: rgb(194, 194, 194);
   margin-right: 5px;
+  text-align: center;
+  justify-content: center;
+}
+
+#tokenizer div.view-layer-control .section.number,
+#tokenizer .section.number {
+  width: 21px;
 }
 
 .magic-lasso input[type="color"],
