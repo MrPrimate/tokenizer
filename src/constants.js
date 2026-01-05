@@ -92,5 +92,8 @@ const CONSTANTS = {
 };
 
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_ID}/`;
+CONSTANTS.SHADOWDARK_FRAME = `[data] ${CONSTANTS.PATH}img/shadowdark-frame.png`.replace(/^\/|\/$/g, "");
+CONSTANTS.DEFAULT_MASK = `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask.webp`.replace(/^\/|\/$/g, "");
+CONSTANTS.DEFAULT_TOP_MASK = `[data] ${CONSTANTS.PATH}img/dynamic-ring-top-mask.webp`.replace(/^\/|\/$/g, "");
 
 export default CONSTANTS;

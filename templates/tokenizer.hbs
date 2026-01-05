@@ -40,10 +40,27 @@
                 <div class="title">
                     <div class="title-element"><h1 id="tokenizer-token-header">{{localize "vtta-tokenizer.label.token"}}</h1></div>
                     <div class="title-element">
-                        <button id="modify-token" type="button" class="box-button" data-target="token" data-type="modify-toggle">{{localize "vtta-tokenizer.label.Modify"}}&nbsp;&nbsp;<i id="modify-token-fas" class="fas fa-square-check button-fas"></i></button>
-                        <button id="paste-token" type="button" class="box-button" data-target="token" data-type="paste-toggle">{{localize "vtta-tokenizer.label.PasteTarget"}}&nbsp;&nbsp;<i id="paste-token-fas" class="fa-regular fa-circle-dot button-fas"></i></button>
+                        <div class="title-buttons">
+                            <button id="quick-token" type="button" class="box-button" data-target="token" data-type="quick-token">{{localize "vtta-tokenizer.label.QuickToken"}}&nbsp;&nbsp;<i id="quick-token-fas" class="fas fa-rabbit-running button-fas"></i></button>
+                            <button id="modify-token" type="button" class="box-button" data-target="token" data-type="modify-toggle">{{localize "vtta-tokenizer.label.Modify"}}&nbsp;&nbsp;<i id="modify-token-fas" class="fas fa-square-check button-fas"></i></button>
+                            <button id="paste-token" type="button" class="box-button" data-target="token" data-type="paste-toggle">{{localize "vtta-tokenizer.label.PasteTarget"}}&nbsp;&nbsp;<i id="paste-token-fas" class="fa-regular fa-circle-dot button-fas"></i></button>
+                        </div>
+                        <div id="quick-token-menu" class="popup quick-token-menu">
+                            <div class="basic-quick-token-control">
+                                <button id="quick-token-dynamic" type="button" class= "box-button popup-select" data-target="token" data-type="quick-token-dynamic">{{localize "vtta-tokenizer.label.ApplyDynamic"}}</button>
+                            </div>
+                            <hr class="tokenizer-hr">
+                            <div class="basic-quick-token-control">
+                                <button id="quick-token-shadowdark" type="button" class= "box-button" data-target="token" data-type="quick-token-shadowdark">{{localize "vtta-tokenizer.label.ApplyShadowdark"}}</button>
+                            </div>
+                            <hr class="tokenizer-hr">
+                            <div class="basic-quick-token-control">
+                                <button id="quick-token-reset" type="button" class= "box-button" data-target="token" data-type="quick-token-reset">{{localize "vtta-tokenizer.label.Reset"}}</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="view" id="tokenizer-token"></div>
                 <div class="menu" id="token-options">
                     <div class="section">

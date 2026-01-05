@@ -44,9 +44,19 @@ export class MagicLasso {
     this.layerCanvas.width = this.width;
     this.layerCanvas.height = this.height;
     this.layerContext = this.layerCanvas.getContext("2d");
+    const original = Utils.cloneCanvas(this.layer.source);
+    const originalContext = original.getContext("2d");
+    this.layer.applyTransformations(originalContext, this.layer.source, false);
+    let source = this.layer.source;
+    if (this.layer.filters.length > 0) {
+      for (const filter of this.layer.filters) {
+        source = filter(original);
+      }
+    }
+
     this.layerContext
       .drawImage(
-        this.layer.source,
+        source,
         0,
         0,
         this.layer.source.width,

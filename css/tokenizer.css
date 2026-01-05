@@ -436,8 +436,15 @@
 }
 
 #tokenizer .popup hr {
-  border-top: 1px solid #ccc;
-  margin: 1em 0;
+  border-top: 1px solid rgb(94, 0, 0);
+  border-top-color: rgb(94, 0, 0);
+  border-bottom-color: rgb(94, 0, 0);
+  margin: 0.3em 0;
+  height: 2px;
+  color: rgb(231, 209, 177);
+  border-left-color: rgb(231, 209, 177);
+  border-right-color: rgb(231, 209, 177);
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(231, 209, 177) 50%, rgba(0, 0, 0, 0) 100%);
 }
 
 #tokenizer select.blend-control-selector {
@@ -554,33 +561,35 @@
   flex-wrap: nowrap;
 }
 
-.tokenizer .title .box-button {
-  background: rgb(94, 0, 0);
+.tokenizer .box-button {
   align-items: center;
-  justify-content: center;
-  color: rgb(255, 255, 255);
-  font-size: 10px;
-  cursor: pointer;
+  background: rgb(94, 0, 0);
+  border-radius: 2px;
   border: none;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,.3), inset 0 0 0 2px hsla(0,0%,100%,.2);
-  flex: 0;
-  height: 2em;
-  margin: 0;
-  padding: 0 0.5em;
-  white-space: nowrap;
-  width: 100%;
-  border-radius: 2px;
+  box-sizing: border-box;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
   display: flex;
+  flex: 0;
   font-family: var(--sans-serif);
-  font-size: var(--font-size-10);
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: .05em;
+  height: 2em;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  line-height: 28px;
+  margin: 0;
   min-height: 1.5em;
+  padding: 0 0.5em;
   text-rendering: optimizeLegibility;
   text-transform: uppercase;
-  line-height: 28px;
-  box-sizing: border-box;
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
   user-select: none;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .tokenizer .box-button.deselected {
@@ -689,4 +698,34 @@
 
 div.magic-lasso-wrapper {
   position: relative;
+}
+
+.tokenizer div.basic-quick-token-control {
+  display: flex;
+}
+
+.tokenizer div.title-buttons {
+  order: 0;
+  flex: 1 0 auto;
+  align-self: auto;
+  display: flex;
+  margin: auto;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+.tokenizer hr.tokenizer-hr {
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(231, 209, 177) 50%, rgba(0, 0, 0, 0) 100%);
+  background: rgb(94, 0, 0);
+  border-bottom-color: rgb(94, 0, 0);
+  border-left-color: rgb(231, 209, 177);
+  border-right-color: rgb(231, 209, 177);
+  border-top-color: rgb(94, 0, 0);
+  border-top: 1px solid rgb(94, 0, 0);
+  color: rgb(231, 209, 177);
+  margin: 0.3em 0;
+  margin: 5px;
+  padding: 0;
+  user-select: none;
+  height: 2px;
 }

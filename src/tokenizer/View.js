@@ -292,6 +292,13 @@ export default class View {
     return this.canvas.height;
   }
 
+  removeAllLayers() {
+    const ids = this.layers.map((l) => l.id);
+    ids.forEach((id) => {
+      this.removeImageLayer(id);
+    });
+  }
+
   removeImageLayer(layerId) {
     let index = 0;
     for (index = 0; index <= this.layers.length; index++) {
@@ -470,7 +477,7 @@ export default class View {
   }
 
   addImageLayer(img, { masked = false, activate = false, tintColor = null, tintLayer = false,
-    position = { x: null, y: null }, scale = null, maskFromImage = false, visible = true } = {},
+    position = { x: null, y: null }, scale = null, maskFromImage = false, visible = true, type = null } = {},
   ) {
     const imgSrc = Utils.isString(img.src) && !img.src.startsWith("data:image/png;base64")
       ? img.src
@@ -497,6 +504,7 @@ export default class View {
       tintLayer,
       maskFromImage,
       visible,
+      type,
     };
 
     const layer = Layer.fromImage(imgOptions);

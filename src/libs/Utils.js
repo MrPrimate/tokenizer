@@ -289,7 +289,7 @@ export default class Utils {
         const img = new Image();
         img.crossOrigin = "Anonymous";
         img.addEventListener("load", () => {
-          view.addImageLayer(img);
+          view.addImageLayer(img, { type: "image" });
         });
         const reader = new FileReader();
         reader.onload = function(ev) {

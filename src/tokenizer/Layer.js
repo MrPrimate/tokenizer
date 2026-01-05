@@ -33,12 +33,17 @@ export default class Layer {
     this.position.x = Math.floor((this.width / 2) - ((this.source.width * this.scale) / 2));
     this.position.y = Math.floor((this.height / 2) - ((this.source.height * this.scale) / 2));
     this.mask = null;
+    this.filters = [];
     this.redraw();
     if (this.providesMask) this.createMask();
     this.recalculateMask();
   }
 
-  constructor({ view, canvas, tintColor, tintLayer, img = null, color = null, maskFromImage = false, visible = true } = {}) {
+  constructor({
+    type, view, canvas, tintColor, tintLayer, img = null, color = null, maskFromImage = false, visible = true,
+    filters = [], contrast, brightness,
+  } = {}) {
+    this.type = type ?? null;
     this.view = view;
     this.id = Utils.generateUUID();
     this.canvas = canvas;
@@ -108,10 +113,17 @@ export default class Layer {
     this.tintLayer = tintLayer;
     this.tintColor = tintColor;
     // this.tintColor = "#f59042";
+
+    this.contrast = contrast ?? 0;
+    this.brightness = brightness ?? 0;
+    this.shadowdarkBlurAmount = 25;
+
+    this.filters = filters;
   }
 
   static fromLayer(layer) {
     const newLayer = new Layer({
+      type: layer.type == "original" ? "clone" : layer.type,
       view: layer.view,
       canvas: Utils.cloneCanvas(layer.canvas),
       img: layer.img,
@@ -120,6 +132,9 @@ export default class Layer {
       maskFromImage: layer.maskFromImage,
       visible: layer.visible,
       color: layer.color,
+      filters: foundry.utils.deepClone(layer.filters),
+      contrast: layer.contrast,
+      brightness: layer.brightness,
     });
 
     newLayer.colorLayer = layer.colorLayer;
@@ -138,6 +153,7 @@ export default class Layer {
     newLayer.flipped = layer.flipped;
     newLayer.visible = layer.visible;
     newLayer.alpha = layer.alpha;
+    newLayer.shadowdarkBlurAmount = layer.shadowdarkBlurAmount;
 
     if (layer.mask) newLayer.mask = Utils.cloneCanvas(layer.mask);
     if (layer.sourceMask) layer.sourceMask = Utils.cloneCanvas(layer.sourceMask);
@@ -328,7 +344,7 @@ export default class Layer {
     this.sourceMask = Utils.cloneCanvas(this.mask);
   }
 
-  static fromImage({ view, img, canvasHeight, canvasWidth, tintColor, tintLayer, maskFromImage, visible } = {}) {
+  static fromImage({ view, img, canvasHeight, canvasWidth, tintColor, tintLayer, maskFromImage, visible, type = "image" } = {}) {
     const height = Math.max(1000, canvasHeight, img.naturalHeight, img.naturalWidth);
     const width = Math.max(1000, canvasWidth, img.naturalHeight, img.naturalWidth);
     const canvas = document.createElement("canvas");
@@ -364,7 +380,7 @@ export default class Layer {
         scaledHeight,
       );
 
-    const layer = new Layer({ view, canvas, img, tintColor, tintLayer, maskFromImage, visible });
+    const layer = new Layer({ type, view, canvas, img, tintColor, tintLayer, maskFromImage, visible });
     // layer.createMask();
     layer.redraw();
     return layer;
@@ -389,7 +405,7 @@ export default class Layer {
     canvas.width = width;
     canvas.height = height;
 
-    const layer = new Layer({ view, canvas, color });
+    const layer = new Layer({ type: "color", view, canvas, color });
     layer.setColor(color);
     return layer;
   }
@@ -518,6 +534,49 @@ export default class Layer {
     }
   }
 
+  getFilteredCanvas(filters = "") {
+    const filterCanvas = Utils.cloneCanvas(this.source);
+    const filterContext = filterCanvas.getContext("2d");
+    filterCanvas.width = this.source.width;
+    filterCanvas.height = this.source.height;
+    filterContext.filter = filters;
+    filterContext.drawImage(this.source, 0, 0);
+    return filterCanvas;
+  }
+
+  adjustBrightness(context) {
+    // Get pixel data from the canvas
+    const imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+    const data = imageData.data; // Uint8ClampedArray [R, G, B, A, R, G, B, A, ...]
+ 
+    // Loop through each pixel (4 values per pixel: R, G, B, A)
+    for (let i = 0; i < data.length; i += 4) {
+      // Adjust R, G, B (skip A)
+      data[i] = Math.max(0, Math.min(255, data[i] + this.brightness)); // Red
+      data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + this.brightness)); // Green
+      data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + this.brightness)); // Blue
+      // Alpha (data[i+3]) remains unchanged
+    }
+ 
+    // Put modified data back on canvas
+    context.putImageData(imageData, 0, 0);
+  }
+
+  adjustContrast(context) {
+    const imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+    const data = imageData.data;
+    const factor = (259 * (this.contrast + 255)) / (255 * (259 - this.contrast));
+
+    for (let i = 0; i < data.length; i += 4) {
+      // Apply contrast formula and clamp
+      data[i] = Math.max(0, Math.min(255, factor * (data[i] - 128) + 128)); // Red
+      data[i + 1] = Math.max(0, Math.min(255, factor * (data[i + 1] - 128) + 128)); // Green
+      data[i + 2] = Math.max(0, Math.min(255, factor * (data[i + 2] - 128) + 128)); // Blue
+    }
+
+    context.putImageData(imageData, 0, 0);
+  }
+
   applyTint(context) {
     const tintCanvas = Utils.cloneCanvas(this.source);
     const tintContext = tintCanvas.getContext("2d");
@@ -536,6 +595,19 @@ export default class Layer {
     context.globalCompositeOperation = 'source-over';
   }
 
+  applyShadowDarkEffect(canvas) {
+    const original = Utils.cloneCanvas(canvas);
+    const context = original.getContext("2d");
+    const bnw = this.getFilteredCanvas("grayscale(1)");
+    const blurPx = this.shadowdarkBlurAmount;
+    const blur = this.getFilteredCanvas(`grayscale(1) invert(1) blur(${blurPx}px)`);
+    context.drawImage(bnw, 0, 0, this.canvas.width, this.canvas.height);
+    context.globalCompositeOperation = 'color-dodge';
+    context.drawImage(blur, 0, 0, this.canvas.width, this.canvas.height);
+    context.globalCompositeOperation = 'source-over';
+    return original;
+  }
+
   /**
    * Refreshes the view canvas with the background color and/or the source image
    */
@@ -545,7 +617,16 @@ export default class Layer {
     // apply transformations to original
     const originalContext = original.getContext("2d");
     this.applyTransformations(originalContext, this.source, false);
-    originalContext.drawImage(this.source, 0, 0);
+    let source = this.source;
+    if (this.filters.length > 0) {
+      for (const filter of this.filters) {
+        source = filter(original);
+      }
+    }
+    const sourceContext = source.getContext("2d");
+    this.adjustBrightness(sourceContext);
+    this.adjustContrast(sourceContext);
+    originalContext.drawImage(source, 0, 0);
     if (this.tintLayer) this.applyTint(originalContext);
     originalContext.resetTransform();
 

@@ -96,7 +96,7 @@ export default class Tokenizer extends FormApplication {
         selected: true,
       },
       {
-        key: "[data] modules/vtta-tokenizer/img/shadowdark-frame.png",
+        key: CONSTANTS.SHADOWDARK_FRAME,
         label: game.i18n.localize("vtta-tokenizer.shadowdark-frame.name"),
         selected: false,
       },
@@ -219,7 +219,7 @@ export default class Tokenizer extends FormApplication {
       },
     ];
 
-    const foundryDefaultMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask.webp`.replace(/^\/|\/$/g, "");
+    const foundryDefaultMask = CONSTANTS.DEFAULT_MASK;
     if (defaultMask !== foundryDefaultMask) {
       defaultMasks.push({
         key: foundryDefaultMask,
@@ -228,7 +228,7 @@ export default class Tokenizer extends FormApplication {
       });
     }
 
-    const foundryDefaultTopMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-top-mask.webp`.replace(/^\/|\/$/g, "");
+    const foundryDefaultTopMask = CONSTANTS.DEFAULT_TOP_MASK;
     if (defaultMask !== foundryDefaultTopMask) {
       defaultMasks.push({
         key: foundryDefaultTopMask,
@@ -439,6 +439,13 @@ export default class Tokenizer extends FormApplication {
     });
   }
 
+  closeQuickLayerSelector() {
+    const menu = document.getElementById("quick-token-menu");
+    menu.classList.remove("show");
+    this.lastControlButtonClicked = null;
+    this.activeLayerSelectorElement = null;
+  }
+
   /* -------------------------------------------- */
 
   async _initAvatar(inputUrl) {
@@ -456,7 +463,7 @@ export default class Tokenizer extends FormApplication {
       const MAX_DIMENSION = Math.max(img.naturalHeight, img.naturalWidth, game.settings.get(CONSTANTS.MODULE_ID, "portrait-size"));
       logger.debug("Setting Avatar dimensions to " + MAX_DIMENSION + "x" + MAX_DIMENSION);
       this.Avatar = new View(this, MAX_DIMENSION, avatarView);
-      this.Avatar.addImageLayer(img);
+      this.Avatar.addImageLayer(img, { type: "original" });
 
       // Setting the height of the form to the desired auto height
       $("#tokenizer-control").css("height", "auto");
@@ -503,7 +510,7 @@ export default class Tokenizer extends FormApplication {
       const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
 
       Utils.download(eventTarget.value)
-        .then((img) => view.addImageLayer(img))
+        .then((img) => view.addImageLayer(img, { type: "image" }))
         .catch((error) => ui.notifications.error(error));
     });
 
@@ -555,9 +562,57 @@ export default class Tokenizer extends FormApplication {
           tokenButton.classList.toggle('deselected');
           tokenFas.classList.toggle("fa-circle");
           tokenFas.classList.toggle("fa-circle-dot");
-
+          break;
         }
-        // no default
+        case "quick-token": {
+          // pop up selection box
+          const button = document.getElementById("quick-token");
+          const menu = document.getElementById("quick-token-menu");
+          menu.classList.toggle("show");
+          this.lastControlButtonClicked = button;
+          this.activeLayerSelectorElement = menu.classList.contains("show")
+            ? menu
+            : null;
+          // apply selection to token
+          break;
+        }
+        case "quick-token-dynamic": {
+          this.closeQuickLayerSelector();
+          const frameIds = this.Token.layers.filter((l) => ["mask", "frame"].includes(l.type)).map((l) => l.id);
+          for (const id of frameIds) {
+            this.Token.removeImageLayer(id);
+          }
+          await this._setTokenMask(CONSTANTS.DEFAULT_MASK, true);
+          break;
+        }
+        case "quick-token-shadowdark": {
+          this.closeQuickLayerSelector();
+          const frameIds = this.Token.layers.filter((l) => l.type === "frame").map((l) => l.id);
+          for (const id of frameIds) {
+            this.Token.removeImageLayer(id);
+          }
+          await this._setTokenFrame(CONSTANTS.SHADOWDARK_FRAME, true);
+          this.Token.layers.filter((l) => ["image", "original"].includes(l.type)).forEach((l) => {
+            l.contrast = 40;
+            l.brightness = -30;
+            l.shadowdarkBlurAmount = 25;
+            l.filters.push(l.applyShadowDarkEffect.bind(l));
+          });
+          this.Token.redraw(true);
+          break;
+        }
+        case "quick-token-reset": {
+          this.closeQuickLayerSelector();
+          this.Token.removeAllLayers();
+          this._loadTokenImageToTokenView();
+          break;
+        }
+        default:
+          logger.debug("Unhandled box-button click:", {
+            event,
+            eventTarget,
+            type: eventTarget.dataset?.type,
+          });
       }
     });
 
@@ -569,7 +624,7 @@ export default class Tokenizer extends FormApplication {
       switch (eventTarget.dataset.type) {
         case "upload": {
           const img = await Utils.upload();
-          view.addImageLayer(img);
+          view.addImageLayer(img, { type: "image" });
           break;
         }
         case "download-token": {
@@ -605,7 +660,7 @@ export default class Tokenizer extends FormApplication {
                 label: game.i18n.localize("vtta-tokenizer.label.OK"),
                 callback: () => {
                   Utils.download($("#tokenizerurl").val())
-                    .then((img) => view.addImageLayer(img))
+                    .then((img) => view.addImageLayer(img, { type: "image" }))
                     .catch((error) => {
                       logger.error("Error fetching image", error);
                       ui.notification.error(error);
@@ -620,11 +675,11 @@ export default class Tokenizer extends FormApplication {
           break;
         }
         case "token": {
-          this.Token.get("img").then((img) => view.addImageLayer(img));
+          this.Token.get("img").then((img) => view.addImageLayer(img, { type: "image" }));
           break;
         }
         case "avatar": {
-          this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true }));
+          this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true, type: "image" }));
           break;
         }
         case "color": {
@@ -634,7 +689,7 @@ export default class Tokenizer extends FormApplication {
         }
         case "tokenVariants": {
           game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
-            callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img)),
+            callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img, { type: "image" })),
             searchType: eventTarget.dataset.target === "avatar" ? "Portrait" : "Token",
           });
           break;
@@ -688,7 +743,7 @@ export default class Tokenizer extends FormApplication {
       const options = this.addFrame || this.addMask
         ? this.tokenOffset
         : {};
-      this.Token.addImageLayer(img, options);
+      this.Token.addImageLayer(img, { ...options, type: "original" });
       await this._addHigherTokenLayers();
     } catch (error) {
       if (!src || src === CONST.DEFAULT_TOKEN) {
@@ -767,7 +822,7 @@ export default class Tokenizer extends FormApplication {
       const options = DirectoryPicker.parse(fullPath ? fileName : framePath);
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintFrame && !fileName });
+        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintFrame && !fileName, type: "frame" });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadFrame", { frame: options.current });
         ui.notifications.error(errorMessage);
@@ -789,7 +844,7 @@ export default class Tokenizer extends FormApplication {
       const options = DirectoryPicker.parse(fullPath ? fileName : maskPath);
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true, onTop: true, maskFromImage: true, visible: false });
+        this.Token.addImageLayer(img, { masked: true, onTop: true, maskFromImage: true, visible: false, type: "mask" });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadMask", { mask: options.current });
         ui.notifications.error(errorMessage);
@@ -807,7 +862,7 @@ export default class Tokenizer extends FormApplication {
       const options = DirectoryPicker.parse(fullPath ? fileName : tintLayerPath.replace(/^\/|\/$/g, ""));
       try {
         const img = await Utils.download(options.current);
-        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintLayerPath && tintColor });
+        this.Token.addImageLayer(img, { masked: true, onTop: true, tintColor, tintLayer: tintLayerPath && tintColor, type: "texture" });
       } catch (error) {
         const errorMessage = game.i18n.format("vtta-tokenizer.notification.failedLoadTexture", { texture: options.current });
         ui.notifications.error(errorMessage);
@@ -819,6 +874,14 @@ export default class Tokenizer extends FormApplication {
     const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target");
     const view = pasteTarget === "token" ? this.Token : this.Avatar;
     Utils.extractImage(event, view);
+  }
+
+  _loadTokenImageToTokenView() {
+    if (this.tokenOptions.isWildCard) {
+      this._initWildCardToken();
+    } else {
+      this._initToken(this.tokenOptions.tokenFilename);
+    }
   }
 
   loadImages() {
@@ -841,13 +904,10 @@ export default class Tokenizer extends FormApplication {
       const header = document.getElementById("tokenizer-token-header");
       header.innerText = `${game.i18n.localize("vtta-tokenizer.label.token")} (${game.i18n.localize("vtta-tokenizer.label.Wildcard")})`;
       this.Token = new View(this, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
-      // load the default frame, if there is one set
-      this._initWildCardToken();
+      this._loadTokenImageToTokenView();
     } else {
       this.Token = new View(this, game.settings.get(CONSTANTS.MODULE_ID, "token-size"), tokenView);
-
-      // Add the actor image to the token view
-      this._initToken(this.tokenOptions.tokenFilename);
+      this._loadTokenImageToTokenView();
     }
 
     this._initAvatar(this.tokenOptions.avatarFilename);
