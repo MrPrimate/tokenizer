@@ -88,6 +88,7 @@
   "vtta-tokenizer.label.EditMask": "Edit mask",
   "vtta-tokenizer.label.EditTint": "Edit tint",
   "vtta-tokenizer.label.EnableDisableTransformation": "Enable/disable transformations",
+  "vtta-tokenizer.label.EnableLineArt": "Enable Line Art Mode",
   "vtta-tokenizer.label.file-name": "File Name",
   "vtta-tokenizer.label.Fill": "Fill",
   "vtta-tokenizer.label.FillColor": "Fill Color",

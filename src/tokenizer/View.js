@@ -455,6 +455,10 @@ export default class View {
         this.setLineArtBlurSize(event.detail.layerId, event.detail.size);
         this.refreshControls();
       });
+      control.view.addEventListener('line-art-toggle', (event) => {
+        this.setLineArtMode(event.detail.layerId, event.detail.enabled);
+        this.refreshControls();
+      });
       control.view.addEventListener('contrast', (event) => {
         this.setContrast(event.detail.layerId, event.detail.contrast);
         this.refreshControls();
@@ -774,6 +778,21 @@ export default class View {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
       layer.lineArtBlurSize = parseInt(size);
+      layer.redraw();
+      this.redraw(true);
+    }
+  }
+
+  setLineArtMode(id, enabled) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      const existing = layer.filters.some((f) => f.name === "lineArtEffect");
+      if (enabled && !existing) {
+        layer.filters.push(layer.lineArtEffect.bind(layer));
+      } else if (!enabled && existing) {
+        layer.filters = layer.filters.filter((f) => f.name !== "lineArtEffect");
+      }
+      console.warn(layer.filters);
       layer.redraw();
       this.redraw(true);
     }

@@ -91,6 +91,8 @@ export default class Control {
 
   lineArtBlurSizeLabel = document.createElement('div');
 
+  lineArtEnableButton = document.createElement('input');
+
   constructor(tokenizer, layer) {
     this.tokenizer = tokenizer;
     this.layer = layer;
@@ -708,14 +710,31 @@ export default class Control {
     lineArtBlurSizeIcon.title = game.i18n.localize("vtta-tokenizer.label.LineArtBlurSize");
     lineArtBlurSizeSpan.appendChild(lineArtBlurSizeIcon);
 
+    let lineArtEnabled = this.layer.filters.some((f) => f.name === "lineArtEffect");
+
     this.lineArtBlurSizeControl.type = 'range';
     this.lineArtBlurSizeControl.min = 1;
     this.lineArtBlurSizeControl.max = 50;
     this.lineArtBlurSizeControl.value = this.layer.lineArtBlurSize ?? 25;
     this.lineArtBlurSizeControl.title = game.i18n.localize("vtta-tokenizer.label.LineArtBlurSize");
     this.lineArtBlurSizeControl.name = "line-art-blur-size";
+    this.lineArtBlurSizeControl.disabled = !lineArtEnabled;
 
     this.lineArtBlurSizeLabel.innerHTML = `${this.lineArtBlurSizeControl.value}px`;
+
+    this.lineArtEnableButton.type = 'checkbox';
+    this.lineArtEnableButton.checked = lineArtEnabled;
+    this.lineArtEnableButton.title = game.i18n.localize("vtta-tokenizer.label.EnableLineArt");
+
+    this.lineArtEnableButton.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        enable: event.target.checked,
+      };
+      this.lineArtBlurSizeControl.disabled = !event.target.checked;
+      this.view.dispatchEvent(new CustomEvent('line-art-toggle', { detail }));
+    });
 
     this.lineArtBlurSizeControl.addEventListener('input', (event) => {
       event.preventDefault();
@@ -728,6 +747,7 @@ export default class Control {
     });
     lineArtBlurSizeSpan.appendChild(this.lineArtBlurSizeControl);
     lineArtBlurSizeSpan.appendChild(this.lineArtBlurSizeLabel);
+    lineArtBlurSizeSpan.appendChild(this.lineArtEnableButton);
 
     adjustmentControlsSpan.appendChild(lineArtBlurSizeSpan);
 
@@ -1022,6 +1042,9 @@ export default class Control {
       this.lineArtBlurSizeControl.value = this.layer.lineArtBlurSize;
       this.lineArtBlurSizeLabel.innerHTML = `${this.layer.lineArtBlurSize}px`;
     }
+    let lineArtEnabled = this.layer.filters.some((f) => f.name === "lineArtEffect");
+    this.lineArtEnableButton.checked = lineArtEnabled;
+    this.lineArtBlurSizeControl.disabled = !lineArtEnabled;
 
   }
 
