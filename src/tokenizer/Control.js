@@ -710,7 +710,7 @@ export default class Control {
     lineArtBlurSizeIcon.title = game.i18n.localize("vtta-tokenizer.label.LineArtBlurSize");
     lineArtBlurSizeSpan.appendChild(lineArtBlurSizeIcon);
 
-    let lineArtEnabled = this.layer.filters.some((f) => f.name === "lineArtEffect");
+    let lineArtEnabled = this.layer.filters.some((f) => f.name.includes("lineArtEffect"));
 
     this.lineArtBlurSizeControl.type = 'range';
     this.lineArtBlurSizeControl.min = 1;
@@ -730,7 +730,7 @@ export default class Control {
       event.preventDefault();
       const detail = {
         layerId: this.layer.id,
-        enable: event.target.checked,
+        enabled: event.target.checked,
       };
       this.lineArtBlurSizeControl.disabled = !event.target.checked;
       this.view.dispatchEvent(new CustomEvent('line-art-toggle', { detail }));
@@ -1042,7 +1042,7 @@ export default class Control {
       this.lineArtBlurSizeControl.value = this.layer.lineArtBlurSize;
       this.lineArtBlurSizeLabel.innerHTML = `${this.layer.lineArtBlurSize}px`;
     }
-    let lineArtEnabled = this.layer.filters.some((f) => f.name === "lineArtEffect");
+    let lineArtEnabled = this.layer.filters.some((f) => f.name.includes("lineArtEffect"));
     this.lineArtEnableButton.checked = lineArtEnabled;
     this.lineArtBlurSizeControl.disabled = !lineArtEnabled;
 

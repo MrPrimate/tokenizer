@@ -786,13 +786,12 @@ export default class View {
   setLineArtMode(id, enabled) {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
-      const existing = layer.filters.some((f) => f.name === "lineArtEffect");
+      const existing = layer.filters.some((f) => f.name.includes("lineArtEffect"));
       if (enabled && !existing) {
         layer.filters.push(layer.lineArtEffect.bind(layer));
       } else if (!enabled && existing) {
-        layer.filters = layer.filters.filter((f) => f.name !== "lineArtEffect");
+        layer.filters = layer.filters.filter((f) => !f.name.includes("lineArtEffect"));
       }
-      console.warn(layer.filters);
       layer.redraw();
       this.redraw(true);
     }
