@@ -621,10 +621,9 @@
   width: 50px;
 }
 
-.tokenizer div.basic-mask-control {
+.tokenizer div.basic-control {
   display: flex;
 }
-
 
 .magic-lasso #threshold {
   width: 95px;

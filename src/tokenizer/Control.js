@@ -22,10 +22,79 @@ export default class Control {
       : null;
   }
 
+
+  view = document.createElement('div');
+
+  idNumber = document.createElement("div");
+
+  maskControl = document.createElement('button');
+
+  maskManagementSection = document.createElement('div');
+
+  maskLayerSelector = document.createElement("div");
+
+  positionManagementSection = document.createElement('div');
+
+  visibleControl = document.createElement('button');
+
+  activeControl = document.createElement('button');
+
+  deleteSection = document.createElement('div');
+
+  colorManagementSection = document.createElement('div');
+
+  colorSelector = document.createElement('input');
+
+  colorSelectorProxy = document.createElement('div');
+
+  clearColor = document.createElement('button');
+
+  getColor = document.createElement('button');
+
+  moveManagementSection = document.createElement('div');
+
+  moveUpControl = document.createElement('button');
+
+  moveDownControl = document.createElement('button');
+
+  adjustmentManagementSection = document.createElement('div');
+
+  colorSelectionManagementSection = document.createElement('div');
+
+  colorBoxSpan = document.createElement('div');
+
+  getAlpha = document.createElement('button');
+
+  colorTintSelectorProxy = document.createElement('div');
+
+  clearColorTint = document.createElement('button');
+
+  tintControlsDiv = document.createElement('div');
+
+  alphaSelectorProxy = document.createElement('div');
+
+  deleteControl = document.createElement('button');
+
+  opacitySliderControl = document.createElement('input');
+
+  opacityLabel = document.createElement('div');
+
+  brightnessSliderControl = document.createElement('input');
+
+  brightnessLabel = document.createElement('div');
+
+  contrastSliderControl = document.createElement('input');
+
+  contrastLabel = document.createElement('div');
+
+  lineArtBlurSizeControl = document.createElement('input');
+
+  lineArtBlurSizeLabel = document.createElement('div');
+
   constructor(tokenizer, layer) {
     this.tokenizer = tokenizer;
     this.layer = layer;
-    this.view = document.createElement('div');
+
     this.view.setAttribute('data-layer', this.layer.id);
     this.view.classList.add('view-layer-control');
 
@@ -33,7 +102,6 @@ export default class Control {
     idSection.name = "layer-id-num";
     idSection.title = game.i18n.localize("vtta-tokenizer.label.LayerNumber");
     idSection.classList.add("section", "number");
-    this.idNumber = document.createElement("div");
     this.idNumber.innerHTML = this.layer.getLayerLabel();
 
     let previewSection = document.createElement('div');
@@ -44,21 +112,13 @@ export default class Control {
     previewMaskSection.name = 'previewMask';
     previewMaskSection.classList.add('section');
 
-    this.configureColorManagement();
-
-    this.configureMaskManagementSection();
-
-    this.configureTranslationControls();
-
-    // opacity management
-    this.configureOpacitySection();
-    this.configureMagicLassoSection();
-
-    // the move up/down order section
-    this.configureMovementSection();
-
-    // danger zone
-    this.configureDeletionSection();
+    this.#configureColorManagement();
+    this.#configureMaskManagementSection();
+    this.#configureTranslationControls();
+    this.#configureAdjustmentSection();
+    this.#configureMagicLassoSection();
+    this.#configureMovementSection();
+    this.#configureDeletionSection();
 
     // push all elements to the control's view
     this.view.appendChild(idSection);
@@ -75,26 +135,21 @@ export default class Control {
       this.colorManagementSection.appendChild(this.colorSelectorProxy);
       this.colorManagementSection.appendChild(this.clearColor);
       this.colorManagementSection.appendChild(this.getColor);
-      this.colorManagementSection.appendChild(this.opacityManagementSection);
+      this.colorManagementSection.appendChild(this.adjustmentManagementSection);
       this.maskControl.disabled = true;
     } else {
       this.view.appendChild(this.positionManagementSection);
       this.positionManagementSection.appendChild(this.visibleControl);
       this.positionManagementSection.appendChild(this.activeControl);
-      // this.positionManagementSection.appendChild(this.flipControl);
-      // this.positionManagementSection.appendChild(this.centreLayerControl);
       this.positionManagementSection.appendChild(this.colorSelectionManagementSection);
-      this.positionManagementSection.appendChild(this.opacityManagementSection);
-      // this.positionManagementSection.appendChild(this.resetControl);
+      this.positionManagementSection.appendChild(this.adjustmentManagementSection);
       this.positionManagementSection.appendChild(this.layerMovementControl);
-      // this.positionManagementSection.appendChild(this.layerMovementSelectorSpan);
     }
     this.view.appendChild(this.moveManagementSection);
     this.view.appendChild(this.deleteSection);
   }
 
-  configureMaskManagementSection() {
-    this.maskManagementSection = document.createElement('div');
+  #configureMaskManagementSection() {
     this.maskManagementSection.name = 'mask-management';
     this.maskManagementSection.classList.add('section');
     let maskManagementTitle = document.createElement('span');
@@ -102,7 +157,6 @@ export default class Control {
     this.maskManagementSection.appendChild(maskManagementTitle);
 
     // Set the basic mask of this layer
-    this.maskControl = document.createElement('button');
     this.maskControl.classList.add('mask-control', 'popup-button');
     this.maskControl.title = game.i18n.localize("vtta-tokenizer.label.ToggleBasicMask");
     let maskButtonText = document.createElement('i');
@@ -116,63 +170,62 @@ export default class Control {
     });
 
     // Set the mask of this layer
-    this.maskEditControl = document.createElement('button');
-    this.maskEditControl.classList.add('mask-control', 'popup-button');
-    // this.maskEditControl.disabled = true;
-    this.maskEditControl.title = game.i18n.localize("vtta-tokenizer.label.EditMask");
+    let maskEditControl = document.createElement('button');
+    maskEditControl.classList.add('mask-control', 'popup-button');
+    // maskEditControl.disabled = true;
+    maskEditControl.title = game.i18n.localize("vtta-tokenizer.label.EditMask");
     let maskEditButtonText = document.createElement('i');
     maskEditButtonText.classList.add('fas', 'fa-pencil');
-    this.maskEditControl.appendChild(maskEditButtonText);
+    maskEditControl.appendChild(maskEditButtonText);
 
     // send a mask event when clicked
-    this.maskEditControl.addEventListener("click", (event) => {
+    maskEditControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('edit-mask', { detail: { layerId: this.layer.id } }));
     });
 
     // Set the mask of this layer
-    this.maskResetControl = document.createElement('button');
-    this.maskResetControl.classList.add('popup-button');
-    this.maskResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetMasks");
+    let maskResetControl = document.createElement('button');
+    maskResetControl.classList.add('popup-button');
+    maskResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetMasks");
     let maskResetButtonText = document.createElement('i');
     maskResetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
-    this.maskResetControl.appendChild(maskResetButtonText);
+    maskResetControl.appendChild(maskResetButtonText);
 
-    this.maskResetControl.addEventListener("click", (event) => {
+    maskResetControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset-mask-layer', { detail: { layerId: this.layer.id } }));
     });
 
-    this.masksControl = document.createElement('button');
-    this.masksControl.classList.add('blend-control');
-    this.masksControl.title = game.i18n.localize("vtta-tokenizer.label.AdvancedMaskApplication");
+    let masksControl = document.createElement('button');
+    masksControl.classList.add('blend-control');
+    masksControl.title = game.i18n.localize("vtta-tokenizer.label.AdvancedMaskApplication");
 
     let masksButtonText = document.createElement('i');
     masksButtonText.classList.add('fas', 'fa-masks-theater');
-    this.masksControl.appendChild(masksButtonText);
+    masksControl.appendChild(masksButtonText);
 
-    this.maskSelectorSpan = document.createElement('div');
-    this.maskSelectorSpan.classList.add('popup');
+    let maskSelectorSpan = document.createElement('div');
+    maskSelectorSpan.classList.add('popup');
 
-    this.maskLayerSelector = document.createElement("div");
     this.maskLayerSelector.classList.add("popup-selector");
 
-    this.addSelectLayerMasks();
+    this.#addSelectLayerMasks();
     let basicMaskControls = document.createElement('div');
-    basicMaskControls.classList.add('basic-mask-control');
+    basicMaskControls.classList.add('basic-control');
     basicMaskControls.appendChild(this.maskControl);
-    basicMaskControls.appendChild(this.maskEditControl);
-    basicMaskControls.appendChild(this.maskResetControl);
+    basicMaskControls.appendChild(maskEditControl);
+    basicMaskControls.appendChild(maskResetControl);
     
-    this.maskSelectorSpan.appendChild(basicMaskControls);
-    this.maskSelectorSpan.appendChild(this.maskLayerSelector);
+    maskSelectorSpan.appendChild(basicMaskControls);
+    maskSelectorSpan.appendChild(this.maskLayerSelector);
 
-    this.blendControlImage = document.createElement('select');
-    this.blendControlImage.classList.add('blend-control-image');
-    this.blendControlMask = document.createElement('select');
-    this.blendControlMask.classList.add('blend-control-mask');
+    let blendControlImage = document.createElement('select');
+    blendControlImage.classList.add('blend-control-image');
+    let blendControlMask = document.createElement('select');
+    blendControlMask.classList.add('blend-control-mask');
 
-    [this.blendControlMask, this.blendControlImage].forEach((blendControlElement) => {
+    [blendControlMask, blendControlImage].forEach((blendControlElement) => {
       blendControlElement.classList.add('blend-control-selector');
       for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
         const option = document.createElement('option');
@@ -204,33 +257,32 @@ export default class Control {
     blendImageText.title = game.i18n.localize("vtta-tokenizer.label.ImageBlendMode");
     blendImageText.classList.add('fas', 'fa-image');
     blendImageDiv.appendChild(blendImageText);
-    blendImageDiv.appendChild(this.blendControlImage);
-    this.maskSelectorSpan.appendChild(blendImageDiv);
+    blendImageDiv.appendChild(blendControlImage);
+    maskSelectorSpan.appendChild(blendImageDiv);
 
     let blendMaskDiv = document.createElement('div');
     let blendMaskText = document.createElement('i');
     blendMaskText.title = game.i18n.localize("vtta-tokenizer.label.MaskBlendMode");
     blendMaskText.classList.add('fas', 'fa-mask');
     blendMaskDiv.appendChild(blendMaskText);
-    blendMaskDiv.appendChild(this.blendControlMask);
-    this.maskSelectorSpan.appendChild(blendMaskDiv);
+    blendMaskDiv.appendChild(blendControlMask);
+    maskSelectorSpan.appendChild(blendMaskDiv);
 
     // send an activate event when clicked
-    this.masksControl.addEventListener("click", (event) => {
+    masksControl.addEventListener("click", (event) => {
       event.preventDefault();
-      this.toggleVisibleDiv(this.masksControl, this.maskSelectorSpan);
+      this.toggleVisibleDiv(masksControl, maskSelectorSpan);
     }, true);
 
     // blend mode controls
     let blendManagementSection = document.createElement('div');
-    blendManagementSection.appendChild(this.masksControl);
-    blendManagementSection.appendChild(this.maskSelectorSpan);
+    blendManagementSection.appendChild(masksControl);
+    blendManagementSection.appendChild(maskSelectorSpan);
     this.maskManagementSection.appendChild(blendManagementSection);
   }
 
-  configureTranslationControls() {
+  #configureTranslationControls() {
     // position management section
-    this.positionManagementSection = document.createElement('div');
     this.positionManagementSection.name = 'position-management';
     this.positionManagementSection.classList.add('section');
     let positionManagementTitle = document.createElement('span');
@@ -238,7 +290,6 @@ export default class Control {
     this.positionManagementSection.appendChild(positionManagementTitle);
 
     // is this layer visible?
-    this.visibleControl = document.createElement('button');
     this.visibleControl.classList.add('visible-layer');
     this.visibleControl.title = game.i18n.localize("vtta-tokenizer.label.VisibleLayer");
 
@@ -253,7 +304,6 @@ export default class Control {
     });
 
     // Makes the layer active for translating/ scaling
-    this.activeControl = document.createElement('button');
     this.activeControl.title = game.i18n.localize("vtta-tokenizer.label.EnableDisableTransformation");
     this.activeControl.classList.add('mask-control');
     let activeButtonText = document.createElement('i');
@@ -271,43 +321,43 @@ export default class Control {
     });
 
     // Makes flips the layer
-    this.flipControl = document.createElement('button');
-    this.flipControl.title = game.i18n.localize("vtta-tokenizer.label.FlipLayer");
-    this.flipControl.classList.add('flip-control', 'popup-button');
+    let flipControl = document.createElement('button');
+    flipControl.title = game.i18n.localize("vtta-tokenizer.label.FlipLayer");
+    flipControl.classList.add('flip-control', 'popup-button');
     let flipButtonText = document.createElement('i');
     flipButtonText.classList.add('fas', 'fa-people-arrows');
-    this.flipControl.appendChild(flipButtonText);
+    flipControl.appendChild(flipButtonText);
 
     // send an activate event when clicked
-    this.flipControl.addEventListener("click", (event) => {
+    flipControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('flip', { detail: { layerId: this.layer.id } }));
     });
 
     // resets the layer on the view
-    this.resetControl = document.createElement('button');
-    this.resetControl.classList.add('reset-control', 'popup-button');
-    this.resetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetLayer");
+    let resetControl = document.createElement('button');
+    resetControl.classList.add('reset-control', 'popup-button');
+    resetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetLayer");
     let resetButtonText = document.createElement('i');
     resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
-    this.resetControl.appendChild(resetButtonText);
+    resetControl.appendChild(resetButtonText);
 
     // send an activate event when clicked
-    this.resetControl.addEventListener("click", (event) => {
+    resetControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset', { detail: { layerId: this.layer.id } }));
     });
 
     // Centres the layer
-    this.centreLayerControl = document.createElement('button');
-    this.centreLayerControl.title = game.i18n.localize("vtta-tokenizer.label.CentreLayer");
-    this.centreLayerControl.classList.add('centre-control', 'popup-button');
+    let centreLayerControl = document.createElement('button');
+    centreLayerControl.title = game.i18n.localize("vtta-tokenizer.label.CentreLayer");
+    centreLayerControl.classList.add('centre-control', 'popup-button');
     let centreLayerText = document.createElement('i');
     centreLayerText.classList.add('fas', 'fa-crosshairs');
-    this.centreLayerControl.appendChild(centreLayerText);
+    centreLayerControl.appendChild(centreLayerText);
 
     // send an activate event when clicked
-    this.centreLayerControl.addEventListener("click", (event) => {
+    centreLayerControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('centre-layer', { detail: { layerId: this.layer.id } }));
     });
@@ -332,9 +382,9 @@ export default class Control {
     let buttonDiv = document.createElement("div");
     buttonDiv.classList.add("popup-selector");
 
-    buttonDiv.appendChild(this.flipControl);
-    buttonDiv.appendChild(this.centreLayerControl);
-    buttonDiv.appendChild(this.resetControl);
+    buttonDiv.appendChild(flipControl);
+    buttonDiv.appendChild(centreLayerControl);
+    buttonDiv.appendChild(resetControl);
 
     layerMovementSelectorDiv.appendChild(buttonDiv);
     layerMovementSelectorDiv.appendChild(document.createElement('hr'));
@@ -342,30 +392,30 @@ export default class Control {
     let scaleDiv = document.createElement('div');
     scaleDiv.classList.add("popup-selector");
 
-    this.scaleInput = document.createElement('input');
-    this.scaleInput.type = "text";
-    this.scaleInput.value = `${this.layer.scale * 100}`;
-    this.scaleInput.classList.add('scale-input', 'popup-input');
+    let scaleInput = document.createElement('input');
+    scaleInput.type = "text";
+    scaleInput.value = `${this.layer.scale * 100}`;
+    scaleInput.classList.add('scale-input', 'popup-input');
 
-    this.scaleControl = document.createElement('button');
-    this.scaleControl.title = game.i18n.localize("vtta-tokenizer.label.ScaleButton");
-    this.scaleControl.classList.add('scale-control', 'popup-button');
+    let scaleControl = document.createElement('button');
+    scaleControl.title = game.i18n.localize("vtta-tokenizer.label.ScaleButton");
+    scaleControl.classList.add('scale-control', 'popup-button');
     let scaleText = document.createElement('i');
     scaleText.classList.add('fas', 'fa-compress');
-    this.scaleControl.appendChild(scaleText);
+    scaleControl.appendChild(scaleText);
 
-    this.scaleControl.addEventListener("click", (event) => {
+    scaleControl.addEventListener("click", (event) => {
       event.preventDefault();
-      const percentage = parseFloat(this.scaleInput.value);
+      const percentage = parseFloat(scaleInput.value);
       if (isNaN(percentage)) {
-        this.scaleInput.value = `${this.layer.scale * 100}`;
+        scaleInput.value = `${this.layer.scale * 100}`;
       } else {
         this.view.dispatchEvent(new CustomEvent('scale-layer', { detail: { layerId: this.layer.id, percent: percentage } }));
       }
     });
 
-    scaleDiv.appendChild(this.scaleInput);
-    scaleDiv.appendChild(this.scaleControl);
+    scaleDiv.appendChild(scaleInput);
+    scaleDiv.appendChild(scaleControl);
 
     layerMovementSelectorDiv.appendChild(scaleDiv);
 
@@ -376,20 +426,19 @@ export default class Control {
     this.layerMovementControl = wrapperDiv;
   }
 
-  configureDeletionSection() {
-    this.deleteSection = document.createElement('div');
+  #configureDeletionSection() {
     this.deleteSection.name = 'delete-management';
     this.deleteSection.classList.add('section');
 
     // duplicate
-    this.duplicateControl = document.createElement('button');
-    this.duplicateControl.classList.add('duplicate-control');
-    this.duplicateControl.title = game.i18n.localize("vtta-tokenizer.label.CloneLayer");
+    let duplicateControl = document.createElement('button');
+    duplicateControl.classList.add('duplicate-control');
+    duplicateControl.title = game.i18n.localize("vtta-tokenizer.label.CloneLayer");
     let duplicateButtonText = document.createElement('i');
     duplicateButtonText.classList.add('fas', 'fa-clone');
-    this.duplicateControl.appendChild(duplicateButtonText);
+    duplicateControl.appendChild(duplicateButtonText);
 
-    this.duplicateControl.addEventListener("click", (event) => {
+    duplicateControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(
         new CustomEvent('duplicate', {
@@ -399,7 +448,6 @@ export default class Control {
     });
 
     // delete
-    this.deleteControl = document.createElement('button');
     this.deleteControl.classList.add('delete-control');
     this.deleteControl.title = game.i18n.localize("vtta-tokenizer.label.DeleteLayer");
     let deleteButtonText = document.createElement('i');
@@ -415,12 +463,11 @@ export default class Control {
       );
     });
 
-    this.deleteSection.appendChild(this.duplicateControl);
+    this.deleteSection.appendChild(duplicateControl);
     this.deleteSection.appendChild(this.deleteControl);
   }
 
-  configureColorManagement() {
-    this.colorManagementSection = document.createElement('div');
+  #configureColorManagement() {
     this.colorManagementSection.name = 'color-management';
     this.colorManagementSection.classList.add('section');
     let colorManagementTitle = document.createElement('span');
@@ -428,12 +475,10 @@ export default class Control {
     this.colorManagementSection.appendChild(colorManagementTitle);
 
     // the color picker element, which is hidden
-    this.colorSelector = document.createElement('input');
     this.colorSelector.type = 'color';
     this.colorSelector.value = '#00000FF';
 
     // a nicer looking proxy for the color picker
-    this.colorSelectorProxy = document.createElement('div');
     this.colorSelectorProxy.title = game.i18n.localize("vtta-tokenizer.label.EditTint");
     this.colorSelectorProxy.classList.add('color-picker', 'transparent');
     this.colorSelectorProxy.addEventListener("click", () => {
@@ -452,7 +497,6 @@ export default class Control {
     });
 
     // ability to clear the color of the layer
-    this.clearColor = document.createElement('button');
     this.clearColor.disabled = true;
     this.clearColor.classList.add('danger');
     this.clearColor.title = game.i18n.localize("vtta-tokenizer.label.ClearTint");
@@ -470,7 +514,6 @@ export default class Control {
     });
 
     // get color from canvas
-    this.getColor = document.createElement('button');
     this.getColor.title = game.i18n.localize("vtta-tokenizer.label.PickTint");
     let colorButtonText = document.createElement('i');
     colorButtonText.classList.add('fas', 'fa-eye-dropper');
@@ -497,14 +540,12 @@ export default class Control {
     });
   }
 
-  configureMovementSection() {
-    this.moveManagementSection = document.createElement('div');
+  #configureMovementSection() {
     this.moveManagementSection.classList.add('move-control');
     this.moveManagementSection.name = 'move-management';
     this.moveManagementSection.classList.add('section');
 
     // moving up
-    this.moveUpControl = document.createElement('button');
     this.moveUpControl.classList.add('move-control', 'move-up');
     this.moveUpControl.title = game.i18n.localize("vtta-tokenizer.label.MoveLayerUp");
     let moveUpButtonText = document.createElement('i');
@@ -522,7 +563,6 @@ export default class Control {
     });
 
     // moving down
-    this.moveDownControl = document.createElement('button');
     this.moveDownControl.classList.add('move-control', 'move-down');
     this.moveDownControl.title = game.i18n.localize("vtta-tokenizer.label.MoveLayerDown");
     let moveDownButtonText = document.createElement('i');
@@ -543,42 +583,41 @@ export default class Control {
 
   }
 
-  configureOpacitySection() {
-    this.opacityManagementSection = document.createElement('div');
+  #configureAdjustmentSection() {
+    let adjustmentSelectionControl = document.createElement('button');
+    adjustmentSelectionControl.classList.add('adjustment-control');
+    adjustmentSelectionControl.title = game.i18n.localize("vtta-tokenizer.label.Adjustments");
 
-    this.opacityControl = document.createElement('button');
-    this.opacityControl.classList.add('opacity-control');
-    this.opacityControl.title = game.i18n.localize("vtta-tokenizer.label.Opacity");
+    let adjustmentsButtonText = document.createElement('i');
+    adjustmentsButtonText.classList.add('fas', 'fa-hammer-brush');
+    adjustmentSelectionControl.appendChild(adjustmentsButtonText);
+    this.adjustmentManagementSection.appendChild(adjustmentSelectionControl);
 
-    let opacityButtonText = document.createElement('i');
-    opacityButtonText.classList.add('fas', 'fa-adjust');
-    this.opacityControl.appendChild(opacityButtonText);
-    this.opacityManagementSection.appendChild(this.opacityControl);
+    let adjustmentControlsSpan = document.createElement('div');
+    adjustmentControlsSpan.classList.add('popup');
 
-    // this.opacitySliderSpan = document.createElement('span');
-    this.opacitySliderSpan = document.createElement('div');
-    this.opacitySliderSpan.classList.add('popup');
-    // this.opacitySliderSpan.classList.add("property-attribution");
+    // send an activate event when clicked
+    adjustmentSelectionControl.addEventListener("click", (event) => {
+      event.preventDefault();
+      this.toggleVisibleDiv(adjustmentSelectionControl, adjustmentControlsSpan);
+    }, true);
 
-    this.opacitySliderControl = document.createElement('input');
+    // opacity controls
+    let opacitySliderSpan = document.createElement('div');
+    opacitySliderSpan.classList.add('basic-control');
+    let opacityIcon = document.createElement('i');
+    opacityIcon.classList.add('fa-duotone', 'fa-solid', 'fa-face-dotted');
+    opacityIcon.title = game.i18n.localize("vtta-tokenizer.label.Opacity");
+    opacitySliderSpan.appendChild(opacityIcon);
+
     this.opacitySliderControl.type = 'range';
     this.opacitySliderControl.min = 0;
     this.opacitySliderControl.max = 100;
-    this.opacitySliderControl.value = 100;
+    this.opacitySliderControl.value = (this.layer.alpha ?? 1) * 100;
     this.opacitySliderControl.title = game.i18n.localize("vtta-tokenizer.label.Opacity");
     this.opacitySliderControl.name = "opacity";
 
-    this.opacitySliderSpan.appendChild(this.opacitySliderControl);
-
-    // send an activate event when clicked
-    this.opacityControl.addEventListener("click", (event) => {
-      event.preventDefault();
-      this.toggleVisibleDiv(this.opacityControl, this.opacitySliderSpan);
-    }, true);
-
-    this.opacitySliderSpan.addEventListener('mouseleave', () => {
-      this.opacitySliderSpan.classList.remove("show");
-    });
+    this.opacityLabel.innerHTML = `${this.opacitySliderControl.value}%`;
 
     this.opacitySliderControl.addEventListener('input', (event) => {
       event.preventDefault();
@@ -587,41 +626,145 @@ export default class Control {
         opacity: event.target.value,
       };
       this.view.dispatchEvent(new CustomEvent('opacity', { detail }));
+      this.opacityLabel.innerHTML = `${event.target.value}%`;
     });
 
-    this.opacityManagementSection.appendChild(this.opacitySliderSpan);
+    opacitySliderSpan.appendChild(this.opacitySliderControl);
+    opacitySliderSpan.appendChild(this.opacityLabel);
+
+    adjustmentControlsSpan.appendChild(opacitySliderSpan);
+    adjustmentControlsSpan.appendChild(document.createElement('hr'));
+
+    // brightness controls
+    let brightnessSliderSpan = document.createElement('div');
+    brightnessSliderSpan.classList.add('basic-control');
+    let brightnessIcon = document.createElement('i');
+    brightnessIcon.classList.add('fa-solid', 'fa-brightness');
+    brightnessIcon.title = game.i18n.localize("vtta-tokenizer.label.Brightness");
+    brightnessSliderSpan.appendChild(brightnessIcon);
+
+    this.brightnessSliderControl.type = 'range';
+    this.brightnessSliderControl.min = -100;
+    this.brightnessSliderControl.max = 100;
+    this.brightnessSliderControl.value = this.layer.brightness ?? 0;
+    this.brightnessSliderControl.title = game.i18n.localize("vtta-tokenizer.label.Brightness");
+    this.brightnessSliderControl.name = "brightness";
+
+    this.brightnessLabel.innerHTML = `${this.brightnessSliderControl.value}%`;
+
+    this.brightnessSliderControl.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        brightness: event.target.value,
+      };
+      this.view.dispatchEvent(new CustomEvent('brightness', { detail }));
+      this.brightnessLabel.innerHTML = `${event.target.value ?? 0}%`;
+    });
+    brightnessSliderSpan.appendChild(this.brightnessSliderControl);
+    brightnessSliderSpan.appendChild(this.brightnessLabel);
+
+    adjustmentControlsSpan.appendChild(brightnessSliderSpan);
+    adjustmentControlsSpan.appendChild(document.createElement('hr'));
+
+    // contrast controls
+    let contrastSliderSpan = document.createElement('div');
+    contrastSliderSpan.classList.add('basic-control');
+    let contrastIcon = document.createElement('i');
+    contrastIcon.classList.add('fa-solid', 'fa-circle-half-stroke');
+    contrastIcon.title = game.i18n.localize("vtta-tokenizer.label.Contrast");
+    contrastSliderSpan.appendChild(contrastIcon);
+
+    this.contrastSliderControl.type = 'range';
+    this.contrastSliderControl.min = -100;
+    this.contrastSliderControl.max = 100;
+    this.contrastSliderControl.value = this.layer.contrast ?? 0;
+    this.contrastSliderControl.title = game.i18n.localize("vtta-tokenizer.label.Contrast");
+    this.contrastSliderControl.name = "contrast";
+
+    this.contrastLabel.innerHTML = `${this.contrastSliderControl.value}%`;
+
+    this.contrastSliderControl.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        contrast: event.target.value,
+      };
+      this.view.dispatchEvent(new CustomEvent('contrast', { detail }));
+      this.contrastLabel.innerHTML = `${event.target.value}%`;
+    });
+    contrastSliderSpan.appendChild(this.contrastSliderControl);
+
+    contrastSliderSpan.appendChild(this.contrastLabel);
+
+    adjustmentControlsSpan.appendChild(contrastSliderSpan);
+    adjustmentControlsSpan.appendChild(document.createElement('hr'));
+
+    // line art brush size
+    let lineArtBlurSizeSpan = document.createElement('div');
+    lineArtBlurSizeSpan.classList.add('basic-control');
+    let lineArtBlurSizeIcon = document.createElement('i');
+    lineArtBlurSizeIcon.classList.add('fa-solid', 'fa-paint-brush');
+    lineArtBlurSizeIcon.title = game.i18n.localize("vtta-tokenizer.label.LineArtBlurSize");
+    lineArtBlurSizeSpan.appendChild(lineArtBlurSizeIcon);
+
+    this.lineArtBlurSizeControl.type = 'range';
+    this.lineArtBlurSizeControl.min = 1;
+    this.lineArtBlurSizeControl.max = 50;
+    this.lineArtBlurSizeControl.value = this.layer.lineArtBlurSize ?? 25;
+    this.lineArtBlurSizeControl.title = game.i18n.localize("vtta-tokenizer.label.LineArtBlurSize");
+    this.lineArtBlurSizeControl.name = "line-art-blur-size";
+
+    this.lineArtBlurSizeLabel.innerHTML = `${this.lineArtBlurSizeControl.value}px`;
+
+    this.lineArtBlurSizeControl.addEventListener('input', (event) => {
+      event.preventDefault();
+      const detail = {
+        layerId: this.layer.id,
+        size: event.target.value,
+      };
+      this.view.dispatchEvent(new CustomEvent('line-art-blur-size', { detail }));
+      this.lineArtBlurSizeLabel.innerHTML = `${event.target.value}px`;
+    });
+    lineArtBlurSizeSpan.appendChild(this.lineArtBlurSizeControl);
+    lineArtBlurSizeSpan.appendChild(this.lineArtBlurSizeLabel);
+
+    adjustmentControlsSpan.appendChild(lineArtBlurSizeSpan);
+
+    this.adjustmentManagementSection.appendChild(adjustmentControlsSpan);
+
+    // add section for adjusting brightness
+
+    // add section for adjusting contrast
   }
 
-  configureMagicLassoSection() {
-    this.colorSelectionManagementSection = document.createElement('div');
-
-    this.colorSelectionControl = document.createElement('button');
-    this.colorSelectionControl.classList.add('color-selection-control');
-    this.colorSelectionControl.title = game.i18n.localize("vtta-tokenizer.label.ColorChangeControl");
+  #configureMagicLassoSection() {
+    let colorSelectionControl = document.createElement('button');
+    colorSelectionControl.classList.add('color-selection-control');
+    colorSelectionControl.title = game.i18n.localize("vtta-tokenizer.label.ColorChangeControl");
 
     let buttonText = document.createElement('i');
     buttonText.classList.add('fa-thin', 'fa-eye-dropper', 'fa-regular');
-    this.colorSelectionControl.appendChild(buttonText);
-    this.colorSelectionManagementSection.appendChild(this.colorSelectionControl);
+    colorSelectionControl.appendChild(buttonText);
+    this.colorSelectionManagementSection.appendChild(colorSelectionControl);
 
-    this.colorThresholdSliderSpan = document.createElement('div');
-    this.colorThresholdSliderSpan.classList.add('popup');
-
-    this.colorThresholdSliderControl = document.createElement('input');
-    this.colorThresholdSliderControl.type = 'range';
-    this.colorThresholdSliderControl.min = 0;
-    this.colorThresholdSliderControl.max = 150;
-    this.colorThresholdSliderControl.value = 15;
-    this.colorThresholdSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorThreshold");
-    this.colorThresholdSliderControl.name = "color-threshold";
+    this.colorBoxSpan.classList.add('popup');
 
     // send an activate event when clicked
-    this.colorSelectionControl.addEventListener("click", (event) => {
+    colorSelectionControl.addEventListener("click", (event) => {
       event.preventDefault();
-      this.toggleVisibleDiv(this.colorSelectionControl, this.colorThresholdSliderSpan);
+      this.toggleVisibleDiv(colorSelectionControl, this.colorBoxSpan);
     }, true);
 
-    this.colorThresholdSliderControl.addEventListener('input', (event) => {
+    let colorThresholdSliderControl = document.createElement('input');
+    colorThresholdSliderControl.type = 'range';
+    colorThresholdSliderControl.min = 0;
+    colorThresholdSliderControl.max = 150;
+    colorThresholdSliderControl.value = 15;
+    colorThresholdSliderControl.title = game.i18n.localize("vtta-tokenizer.label.ColorThreshold");
+    colorThresholdSliderControl.name = "color-threshold";
+
+    colorThresholdSliderControl.addEventListener('input', (event) => {
       event.preventDefault();
       const detail = {
         layerId: this.layer.id,
@@ -631,7 +774,6 @@ export default class Control {
     });
 
     // get color from canvas
-    this.getAlpha = document.createElement('button');
     this.getAlpha.classList.add('popup-button');
     this.getAlpha.title = game.i18n.localize("vtta-tokenizer.label.PickAlpha");
     let alphaButtonText = document.createElement('i');
@@ -658,77 +800,70 @@ export default class Control {
       }
     });
 
-    this.alphaSelectorProxy = document.createElement('div');
     this.alphaSelectorProxy.classList.add('color-picker', 'transparent');
 
-    this.transparencyResetControl = document.createElement('button');
-    this.transparencyResetControl.classList.add('popup-button');
-    this.transparencyResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetColorTransparency");
+    let transparencyResetControl = document.createElement('button');
+    transparencyResetControl.classList.add('popup-button');
+    transparencyResetControl.title = game.i18n.localize("vtta-tokenizer.label.ResetColorTransparency");
     let resetButtonText = document.createElement('i');
     resetButtonText.classList.add('fas', 'fa-compress-arrows-alt');
-    this.transparencyResetControl.appendChild(resetButtonText);
+    transparencyResetControl.appendChild(resetButtonText);
 
-    this.transparencyResetControl.addEventListener("click", (event) => {
+    transparencyResetControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('reset-transparency-level', { detail: { layerId: this.layer.id } }));
     });
 
     // get color from canvas
-    this.magicLassoControl = document.createElement('button');
-    this.magicLassoControl.classList.add('popup-button');
-    this.magicLassoControl.title = game.i18n.localize("vtta-tokenizer.label.MagicLasso");
+    let magicLassoControl = document.createElement('button');
+    magicLassoControl.classList.add('popup-button');
+    magicLassoControl.title = game.i18n.localize("vtta-tokenizer.label.MagicLasso");
     let magicLassoButtonText = document.createElement('i');
     magicLassoButtonText.classList.add('fa-thin', 'fa-lasso-sparkles', 'fa-regular');
-    this.magicLassoControl.appendChild(magicLassoButtonText);
+    magicLassoControl.appendChild(magicLassoButtonText);
 
-    this.magicLassoControl.addEventListener("click", (event) => {
+    magicLassoControl.addEventListener("click", (event) => {
       event.preventDefault();
       this.view.dispatchEvent(new CustomEvent('magic-lasso', { detail: { layerId: this.layer.id } }));
     });
 
 
     let lassoControls = document.createElement('div');
-    lassoControls.classList.add('basic-mask-control');
-    lassoControls.appendChild(this.magicLassoControl);
+    lassoControls.classList.add('basic-control');
+    lassoControls.appendChild(magicLassoControl);
 
     this.#tintControls();
-    let tintControls = document.createElement('div');
-    tintControls.classList.add('basic-mask-control');
-    tintControls.appendChild(this.colorTintSelector);
-    tintControls.appendChild(this.colorTintSelectorProxy);
-    tintControls.appendChild(this.clearColorTint);
 
     let transparencyControls = document.createElement('div');
-    transparencyControls.classList.add('basic-mask-control');
+    transparencyControls.classList.add('basic-control');
     transparencyControls.appendChild(this.alphaSelectorProxy);
     transparencyControls.appendChild(this.getAlpha);
-    transparencyControls.appendChild(this.transparencyResetControl);
+    transparencyControls.appendChild(transparencyResetControl);
 
-    this.colorThresholdSliderSpan.appendChild(lassoControls);
-    this.colorThresholdSliderSpan.appendChild(document.createElement('hr'));
-    this.colorThresholdSliderSpan.appendChild(tintControls);
-    this.colorThresholdSliderSpan.appendChild(document.createElement('hr'));
-    this.colorThresholdSliderSpan.appendChild(transparencyControls);
-    this.colorThresholdSliderSpan.appendChild(this.colorThresholdSliderControl);
-    this.colorSelectionManagementSection.appendChild(this.colorThresholdSliderSpan);
+    this.colorBoxSpan.appendChild(lassoControls);
+    this.colorBoxSpan.appendChild(document.createElement('hr'));
+    this.colorBoxSpan.appendChild(this.tintControlsDiv);
+    this.colorBoxSpan.appendChild(document.createElement('hr'));
+    this.colorBoxSpan.appendChild(transparencyControls);
+    this.colorBoxSpan.appendChild(colorThresholdSliderControl);
+    this.colorSelectionManagementSection.appendChild(this.colorBoxSpan);
   }
 
   #tintControls() {
     // the color picker element, which is hidden
-    this.colorTintSelector = document.createElement('input');
-    this.colorTintSelector.type = 'color';
-    this.colorTintSelector.value = '#00000FF';
+    let colorTintSelector = document.createElement('input');
+    colorTintSelector.type = 'color';
+    colorTintSelector.value = '#00000FF';
 
     // a nicer looking proxy for the color picker
-    this.colorTintSelectorProxy = document.createElement('div');
     this.colorTintSelectorProxy.title = game.i18n.localize("vtta-tokenizer.label.EditLayerTint");
     this.colorTintSelectorProxy.classList.add('color-picker', 'transparent');
     this.colorTintSelectorProxy.addEventListener("click", () => {
-      this.colorTintSelector.click();
+      colorTintSelector.click();
     });
 
     // listen to the color Selector onChange Event to update the layer's background color
-    this.colorTintSelector.addEventListener('change', (event) => {
+    colorTintSelector.addEventListener('change', (event) => {
       this.colorTintSelectorProxy.style.backgroundColor = event.target.value;
       this.colorTintSelectorProxy.classList.remove('transparent');
       this.view.dispatchEvent(
@@ -739,7 +874,6 @@ export default class Control {
     });
 
     // ability to clear the color of the layer
-    this.clearColorTint = document.createElement('button');
     this.clearColorTint.disabled = true;
     this.clearColorTint.classList.add('danger', 'popup-button');
     this.clearColorTint.title = game.i18n.localize("vtta-tokenizer.label.ClearTint");
@@ -755,9 +889,14 @@ export default class Control {
         }),
       );
     });
+
+    this.tintControlsDiv.classList.add('basic-control');
+    this.tintControlsDiv.appendChild(colorTintSelector);
+    this.tintControlsDiv.appendChild(this.colorTintSelectorProxy);
+    this.tintControlsDiv.appendChild(this.clearColorTint);
   }
 
-  addSelectLayerMasks() {
+  #addSelectLayerMasks() {
     this.maskLayerSelector.innerHTML = "";
     this.layer.view.layers.forEach((layer) => {
       const layerIdDiv = document.createElement("div");
@@ -799,7 +938,7 @@ export default class Control {
     }
 
     this.maskLayerSelector.innerHTML = "";
-    this.addSelectLayerMasks();
+    this.#addSelectLayerMasks();
 
     // is this layer visible
     if (this.layer.visible) {
@@ -866,6 +1005,24 @@ export default class Control {
     } else {
       this.deleteControl.disabled = false;
     }
+
+    if (this.opacitySliderControl.value !== this.layer.opacity) {
+      this.opacitySliderControl.value = this.layer.alpha * 100;
+      this.opacityLabel.innerHTML = `${this.layer.alpha * 100}%`;
+    }
+    if (this.brightnessSliderControl.value !== this.layer.brightness) {
+      this.brightnessSliderControl.value = this.layer.brightness;
+      this.brightnessLabel.innerHTML = `${this.layer.brightness}%`;
+    }
+    if (this.contrastSliderControl.value !== this.layer.contrast) {
+      this.contrastSliderControl.value = this.layer.contrast;
+      this.contrastLabel.innerHTML = `${this.layer.contrast}%`;
+    }
+    if (this.lineArtBlurSizeControl.value !== this.layer.lineArtBlurSize) {
+      this.lineArtBlurSizeControl.value = this.layer.lineArtBlurSize;
+      this.lineArtBlurSizeLabel.innerHTML = `${this.layer.lineArtBlurSize}px`;
+    }
+
   }
 
   startColorPicking() {
@@ -882,7 +1039,7 @@ export default class Control {
 
   endAlphaPicking() {
     this.getAlpha.classList.remove('active');
-    this.colorThresholdSliderSpan.classList.toggle("show");
+    this.colorBoxSpan.classList.toggle("show");
   }
 
   enableMoveUp() {

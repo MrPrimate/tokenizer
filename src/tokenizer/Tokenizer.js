@@ -288,15 +288,16 @@ export default class Tokenizer extends FormApplication {
   //  targetFolder: folder to target, otherwise uses defaults, wildcard use folder derived from wildcard path
   //  isWildCard: is wildcard token?
   //  tokenOffset: { position: {x:0, y:0} }
+  //  forceDynamicRing: true - force dynamic ring on token
   //  any other items needed in callback function, options will be passed to callback, with filenames updated to new references
   //
   constructor(options, callback) {
     super({});
     this.tokenOptions = options;
-    const defaultOffset = game.settings.get(CONSTANTS.MODULE_ID, "default-token-offset");
+    this.defaultOffset = game.settings.get(CONSTANTS.MODULE_ID, "default-token-offset");
     this.tokenOffset = options.tokenOffset
       ? options.tokenOffset
-      : { position: { x: defaultOffset, y: defaultOffset } };
+      : { position: { x: this.defaultOffset, y: this.defaultOffset } };
     this.callback = callback;
     this.modifyAvatar = !game.settings.get(CONSTANTS.MODULE_ID, "token-only-toggle");
     this.modifyToken = true;
@@ -583,21 +584,29 @@ export default class Tokenizer extends FormApplication {
             this.Token.removeImageLayer(id);
           }
           await this._setTokenMask(CONSTANTS.DEFAULT_MASK, true);
+          this.tokenOptions.forceDynamicRing = true;
           break;
         }
-        case "quick-token-shadowdark": {
+        case "quick-token-lineart": {
           this.closeQuickLayerSelector();
-          const frameIds = this.Token.layers.filter((l) => l.type === "frame").map((l) => l.id);
+          const frameIds = this.Token.layers.filter((l) => ["mask", "frame", "original"].includes(l.type)).map((l) => l.id);
           for (const id of frameIds) {
             this.Token.removeImageLayer(id);
           }
+          const img = await this.Avatar.get("img");
+          this.Token.addImageLayer(img, {
+            activate: true,
+            type: "image",
+            position: { x: this.defaultOffset, y: this.defaultOffset },
+          });
           await this._setTokenFrame(CONSTANTS.SHADOWDARK_FRAME, true);
           this.Token.layers.filter((l) => ["image", "original"].includes(l.type)).forEach((l) => {
             l.contrast = 40;
             l.brightness = -30;
-            l.shadowdarkBlurAmount = 25;
-            l.filters.push(l.applyShadowDarkEffect.bind(l));
+            l.lineArtBlurSize = 25;
+            l.filters.push(l.lineArtEffect.bind(l));
           });
+          this.Token.refreshControls();
           this.Token.redraw(true);
           break;
         }

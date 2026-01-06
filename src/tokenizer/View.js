@@ -331,120 +331,144 @@ export default class View {
     control.view.remove();
 
     this.controls.splice(index, 1);
-    this.controls.forEach((control) => control.refresh());
+    this.refreshControls();
     this.redraw(true);
+  }
+
+  refreshControls() {
+    this.controls.forEach((control) => control.refresh());
   }
 
   #addLayerControls(layer, { masked, activate } = {}) {
     // add the control at the top of the control array
-    const control = new Control(this.tokenizer, layer, this.layers.length - 1);
-    this.controls.unshift(control);
+    try {
+      const control = new Control(this.tokenizer, layer, this.layers.length - 1);
+      this.controls.unshift(control);
 
-    // add the control at the top of the control area, too
-    this.controlsArea.insertBefore(control.view, this.controlsArea.firstChild);
-    this.controls.forEach((control) => control.refresh());
+      // add the control at the top of the control area, too
+      this.controlsArea.insertBefore(control.view, this.controlsArea.firstChild);
+      this.refreshControls();
 
-    // Setup all listeners for this control
-    control.view.addEventListener('color', (event) => {
-      this.setColor(event.detail.layerId, event.detail.color);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('color-tint', (event) => {
-      this.setLayerColorTint(event.detail.layerId, event.detail.color);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('mask', (event) => {
-      this.activateMask(event.detail.layerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    // if a default mask is applied, trigger the calculation of the mask, too
-    if (masked) {
-      this.activateMask(layer.id);
-      this.controls.forEach((control) => control.refresh());
+      // Setup all listeners for this control
+      control.view.addEventListener('color', (event) => {
+        this.setColor(event.detail.layerId, event.detail.color);
+        this.refreshControls();
+      });
+      control.view.addEventListener('color-tint', (event) => {
+        this.setLayerColorTint(event.detail.layerId, event.detail.color);
+        this.refreshControls();
+      });
+      control.view.addEventListener('mask', (event) => {
+        this.activateMask(event.detail.layerId);
+        this.refreshControls();
+      });
+      // if a default mask is applied, trigger the calculation of the mask, too
+      if (masked) {
+        this.activateMask(layer.id);
+        this.refreshControls();
+      }
+      control.view.addEventListener('activate', (event) => {
+        this.activateLayer(event.detail.layerId);
+        this.refreshControls();
+      });
+      if (activate) {
+        this.activateLayer(layer.id);
+        this.refreshControls();
+      }
+      control.view.addEventListener('deactivate', () => {
+        this.deactivateLayers();
+        this.refreshControls();
+      });
+      control.view.addEventListener('center', (event) => {
+        this.centerLayer(event.detail.layerId);
+      });
+      control.view.addEventListener('reset', (event) => {
+        this.resetLayer(event.detail.layerId);
+      });
+      control.view.addEventListener('flip', (event) => {
+        this.mirrorLayer(event.detail.layerId);
+      });
+      control.view.addEventListener('move', (event) => {
+        // move the control in sync
+        this.moveLayer(event.detail.layerId, event.detail.direction);
+        this.refreshControls();
+      });
+      control.view.addEventListener('pick-color-start', (event) => {
+        this.startColorPicking(event.detail.layerId);
+      });
+      control.view.addEventListener('pick-color-end', () => {
+        this.endColorPicking(true);
+      });
+      control.view.addEventListener('pick-alpha-start', (event) => {
+        this.startAlphaPicking(event.detail.layerId);
+      });
+      control.view.addEventListener('pick-alpha-end', () => {
+        this.endAlphaPicking(true);
+      });
+      control.view.addEventListener('delete', (event) => {
+        this.removeImageLayer(event.detail.layerId);
+      });
+      control.view.addEventListener('opacity', (event) => {
+        this.setOpacity(event.detail.layerId, event.detail.opacity);
+        this.refreshControls();
+      });
+      control.view.addEventListener('visible', (event) => {
+        this.setLayerVisibility(event.detail.layerId);
+        this.refreshControls();
+      });
+      control.view.addEventListener('blend', (event) => {
+        this.setBlendMode(event.detail.layerId, event.detail.blendMode, event.detail.mask);
+      });
+      control.view.addEventListener('edit-mask', async (event) => {
+        this.editMask(event.detail.layerId);
+      });
+      control.view.addEventListener('mask-layer', async (event) => {
+        this.customMaskLayerToggle(event.detail.layerId, event.detail.maskLayerId);
+        this.refreshControls();
+      });
+      control.view.addEventListener('transparency-level', (event) => {
+        this.alphaTolerance = event.detail.tolerance;
+      });
+      control.view.addEventListener('reset-transparency-level', (event) => {
+        this.resetTransparencyLevel(event.detail.layerId);
+      });
+      control.view.addEventListener('reset-mask-layer', (event) => {
+        this.resetCustomMaskLayers(event.detail.layerId);
+        this.refreshControls();
+      });
+      control.view.addEventListener('duplicate', (event) => {
+        this.cloneLayer(event.detail.layerId);
+        this.refreshControls();
+      });
+      control.view.addEventListener('magic-lasso', async (event) => {
+        this.magicLasso(event.detail.layerId);
+      });
+      control.view.addEventListener('centre-layer', (event) => {
+        this.centreLayer(event.detail.layerId);
+        this.refreshControls();
+      });
+      control.view.addEventListener('scale-layer', (event) => {
+        this.scaleLayer(event.detail.layerId, event.detail.percent);
+        this.refreshControls();
+      });
+      control.view.addEventListener('line-art-blur-size', (event) => {
+        this.setLineArtBlurSize(event.detail.layerId, event.detail.size);
+        this.refreshControls();
+      });
+      control.view.addEventListener('contrast', (event) => {
+        this.setContrast(event.detail.layerId, event.detail.contrast);
+        this.refreshControls();
+      });
+      control.view.addEventListener('brightness', (event) => {
+        this.setBrightness(event.detail.layerId, event.detail.brightness);
+        this.refreshControls();
+      });
+
+    } catch (e) {
+      logger.error(e);
+      logger.error(e.stack);
+      throw e;
     }
-    control.view.addEventListener('activate', (event) => {
-      this.activateLayer(event.detail.layerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    if (activate) {
-      this.activateLayer(layer.id);
-      this.controls.forEach((control) => control.refresh());
-    }
-    control.view.addEventListener('deactivate', () => {
-      this.deactivateLayers();
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('center', (event) => {
-      this.centerLayer(event.detail.layerId);
-    });
-    control.view.addEventListener('reset', (event) => {
-      this.resetLayer(event.detail.layerId);
-    });
-    control.view.addEventListener('flip', (event) => {
-      this.mirrorLayer(event.detail.layerId);
-    });
-    control.view.addEventListener('move', (event) => {
-      // move the control in sync
-      this.moveLayer(event.detail.layerId, event.detail.direction);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('pick-color-start', (event) => {
-      this.startColorPicking(event.detail.layerId);
-    });
-    control.view.addEventListener('pick-color-end', () => {
-      this.endColorPicking(true);
-    });
-    control.view.addEventListener('pick-alpha-start', (event) => {
-      this.startAlphaPicking(event.detail.layerId);
-    });
-    control.view.addEventListener('pick-alpha-end', () => {
-      this.endAlphaPicking(true);
-    });
-    control.view.addEventListener('delete', (event) => {
-      this.removeImageLayer(event.detail.layerId);
-    });
-    control.view.addEventListener('opacity', (event) => {
-      this.setOpacity(event.detail.layerId, event.detail.opacity);
-    });
-    control.view.addEventListener('visible', (event) => {
-      this.setLayerVisibility(event.detail.layerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('blend', (event) => {
-      this.setBlendMode(event.detail.layerId, event.detail.blendMode, event.detail.mask);
-    });
-    control.view.addEventListener('edit-mask', async (event) => {
-      this.editMask(event.detail.layerId);
-    });
-    control.view.addEventListener('mask-layer', async (event) => {
-      this.customMaskLayerToggle(event.detail.layerId, event.detail.maskLayerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('transparency-level', (event) => {
-      this.alphaTolerance = event.detail.tolerance;
-    });
-    control.view.addEventListener('reset-transparency-level', (event) => {
-      this.resetTransparencyLevel(event.detail.layerId);
-    });
-    control.view.addEventListener('reset-mask-layer', (event) => {
-      this.resetCustomMaskLayers(event.detail.layerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('duplicate', (event) => {
-      this.cloneLayer(event.detail.layerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('magic-lasso', async (event) => {
-      this.magicLasso(event.detail.layerId);
-    });
-    control.view.addEventListener('centre-layer', (event) => {
-      this.centreLayer(event.detail.layerId);
-      this.controls.forEach((control) => control.refresh());
-    });
-    control.view.addEventListener('scale-layer', (event) => {
-      this.scaleLayer(event.detail.layerId, event.detail.percent);
-      this.controls.forEach((control) => control.refresh());
-    });
   }
 
   addLayer(layer, { masked = false, activate = false }) {
@@ -746,6 +770,33 @@ export default class View {
     }
   }
 
+  setLineArtBlurSize(id, size) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.lineArtBlurSize = parseInt(size);
+      layer.redraw();
+      this.redraw(true);
+    }
+  }
+
+  setContrast(id, contrast) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.contrast = parseInt(contrast);
+      layer.redraw();
+      this.redraw(true);
+    }
+  }
+
+  setBrightness(id, brightness) {
+    const layer = this.layers.find((layer) => layer.id === id);
+    if (layer !== null) {
+      layer.brightness = parseInt(brightness);
+      layer.redraw();
+      this.redraw(true);
+    }
+  }
+
   setLayerVisibility(id) {
     const layer = this.layers.find((layer) => layer.id === id);
     if (layer !== null) {
@@ -851,7 +902,7 @@ export default class View {
     if (layer) {
       layer.editMask(this.redraw.bind(this));
       this.deactivateLayers();
-      this.controls.forEach((control) => control.refresh());
+      this.refreshControls();
     }
   }
 
@@ -861,7 +912,7 @@ export default class View {
     if (layer) {
       layer.magicLasso(this.redraw.bind(this));
       this.deactivateLayers();
-      this.controls.forEach((control) => control.refresh());
+      this.refreshControls();
     }
   }
 

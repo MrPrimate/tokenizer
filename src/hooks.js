@@ -61,12 +61,12 @@ function launchTokenizer(options, callback) {
 
 }
 
-function updateDynamicRingData(updateTokenData, path) {
+function updateDynamicRingData(updateTokenData, path, { forceRing = true } = {}) {
   const setRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
-    || foundry.utils.getProperty(updateTokenData, "ring.enabled");
+    || foundry.utils.getProperty(updateTokenData, "ring.enabled")
+    || forceRing;
 
-
-  if (game.settings.get(CONSTANTS.MODULE_ID, "force-disable-dynamic-token-ring")) {
+  if (game.settings.get(CONSTANTS.MODULE_ID, "force-disable-dynamic-token-ring") && !forceRing) {
     foundry.utils.setProperty(updateTokenData, "ring.enabled", false);
   } else {
     foundry.utils.setProperty(updateTokenData, "ring.enabled", setRing);
@@ -109,7 +109,7 @@ async function updateActor(tokenizerResponse) {
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
     foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
     foundry.utils.setProperty(update, "prototypeToken.randomImg", false);
-    updateDynamicRingData(update.prototypeToken, tokenPath);
+    updateDynamicRingData(update.prototypeToken, tokenPath, { forceRing: tokenizerResponse.forceDynamicRing });
     adjustScaling(update.prototypeToken);
   } 
   // else if (tokenizerResponse.actor.prototypeToken.texture.src.indexOf("*") === -1) {

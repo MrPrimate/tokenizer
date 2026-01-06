@@ -116,7 +116,7 @@ export default class Layer {
 
     this.contrast = contrast ?? 0;
     this.brightness = brightness ?? 0;
-    this.shadowdarkBlurAmount = 25;
+    this.lineArtBlurSize = 25;
 
     this.filters = filters;
   }
@@ -153,7 +153,7 @@ export default class Layer {
     newLayer.flipped = layer.flipped;
     newLayer.visible = layer.visible;
     newLayer.alpha = layer.alpha;
-    newLayer.shadowdarkBlurAmount = layer.shadowdarkBlurAmount;
+    newLayer.lineArtBlurSize = layer.lineArtBlurSize;
 
     if (layer.mask) newLayer.mask = Utils.cloneCanvas(layer.mask);
     if (layer.sourceMask) layer.sourceMask = Utils.cloneCanvas(layer.sourceMask);
@@ -569,8 +569,11 @@ export default class Layer {
 
     for (let i = 0; i < data.length; i += 4) {
       // Apply contrast formula and clamp
+      // eslint-disable-next-line no-mixed-operators
       data[i] = Math.max(0, Math.min(255, factor * (data[i] - 128) + 128)); // Red
+      // eslint-disable-next-line no-mixed-operators
       data[i + 1] = Math.max(0, Math.min(255, factor * (data[i + 1] - 128) + 128)); // Green
+      // eslint-disable-next-line no-mixed-operators
       data[i + 2] = Math.max(0, Math.min(255, factor * (data[i + 2] - 128) + 128)); // Blue
     }
 
@@ -595,12 +598,11 @@ export default class Layer {
     context.globalCompositeOperation = 'source-over';
   }
 
-  applyShadowDarkEffect(canvas) {
+  lineArtEffect(canvas) {
     const original = Utils.cloneCanvas(canvas);
     const context = original.getContext("2d");
     const bnw = this.getFilteredCanvas("grayscale(1)");
-    const blurPx = this.shadowdarkBlurAmount;
-    const blur = this.getFilteredCanvas(`grayscale(1) invert(1) blur(${blurPx}px)`);
+    const blur = this.getFilteredCanvas(`grayscale(1) invert(1) blur(${this.lineArtBlurSize}px)`);
     context.drawImage(bnw, 0, 0, this.canvas.width, this.canvas.height);
     context.globalCompositeOperation = 'color-dodge';
     context.drawImage(blur, 0, 0, this.canvas.width, this.canvas.height);
@@ -616,8 +618,8 @@ export default class Layer {
     const original = Utils.cloneCanvas(this.source);
     // apply transformations to original
     const originalContext = original.getContext("2d");
-    this.applyTransformations(originalContext, this.source, false);
-    let source = this.source;
+    this.applyTransformations(originalContext, false);
+    let source = Utils.cloneCanvas(this.source);
     if (this.filters.length > 0) {
       for (const filter of this.filters) {
         source = filter(original);
