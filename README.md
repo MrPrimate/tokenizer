@@ -82,6 +82,12 @@ You can use the Magic Lasso feature to remove areas of a layer you don't want, o
 
 [![Magic Lasso](/docs/magic-lasso-demo.mp4)](/docs/magic-lasso-demo.mp4)
 
+### Quick Token/Presets
+
+You can make lineart/shadowdark style art from your existing images using the presets, as well as quickly apply the settings for dynamic tokens.
+
+[![Quick Token](/docs/shadowdark.mp4)](/docs/shadowdark.mp4)
+
 ### F.A.Q.
 
 #### The Tokenizer does not open when clicking on the avatar image
