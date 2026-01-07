@@ -440,8 +440,8 @@ export default class Tokenizer extends FormApplication {
     });
   }
 
-  closeQuickLayerSelector() {
-    const menu = document.getElementById("quick-token-menu");
+  closeQuickLayerSelector(type) {
+    const menu = document.getElementById(`quick-${type}-menu`);
     menu.classList.remove("show");
     this.lastControlButtonClicked = null;
     this.activeLayerSelectorElement = null;
@@ -472,7 +472,7 @@ export default class Tokenizer extends FormApplication {
       if (inputUrl) {
         const error = game.i18n.format("vtta-tokenizer.notification.failedInput", { url });
         ui.notifications.error(error);
-        await this._initAvatar();
+        await this._initAvatar(this.tokenOptions.avatarFilename);
       } else {
         ui.notifications.error(game.i18n.localize("vtta-tokenizer.notification.failedFallback"));
       }
@@ -523,11 +523,15 @@ export default class Tokenizer extends FormApplication {
       event.preventDefault();
       const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
 
+      const target = eventTarget.dataset.target;
+      const isAvatar = target === "avatar";
+      const view = isAvatar ? this.Avatar : this.Token;
+
       switch (eventTarget.dataset.type) {
         case "modify-toggle": {
-          const button = document.getElementById(`modify-${eventTarget.dataset.target}`);
-          const fas = document.getElementById(`modify-${eventTarget.dataset.target}-fas`);
-          const newState = eventTarget.dataset.target === "avatar"
+          const button = document.getElementById(`modify-${target}`);
+          const fas = document.getElementById(`modify-${target}-fas`);
+          const newState = isAvatar
             ? !this.modifyAvatar
             : !this.modifyToken; 
           
@@ -536,10 +540,10 @@ export default class Tokenizer extends FormApplication {
           fas.classList.toggle("fa-square");
           fas.classList.toggle("fa-square-check");
 
-          $(`#${eventTarget.dataset.target}-options :input`).attr("disabled", !newState);
-          $(`#tokenizer-${eventTarget.dataset.target} :input`).attr("disabled", !newState);
+          $(`#${target}-options :input`).attr("disabled", !newState);
+          $(`#tokenizer-${target} :input`).attr("disabled", !newState);
 
-          if (eventTarget.dataset.target === "avatar") {
+          if (isAvatar) {
             this.modifyAvatar = newState;
           } else {
             this.modifyToken = newState;
@@ -550,7 +554,6 @@ export default class Tokenizer extends FormApplication {
           break;
         }
         case "paste-toggle": {
-          const target = eventTarget.dataset.target;
           const avatarButton = document.getElementById(`paste-avatar`);
           const avatarFas = document.getElementById(`paste-avatar-fas`);
           const tokenButton = document.getElementById(`paste-token`);
@@ -565,55 +568,63 @@ export default class Tokenizer extends FormApplication {
           tokenFas.classList.toggle("fa-circle-dot");
           break;
         }
-        case "quick-token": {
+        case "quick-preset": {
           // pop up selection box
-          const button = document.getElementById("quick-token");
-          const menu = document.getElementById("quick-token-menu");
+          const button = document.getElementById(`quick-${target}`);
+          const menu = document.getElementById(`quick-${target}-menu`);
           menu.classList.toggle("show");
           this.lastControlButtonClicked = button;
           this.activeLayerSelectorElement = menu.classList.contains("show")
             ? menu
             : null;
-          // apply selection to token
           break;
         }
         case "quick-token-dynamic": {
-          this.closeQuickLayerSelector();
-          const frameIds = this.Token.layers.filter((l) => ["mask", "frame"].includes(l.type)).map((l) => l.id);
+          this.closeQuickLayerSelector(target);
+          const frameIds = view.layers.filter((l) => ["mask", "frame"].includes(l.type)).map((l) => l.id);
           for (const id of frameIds) {
-            this.Token.removeImageLayer(id);
+            view.removeImageLayer(id);
           }
           await this._setTokenMask(CONSTANTS.DEFAULT_MASK, true);
           this.tokenOptions.forceDynamicRing = true;
           break;
         }
+        case "quick-avatar-lineart":
         case "quick-token-lineart": {
-          this.closeQuickLayerSelector();
-          const frameIds = this.Token.layers.filter((l) => ["mask", "frame", "original"].includes(l.type)).map((l) => l.id);
+          this.closeQuickLayerSelector(target);
+          const removalTypes = isAvatar ? ["mask", "frame"] : ["mask", "frame", "original"];
+          const frameIds = view.layers.filter((l) => removalTypes.includes(l.type)).map((l) => l.id);
           for (const id of frameIds) {
-            this.Token.removeImageLayer(id);
+            view.removeImageLayer(id);
           }
-          const img = await this.Avatar.get("img");
-          this.Token.addImageLayer(img, {
-            activate: true,
-            type: "image",
-            position: { x: this.defaultOffset, y: this.defaultOffset },
-          });
-          await this._setTokenFrame(CONSTANTS.SHADOWDARK_FRAME, true);
-          this.Token.layers.filter((l) => ["image", "original"].includes(l.type)).forEach((l) => {
+          if (!isAvatar) {
+            const img = await this.Avatar.get("img");
+            view.addImageLayer(img, {
+              activate: true,
+              type: "image",
+              position: { x: this.defaultOffset, y: this.defaultOffset },
+            });
+            await this._setTokenFrame(CONSTANTS.SHADOWDARK_FRAME, true);
+          }
+          view.layers.filter((l) => ["image", "original"].includes(l.type)).forEach((l) => {
             l.contrast = 40;
             l.brightness = -30;
             l.lineArtBlurSize = 25;
             l.filters.push(l.lineArtEffect.bind(l));
           });
-          this.Token.refreshControls();
-          this.Token.redraw(true);
+          view.refreshControls();
+          view.redraw(true);
           break;
         }
+        case "quick-avatar-reset":
         case "quick-token-reset": {
-          this.closeQuickLayerSelector();
-          this.Token.removeAllLayers();
-          this._loadTokenImageToTokenView();
+          this.closeQuickLayerSelector(target);
+          view.removeAllLayers();
+          if (isAvatar) {
+            await this._initAvatar();
+          } else {
+            this._loadTokenImageToTokenView();
+          }
           break;
         }
         default:

@@ -5,7 +5,7 @@
 - Include the frame/ring from the Shadowdark Community Tokens pack. Thanks to @PrototypeESBU
 - Add Contrast and Brightness controls to layers.
 - Add a simple line art mode to make black and white line art from images (image filters, not AI)
-- Add quick token mode to quickly make dynamic tokens and Shadowdark/Lineart style tokens.
+- Add quick preset mode to quickly make dynamic tokens and Shadowdark/Lineart style images.
 
 # [4.6.2]
 

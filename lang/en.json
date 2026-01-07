@@ -110,6 +110,7 @@
   "vtta-tokenizer.label.PasteTarget": "Paste target",
   "vtta-tokenizer.label.PickAlpha": "Add transparency to a color",
   "vtta-tokenizer.label.PickTint": "Pick tint color from canvas",
+  "vtta-tokenizer.label.Presets": "Presets",
   "vtta-tokenizer.label.QuickToken": "Quick Token",
   "vtta-tokenizer.label.Reset": "Reset",
   "vtta-tokenizer.label.ResetColorTransparency": "Reset color/transparency changes on this layer",
