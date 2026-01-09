@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.6.4]
+
+- Update pt-BR.json Thanks to Kharmans
+
 # [4.6.3]
 
 - Include the frame/ring from the Shadowdark Community Tokens pack. Thanks to @PrototypeESBU
