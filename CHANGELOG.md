@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.6.5]
+
+- Dynamic Tokenring could be forced to be enabled in more cases than it should, resulting in odd scaled tokens.
+
 # [4.6.4]
 
 - Update pt-BR.json Thanks to Kharmans
