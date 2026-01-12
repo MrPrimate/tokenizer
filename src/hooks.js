@@ -61,7 +61,7 @@ function launchTokenizer(options, callback) {
 
 }
 
-function updateDynamicRingData(updateTokenData, path, { forceRing = true } = {}) {
+function updateDynamicRingData(updateTokenData, path, { forceRing = false } = {}) {
   const setRing = game.settings.get(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring")
     || foundry.utils.getProperty(updateTokenData, "ring.enabled")
     || forceRing;
