@@ -197,7 +197,9 @@ export default class Layer {
   applyCustomMask(mask, callback) {
     this.customMask = true;
     this.mask = mask;
-    const maskContext = this.renderedMask.getContext('2d');
+    const maskContext = this.renderedMask.getContext('2d', {
+      willReadFrequently: false,
+    });
     maskContext.resetTransform();
     maskContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
     maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
@@ -270,10 +272,14 @@ export default class Layer {
     // so the marching squares algorithm won't run endlessly
     temp.width = CONSTANTS.MASK_DENSITY + 2;
     temp.height = CONSTANTS.MASK_DENSITY + 2;
-    temp.getContext('2d').drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height, 1, 1, CONSTANTS.MASK_DENSITY, CONSTANTS.MASK_DENSITY);
+    temp.getContext('2d', {
+      willReadFrequently: false,
+    }).drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height, 1, 1, CONSTANTS.MASK_DENSITY, CONSTANTS.MASK_DENSITY);
 
     // get the pixel data from the source image
-    let context = temp.getContext('2d');
+    let context = temp.getContext('2d', {
+      willReadFrequently: false,
+    });
     const pixels = context.getImageData(0, 0, CONSTANTS.MASK_DENSITY + 2, CONSTANTS.MASK_DENSITY + 2);
 
     // re-use the intermediate canvas
@@ -313,10 +319,14 @@ export default class Layer {
     mask.height = this.canvas.height;
 
     mask
-      .getContext('2d')
+      .getContext('2d', {
+        willReadFrequently: false,
+      })
       .drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height);
 
-    const context = mask.getContext("2d");
+    const context = mask.getContext("2d", {
+      willReadFrequently: false,
+    });
     context.fillStyle = "black";
     context.globalCompositeOperation = "source-in";
     // context.globalCompositeOperation = "destination-over";
@@ -337,7 +347,9 @@ export default class Layer {
       : rayMask
         ? generateRayMask(this.canvas)
         : this.createOriginalMask();
-    const maskContext = this.renderedMask.getContext('2d');
+    const maskContext = this.renderedMask.getContext('2d', {
+      willReadFrequently: false,
+    });
     maskContext.resetTransform();
     maskContext.drawImage(this.mask, 0, 0, this.canvas.width, this.canvas.height);
 
@@ -367,7 +379,9 @@ export default class Layer {
     const yOffset = (width - scaledWidth) / 2;
     const xOffset = (height - scaledHeight) / 2;
 
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext("2d", {
+      willReadFrequently: false,
+    });
     context.drawImage(
         img,
         0,
@@ -393,7 +407,7 @@ export default class Layer {
   setColor(hexColorString = null) {
     if (!this.colorLayer) return;
     this.color = hexColorString;
-    const context = this.canvas.getContext("2d");
+    const context = this.canvas.getContext("2d", { willReadFrequently: false });
     context.fillStyle = hexColorString;
     context.rect(0, 0, this.width, this.height);
     context.fill();
@@ -536,7 +550,7 @@ export default class Layer {
 
   getFilteredCanvas(filters = "") {
     const filterCanvas = Utils.cloneCanvas(this.source);
-    const filterContext = filterCanvas.getContext("2d");
+    const filterContext = filterCanvas.getContext("2d", { willReadFrequently: false });
     filterCanvas.width = this.source.width;
     filterCanvas.height = this.source.height;
     filterContext.filter = filters;
@@ -582,7 +596,7 @@ export default class Layer {
 
   applyTint(context) {
     const tintCanvas = Utils.cloneCanvas(this.source);
-    const tintContext = tintCanvas.getContext("2d");
+    const tintContext = tintCanvas.getContext("2d", { willReadFrequently: false });
     tintCanvas.width = this.source.width;
     tintCanvas.height = this.source.height;
     this.applyTransformations(tintContext, false);
@@ -600,7 +614,7 @@ export default class Layer {
 
   lineArtEffect(canvas) {
     const original = Utils.cloneCanvas(canvas);
-    const context = original.getContext("2d");
+    const context = original.getContext("2d", { willReadFrequently: false });
     const bnw = this.getFilteredCanvas("grayscale(1)");
     const blur = this.getFilteredCanvas(`grayscale(1) invert(1) blur(${this.lineArtBlurSize}px)`);
     context.drawImage(bnw, 0, 0, this.canvas.width, this.canvas.height);
@@ -617,7 +631,9 @@ export default class Layer {
     // we take the original image and apply our scaling transformations
     const original = Utils.cloneCanvas(this.source);
     // apply transformations to original
-    const originalContext = original.getContext("2d");
+    const originalContext = original.getContext("2d", {
+      willReadFrequently: false,
+    });
     this.applyTransformations(originalContext, false);
     let source = Utils.cloneCanvas(this.source);
     if (this.filters.length > 0) {
@@ -625,7 +641,9 @@ export default class Layer {
         source = filter(original);
       }
     }
-    const sourceContext = source.getContext("2d");
+    const sourceContext = source.getContext("2d", {
+      willReadFrequently: false,
+    });
     this.adjustBrightness(sourceContext);
     this.adjustContrast(sourceContext);
     originalContext.drawImage(source, 0, 0);
@@ -634,8 +652,12 @@ export default class Layer {
 
     // place the computed layer on the view canvas
 
-    const preview = this.preview.getContext("2d");
-    const context = this.canvas.getContext("2d");
+    const preview = this.preview.getContext("2d", {
+      willReadFrequently: false,
+    });
+    const context = this.canvas.getContext("2d", {
+      willReadFrequently: false,
+    });
     [context, preview].forEach((cContext) => {
       cContext.globalCompositeOperation = this.compositeOperation;
       cContext.clearRect(0, 0, this.source.width, this.source.height);

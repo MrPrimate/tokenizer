@@ -146,7 +146,7 @@ export default class Utils {
    * @param {String} url URL of the image that we try to download
    */
   static async download(url) {
-    if (!url) url = "icons/mystery-man.png";
+    if (!url || url.trim() === "") url = "icons/mystery-man.png";
     const proxy = await game.settings.get("vtta-tokenizer", "proxy");
     const useProxy = await Utils.useProxy(url);
     const dateTag = `${+new Date()}`;
@@ -172,14 +172,6 @@ export default class Utils {
         logger.debug("Loading image:", img);
         resolve(img);
       };
-      // img.addEventListener("load", () => {
-      //   logger.debug("Loading image:", img);
-      //   resolve(img);
-      // });
-      // img.addEventListener("error", (event) => {
-      //   logger.error("Download listener error", event);
-      //   reject(event);
-      // });
       // add image source after adding handlers
       img.src = imgSrc;
     });
@@ -304,7 +296,7 @@ export default class Utils {
     const cloneCanvas = document.createElement("canvas");
     cloneCanvas.width = sourceCanvas.width;
     cloneCanvas.height = sourceCanvas.height;
-    cloneCanvas.getContext("2d").drawImage(sourceCanvas, 0, 0);
+    cloneCanvas.getContext("2d", { willReadFrequently: false }).drawImage(sourceCanvas, 0, 0);
     return cloneCanvas;
   }
 

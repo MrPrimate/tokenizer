@@ -150,7 +150,9 @@ function createRays(mask, maskImageData) {
 
 export function generateRayMask(maskCanvas) {
   const maskImageData = maskCanvas
-    .getContext("2d")
+    .getContext("2d", {
+      willReadFrequently: false,
+    })
     .getImageData(0, 0, maskCanvas.width, maskCanvas.height);
 
   const mask = document.createElement("canvas");
@@ -159,7 +161,9 @@ export function generateRayMask(maskCanvas) {
 
   const rays = createRays(mask, maskImageData);
 
-  const context = mask.getContext("2d");
+  const context = mask.getContext("2d", {
+      willReadFrequently: false,
+    });
 
   const edgePoints = rays
     .filter((ray) => ray.edgePixel)

@@ -10,7 +10,7 @@ export class MagicLasso {
     this.canvas.id = "base-canvas";
     this.canvas.width = this.width;
     this.canvas.height = this.height;
-    this.context = this.canvas.getContext("2d");
+    this.context = this.canvas.getContext("2d", { willReadFrequently: false });
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
@@ -20,7 +20,7 @@ export class MagicLasso {
     this.chequeredSource.width = this.width;
     this.chequeredSource.height = this.height;
     
-    const context = this.chequeredSource.getContext("2d");
+    const context = this.chequeredSource.getContext("2d", { willReadFrequently: false });
     const columns = Math.ceil(this.chequeredSource.width / width);
     const rows = Math.ceil(this.chequeredSource.height / width);
 
@@ -43,9 +43,9 @@ export class MagicLasso {
     this.layerCanvas.id = "layer-canvas";
     this.layerCanvas.width = this.width;
     this.layerCanvas.height = this.height;
-    this.layerContext = this.layerCanvas.getContext("2d");
+    this.layerContext = this.layerCanvas.getContext("2d", { willReadFrequently: false });
     const original = Utils.cloneCanvas(this.layer.source);
-    const originalContext = original.getContext("2d");
+    const originalContext = original.getContext("2d", { willReadFrequently: false });
     this.layer.applyTransformations(originalContext, this.layer.source, false);
     let source = this.layer.source;
     if (this.layer.filters.length > 0) {
@@ -208,10 +208,10 @@ export class MagicLasso {
     if (action === "ok" && this.canvasChanged) {
       const source = Utils.cloneCanvas(this.layer.source);
       // rescale the mask back up for the appropriate layer canvas size
-      const context = source.getContext("2d");
+      const context = source.getContext("2d", { willReadFrequently: false });
       context.resetTransform();
       context.clearRect(0, 0, source.width, source.height);
-      source.getContext("2d").drawImage(
+      source.getContext("2d", { willReadFrequently: false }).drawImage(
         this.layerCanvas,
         this.yOffset,
         this.xOffset,

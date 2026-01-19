@@ -8,7 +8,7 @@ export class Masker {
     this.chequeredSource.width = this.width;
     this.chequeredSource.height = this.height;
     
-    const context = this.chequeredSource.getContext("2d");
+    const context = this.chequeredSource.getContext("2d", { willReadFrequently: false });
     const fillStyle = context.fillStyle;
     const alpha = context.globalAlpha;
     const columns = Math.ceil(this.chequeredSource.width / width);
@@ -30,7 +30,7 @@ export class Masker {
     context.fillStyle = fillStyle;
     context.globalAlpha = alpha;
 
-    this.chequeredSource.getContext("2d")
+    this.chequeredSource.getContext("2d", { willReadFrequently: false })
       .drawImage(
         this.layer.preview,
         0,
@@ -49,7 +49,7 @@ export class Masker {
     this.greyscale.width = this.width;
     this.greyscale.height = this.height;
     this.greyscale.filter = "grayscale()";
-    this.greyscale.getContext("2d")
+    this.greyscale.getContext("2d", { willReadFrequently: false })
       .drawImage(
         this.layer.preview,
         0,
@@ -74,7 +74,7 @@ export class Masker {
     this.mask.width = this.width;
     this.mask.height = this.height;
 
-    this.maskContext = this.mask.getContext("2d");
+    this.maskContext = this.mask.getContext("2d", { willReadFrequently: false });
     this.maskContext.resetTransform();
     this.maskContext.clearRect(0, 0, this.width, this.height);
     this.maskContext.drawImage(
@@ -97,7 +97,7 @@ export class Masker {
     this.maskedSource = document.createElement("canvas");
     this.maskedSource.width = this.width;
     this.maskedSource.height = this.height;
-    const maskedContext = this.maskedSource.getContext("2d");
+    const maskedContext = this.maskedSource.getContext("2d", { willReadFrequently: false });
     // add the mask
     maskedContext.drawImage(this.mask, 0, 0);
     maskedContext.globalCompositeOperation = "source-in";
@@ -177,10 +177,10 @@ export class Masker {
     if (action === "ok" && this.maskChanged) {
       const mask = Utils.cloneCanvas(this.layer.renderedMask);
       // rescale the mask back up for the appropriate layer canvas size
-      const context = mask.getContext("2d");
+      const context = mask.getContext("2d", { willReadFrequently: false });
       context.resetTransform();
       context.clearRect(0, 0, this.layer.preview.width, this.layer.preview.height);
-      mask.getContext("2d").drawImage(
+      mask.getContext("2d", { willReadFrequently: false }).drawImage(
         this.mask,
         this.yOffset,
         this.xOffset,
@@ -305,7 +305,7 @@ export class Masker {
   }
 
   draw() {
-    const context = this.canvas.getContext("2d");
+    const context = this.canvas.getContext("2d", { willReadFrequently: false });
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // add a grey version to canvas
