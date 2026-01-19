@@ -1,5 +1,10 @@
 # Changelog
 
+# [4.6.6]
+
+- If an image was deleted from the server, Tokenizer could get stuck in a loop.
+- Try and improve performance on Firefox.
+
 # [4.6.5]
 
 - Dynamic Tokenring could be forced to be enabled in more cases than it should, resulting in odd scaled tokens.
