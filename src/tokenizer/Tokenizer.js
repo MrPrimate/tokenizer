@@ -472,7 +472,11 @@ export default class Tokenizer extends FormApplication {
       if (inputUrl) {
         const error = game.i18n.format("vtta-tokenizer.notification.failedInput", { url });
         ui.notifications.error(error);
-        await this._initAvatar(this.tokenOptions.avatarFilename);
+        if (inputUrl !== this.tokenOptions.avatarFilename) {
+          await this._initAvatar(this.tokenOptions.avatarFilename);
+        } else {
+          await this._initAvatar();
+        }
       } else {
         ui.notifications.error(game.i18n.localize("vtta-tokenizer.notification.failedFallback"));
       }
