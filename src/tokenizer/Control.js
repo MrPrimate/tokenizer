@@ -1019,13 +1019,6 @@ export default class Control {
       this.disableMoveDown();
     }
 
-    // only child?
-    if (this.view.parentElement.childElementCount === 1) {
-      this.deleteControl.disabled = true;
-    } else {
-      this.deleteControl.disabled = false;
-    }
-
     if (this.opacitySliderControl.value !== this.layer.opacity) {
       this.opacitySliderControl.value = this.layer.alpha * 100;
       this.opacityLabel.innerHTML = `${this.layer.alpha * 100}%`;

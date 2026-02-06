@@ -1,5 +1,9 @@
 # Changelog
 
+# [4.6.7]
+
+- When removing layers, you can now remove the last layer.
+
 # [4.6.6]
 
 - If an image was deleted from the server, Tokenizer could get stuck in a loop.
