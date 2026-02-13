@@ -144,10 +144,12 @@ export class Masker {
   }
 
   async display(callback, nestedCallback) {
-    const html = await renderTemplate("modules/vtta-tokenizer/templates/mask-editor.hbs");
-    this.container = $(html);
-    this.container[0].append(this.canvas);
-    $("body").append(this.container);
+    const html = await foundry.applications.handlebars.renderTemplate("modules/vtta-tokenizer/templates/mask-editor.hbs");
+    const template = document.createElement("template");
+    template.innerHTML = html.trim();
+    this.container = template.content.firstChild;
+    this.container.append(this.canvas);
+    document.body.appendChild(this.container);
     this.#activateListeners(callback, nestedCallback);
   }
 

@@ -1,11 +1,11 @@
-<form class="{{cssClass}}" autocomplete="off" onsubmit="event.preventDefault();">
+<div>
   <div class="import-file-selector">
     <p class="notes">{{localize "vtta-tokenizer.auto.description" length=data.length packName=data.packName }}</p>
     <div class="import-progress import-hidden">
       <div class="import-progress-bar" style="width: 0%"></div>
     </div>
     <div>
-      <button class="dialog-button" data-button="import">
+      <button type="button" class="dialog-button" data-action="startTokenize" data-button="import">
         <i class="fas fa-check"></i>
         {{localize "vtta-tokenizer.compendium.button"}}
       </button>
@@ -14,4 +14,4 @@
   <div class="tokenizer-overlay import-invalid">
     <div class="tokenizer-working import-hidden"><i class="fas fa-cog"></i><div style="font-size: 15px; text-align: center;">{{localize "vtta-tokenizer.auto.updating"}}</div></div>
   </div>
-</form>
+</div>

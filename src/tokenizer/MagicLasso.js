@@ -149,15 +149,17 @@ export class MagicLasso {
   }
 
   async display(callback, nestedCallback) {
-    const html = await renderTemplate("modules/vtta-tokenizer/templates/magic-lasso.hbs");
-    this.container = $(html);
+    const html = await foundry.applications.handlebars.renderTemplate("modules/vtta-tokenizer/templates/magic-lasso.hbs");
+    const template = document.createElement("template");
+    template.innerHTML = html.trim();
+    this.container = template.content.firstChild;
     this.wrapper = document.createElement('div');
     this.wrapper.classList.add('magic-lasso-wrapper');
     this.wrapper.appendChild(this.chequeredSource);
     this.wrapper.appendChild(this.layerCanvas);
     this.wrapper.appendChild(this.canvas);
-    this.container[0].append(this.wrapper);
-    $("body").append(this.container);
+    this.container.append(this.wrapper);
+    document.body.appendChild(this.container);
     this.#activateListeners(callback, nestedCallback);
 
     this.#colorPicker();

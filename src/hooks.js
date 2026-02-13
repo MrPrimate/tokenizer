@@ -57,7 +57,7 @@ function launchTokenizer(options, callback) {
 
   logger.debug("Tokenizer options", options);
   const tokenizer = new Tokenizer(options, callback);
-  tokenizer.render(true);
+  tokenizer.render({ force: true });
 
 }
 
@@ -452,15 +452,15 @@ function addCompendiumContextOptions(contextOptions) {
   contextOptions.push({
     name: `${CONSTANTS.MODULE_ID}.compendium.auto-tokenize`,
     callback: (li) => {
-      const pack = $(li).attr("data-pack");
+      const pack = li.dataset?.pack ?? li.getAttribute("data-pack");
       const compendium = game.packs.get(pack);
       if (compendium) {
         const auto = new AutoTokenize(compendium);
-        auto.render(true);
+        auto.render({ force: true });
       }
     },
     condition: (li) => {
-      const pack = $(li).attr("data-pack");
+      const pack = li.dataset?.pack ?? li.getAttribute("data-pack");
       const compendium = game.packs.get(pack);
       if (!compendium) return false;
       const isActor = compendium.metadata.type === "Actor";
@@ -476,10 +476,14 @@ function addUpdateSceneTokensContext(contextOptions) {
   contextOptions.push({
     name: `${CONSTANTS.MODULE_ID}.apply-prototype-to-scene`,
     callback: (li) => {
-      const docId = $(li).attr("data-entry-id")
-        ?? $(li).attr("data-document-id")
-        ?? $(li).attr("data-actor-id")
-        ?? $(li).attr("data-entity-id");
+      const docId = li.dataset?.entryId
+        ?? li.dataset?.documentId
+        ?? li.dataset?.actorId
+        ?? li.dataset?.entityId
+        ?? li.getAttribute("data-entry-id")
+        ?? li.getAttribute("data-document-id")
+        ?? li.getAttribute("data-actor-id")
+        ?? li.getAttribute("data-entity-id");
       if (docId) {
         const doc = game.actors.get(docId);
         logger.debug(`Updating ${doc.name} scene tokens for:`, doc);
@@ -506,10 +510,14 @@ function addTokenizerContentOption(contextOptions) {
   contextOptions.push({
     name: "Tokenizer",
     callback: (li) => {
-      const docId = $(li).attr("data-entry-id")
-        ?? $(li).attr("data-document-id")
-        ?? $(li).attr("data-actor-id")
-        ?? $(li).attr("data-entity-id");
+      const docId = li.dataset?.entryId
+        ?? li.dataset?.documentId
+        ?? li.dataset?.actorId
+        ?? li.dataset?.entityId
+        ?? li.getAttribute("data-entry-id")
+        ?? li.getAttribute("data-document-id")
+        ?? li.getAttribute("data-actor-id")
+        ?? li.getAttribute("data-entity-id");
       if (docId) {
         const doc = game.actors.get(docId);
         logger.debug(`Tokenizing ${doc.name}`);

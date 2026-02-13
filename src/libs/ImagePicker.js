@@ -73,41 +73,40 @@ class ImagePicker extends FPClass {
 
   // Adds a FilePicker-Simulator-Button next to the input fields
   static processHtml(html) {
-    $(html)
-      .find(`input[data-dtype="Img"]`)
-      .each((index, element) => {
-        // $(element).prop("readonly", true);
-        
-        if (!$(element).next().length) {
-          let picker = new ImagePicker({
-            field: $(element)[0],
-            ...ImagePicker.parse(this.value),
-          });
-          // data-type="image" data-target="img"
-          let pickerButton = $(
-            '<button type="button" class="file-picker" title="Pick image"><i class="fas fa-file-import fa-fw"></i></button>',
-          );
-          pickerButton.on("click", () => {
-            picker.render(true);
-          });
-          $(element).parent().append(pickerButton);
-        }
-      });
+    const root = html instanceof HTMLElement ? html : html[0] ?? html;
+    const inputs = root.querySelectorAll(`input[data-dtype="Img"]`);
+    inputs.forEach((element) => {
+      if (!element.nextElementSibling) {
+        let picker = new ImagePicker({
+          field: element,
+          ...ImagePicker.parse(element.value),
+        });
+        let pickerButton = document.createElement("button");
+        pickerButton.type = "button";
+        pickerButton.className = "file-picker";
+        pickerButton.title = "Pick image";
+        pickerButton.innerHTML = '<i class="fas fa-file-import fa-fw"></i>';
+        pickerButton.addEventListener("click", () => {
+          picker.render({ force: true });
+        });
+        element.parentElement.appendChild(pickerButton);
+      }
+    });
   }
 
 
   /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // remove unnecessary elements
-    $(html).find("footer button").text("Select Image");
+  _onRender() {
+    const footerButton = this.element.querySelector("footer button");
+    if (footerButton) {
+      footerButton.textContent = "Select Image";
+    }
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-Hooks.on("renderSettingsConfig", (app, html, user) => {
-  ImagePicker.processHtml(html);
+Hooks.on("renderSettingsConfig", (app, html) => {
+  const root = html instanceof HTMLElement ? html : html[0] ?? html;
+  ImagePicker.processHtml(root);
 });
 
 export default ImagePicker;

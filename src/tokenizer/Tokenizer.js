@@ -6,7 +6,9 @@ import ImageBrowser from "../libs/ImageBrowser.js";
 import CONSTANTS from "../constants.js";
 import { TokenizerSaveLocations } from "../libs/TokenizerSaveLocations.js";
 
-export default class Tokenizer extends FormApplication {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2) {
 
   getOMFGFrames() {
     if (game.settings.get(CONSTANTS.MODULE_ID, "disable-omfg-frames")) return [];
@@ -237,24 +239,6 @@ export default class Tokenizer extends FormApplication {
       });
     }
 
-    // const foundryGridMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-circle-mask-grid.webp`.replace(/^\/|\/$/g, "");
-    // if (defaultMask !== foundryGridMask) {
-    //   defaultMasks.push({
-    //     key: foundryGridMask,
-    //     label: game.i18n.localize("vtta-tokenizer.dynamic-grid-mask.foundry"),
-    //     selected: false,
-    //   });
-    // }
-
-    // const foundryGridTopMask = `[data] ${CONSTANTS.PATH}img/dynamic-ring-top-mask-grid.webp`.replace(/^\/|\/$/g, "");
-    // if (defaultMask !== foundryGridTopMask) {
-    //   defaultMasks.push({
-    //     key: foundryGridTopMask,
-    //     label: game.i18n.localize("vtta-tokenizer.dynamic-grid-top-mask.foundry"),
-    //     selected: false,
-    //   });
-    // }
-
     return defaultMasks;
   }
 
@@ -292,7 +276,7 @@ export default class Tokenizer extends FormApplication {
   //  any other items needed in callback function, options will be passed to callback, with filenames updated to new references
   //
   constructor(options, callback) {
-    super({});
+    super();
     this.tokenOptions = options;
     this.defaultOffset = game.settings.get(CONSTANTS.MODULE_ID, "default-token-offset");
     this.tokenOffset = options.tokenOffset
@@ -328,22 +312,40 @@ export default class Tokenizer extends FormApplication {
     this.activeLayerSelectorElement = null;
   }
 
-  /**
-   * Define default options for the PartySummary application
-   */
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.template = "modules/vtta-tokenizer/templates/tokenizer.hbs";
-    options.id = "tokenizer-control";
-    options.width = "auto"; // "1019";
-    options.height = "auto"; // "813";
-    options.classes = ["tokenizer"];
-    return options;
-  }
+  static PARTS = {
+    form: {
+      template: "modules/vtta-tokenizer/templates/tokenizer.hbs",
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    id: "tokenizer-control",
+    classes: ["tokenizer", "themed", "theme-light"],
+    tag: "form",
+    form: {
+      handler: Tokenizer.formHandler,
+      submitOnChange: false,
+      closeOnSubmit: true,
+    },
+    actions: {
+      filePickerThumbs: Tokenizer.filePickerThumbs,
+      boxButton: Tokenizer.boxButton,
+      menuButton: Tokenizer.menuButton,
+      invisibleButton: Tokenizer.invisibleButton,
+      chooseImage: this.#onChooseImage,
+    },
+    position: {
+      width: "auto",
+      height: "auto",
+    },
+    window: {
+      title: "Tokenizer",
+    },
+  };
 
   /* -------------------------------------------- */
 
-  async getData() {
+  async _prepareContext() {
     const frames = await this.getFrames();
     const masks = await this.getMasks();
     const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target");
@@ -351,7 +353,7 @@ export default class Tokenizer extends FormApplication {
 
     return {
       options: this.tokenOptions,
-      canUpload: game.user && game.user.can("FILES_UPLOAD"), // game.user.isTrusted || game.user.isGM,
+      canUpload: game.user && game.user.can("FILES_UPLOAD"),
       canBrowse: game.user && game.user.can("FILES_BROWSE"),
       tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && game.modules.get("token-variants")?.active,
       frames,
@@ -360,6 +362,31 @@ export default class Tokenizer extends FormApplication {
       pasteTargetName,
       modifyAvatar: this.modifyAvatar,
     };
+  }
+
+  static async #onChooseImage(event, button) {
+    const target = button.dataset.target;
+    let current = "";
+    let view;
+    if (target === "foundryAvatar") {
+      view = this.Avatar;
+      current = this.tokenOptions.avatarFilename || "";
+    } else if (target === "foundryToken") {
+      view = this.Token;
+      current = this.tokenOptions.tokenFilename || "";
+    }
+
+    const fp = new foundry.applications.apps.FilePicker({
+      type: "image",
+      current: current,
+      callback: (path) => {
+        Utils.download(path)
+          .then((img) => view.addImageLayer(img, { type: "image" }))
+          .catch((error) => ui.notifications.error(error));
+      },
+    });
+
+    fp.render(true);
   }
 
   getWildCardPath() {
@@ -428,16 +455,12 @@ export default class Tokenizer extends FormApplication {
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
-  _updateObject(event, formData) {
+  static async formHandler() {
     // upload token and avatar
-    // get the data
-    Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]).then(async (dataResults) => {
-      await this.updateAvatar(dataResults[0]);
-      await this.updateToken(dataResults[1]);
-
-      this.callback(this.tokenOptions);
-    });
+    const dataResults = await Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]);
+    await this.updateAvatar(dataResults[0]);
+    await this.updateToken(dataResults[1]);
+    this.callback(this.tokenOptions);
   }
 
   closeQuickLayerSelector(type) {
@@ -467,7 +490,7 @@ export default class Tokenizer extends FormApplication {
       this.Avatar.addImageLayer(img, { type: "original" });
 
       // Setting the height of the form to the desired auto height
-      $("#tokenizer-control").css("height", "auto");
+      this.element.style.height = "auto";
     } catch (error) {
       if (inputUrl) {
         const error = game.i18n.format("vtta-tokenizer.notification.failedInput", { url });
@@ -482,252 +505,239 @@ export default class Tokenizer extends FormApplication {
       }
     }
 
-    $("#avatar-options :input").attr("disabled", !this.modifyAvatar);
-    $("#tokenizer-avatar :input").attr("disabled", !this.modifyAvatar);
-    $("#token-options :input").attr("disabled", !this.modifyToken);
-    $("#tokenizer-token :input").attr("disabled", !this.modifyToken);
+    this.element.querySelectorAll("#avatar-options :is(input, select, textarea, button)").forEach((el) => {
+      el.disabled = !this.modifyAvatar;
+    });
+    this.element.querySelectorAll("#tokenizer-avatar :is(input, select, textarea, button)").forEach((el) => {
+      el.disabled = !this.modifyAvatar;
+    });
+    this.element.querySelectorAll("#token-options :is(input, select, textarea, button)").forEach((el) => {
+      el.disabled = !this.modifyToken;
+    });
+    this.element.querySelectorAll("#tokenizer-token :is(input, select, textarea, button)").forEach((el) => {
+      el.disabled = !this.modifyToken;
+    });
   }
 
-  activateListeners(html) {
+  _onRender() {
     this.loadImages();
+  }
 
-    $("#tokenizer .file-picker-thumbs").click((event) => {
-        event.preventDefault();
-        const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-
-        switch (eventTarget.dataset.type) {
-          case "mask": {
-            const picker = new ImageBrowser(this.masks, { type: "image", callback: this.handleMaskSelection.bind(this) });
-            picker.render(true);
-            break;
-          }
-          case "frame": {
-            const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleFrameSelection.bind(this) });
-            picker.render(true);
-            break;
-          }
-          // no default
-        }
-    });
-
-    $("#tokenizer .filePickerTarget").on("change", (event) => {
-      const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-      const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
-
-      Utils.download(eventTarget.value)
-        .then((img) => view.addImageLayer(img, { type: "image" }))
-        .catch((error) => ui.notifications.error(error));
-    });
-
-    $("#tokenizer button.invisible-button").click(async (event) => {
-      event.preventDefault();
-    });
-
-    $("#tokenizer button.box-button").click(async (event) => {
-      event.preventDefault();
-      const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-
-      const target = eventTarget.dataset.target;
-      const isAvatar = target === "avatar";
-      const view = isAvatar ? this.Avatar : this.Token;
-
-      switch (eventTarget.dataset.type) {
-        case "modify-toggle": {
-          const button = document.getElementById(`modify-${target}`);
-          const fas = document.getElementById(`modify-${target}-fas`);
-          const newState = isAvatar
-            ? !this.modifyAvatar
-            : !this.modifyToken; 
-          
-          fas.classList.toggle("fa-regular");
-          fas.classList.toggle("fas");
-          fas.classList.toggle("fa-square");
-          fas.classList.toggle("fa-square-check");
-
-          $(`#${target}-options :input`).attr("disabled", !newState);
-          $(`#tokenizer-${target} :input`).attr("disabled", !newState);
-
-          if (isAvatar) {
-            this.modifyAvatar = newState;
-          } else {
-            this.modifyToken = newState;
-          }
-
-          button.classList.toggle('deselected');
-          fas.classList.toggle('deselected');
-          break;
-        }
-        case "paste-toggle": {
-          const avatarButton = document.getElementById(`paste-avatar`);
-          const avatarFas = document.getElementById(`paste-avatar-fas`);
-          const tokenButton = document.getElementById(`paste-token`);
-          const tokenFas = document.getElementById(`paste-token-fas`);
-          game.settings.set("vtta-tokenizer", "paste-target", target);
-
-          avatarButton.classList.toggle('deselected');
-          avatarFas.classList.toggle("fa-circle");
-          avatarFas.classList.toggle("fa-circle-dot");
-          tokenButton.classList.toggle('deselected');
-          tokenFas.classList.toggle("fa-circle");
-          tokenFas.classList.toggle("fa-circle-dot");
-          break;
-        }
-        case "quick-preset": {
-          // pop up selection box
-          const button = document.getElementById(`quick-${target}`);
-          const menu = document.getElementById(`quick-${target}-menu`);
-          menu.classList.toggle("show");
-          this.lastControlButtonClicked = button;
-          this.activeLayerSelectorElement = menu.classList.contains("show")
-            ? menu
-            : null;
-          break;
-        }
-        case "quick-token-dynamic": {
-          this.closeQuickLayerSelector(target);
-          const frameIds = view.layers.filter((l) => ["mask", "frame"].includes(l.type)).map((l) => l.id);
-          for (const id of frameIds) {
-            view.removeImageLayer(id);
-          }
-          await this._setTokenMask(CONSTANTS.DEFAULT_MASK, true);
-          this.tokenOptions.forceDynamicRing = true;
-          break;
-        }
-        case "quick-avatar-lineart":
-        case "quick-token-lineart": {
-          this.closeQuickLayerSelector(target);
-          const removalTypes = isAvatar ? ["mask", "frame"] : ["mask", "frame", "original"];
-          const frameIds = view.layers.filter((l) => removalTypes.includes(l.type)).map((l) => l.id);
-          for (const id of frameIds) {
-            view.removeImageLayer(id);
-          }
-          if (!isAvatar) {
-            const img = await this.Avatar.get("img");
-            view.addImageLayer(img, {
-              activate: true,
-              type: "image",
-              position: { x: this.defaultOffset, y: this.defaultOffset },
-            });
-            await this._setTokenFrame(CONSTANTS.SHADOWDARK_FRAME, true);
-          }
-          view.layers.filter((l) => ["image", "original"].includes(l.type)).forEach((l) => {
-            l.contrast = 40;
-            l.brightness = -30;
-            l.lineArtBlurSize = 25;
-            l.filters.push(l.lineArtEffect.bind(l));
-          });
-          view.refreshControls();
-          view.redraw(true);
-          break;
-        }
-        case "quick-avatar-reset":
-        case "quick-token-reset": {
-          this.closeQuickLayerSelector(target);
-          view.removeAllLayers();
-          if (isAvatar) {
-            await this._initAvatar();
-          } else {
-            this._loadTokenImageToTokenView();
-          }
-          break;
-        }
-        default:
-          logger.debug("Unhandled box-button click:", {
-            event,
-            eventTarget,
-            type: eventTarget.dataset?.type,
-          });
+  static async filePickerThumbs(event, target) {
+    event.preventDefault();
+    switch (target.dataset.type) {
+      case "mask": {
+        const picker = new ImageBrowser(this.masks, { type: "image", callback: this.handleMaskSelection.bind(this) });
+        picker.render({ force: true });
+        break;
       }
-    });
+      case "frame": {
+        const picker = new ImageBrowser(this.frames, { type: "image", callback: this.handleFrameSelection.bind(this) });
+        picker.render({ force: true });
+        break;
+      }
+      // no default
+    }
+  }
 
-    $("#tokenizer button.menu-button").click(async (event) => {
-      event.preventDefault();
-      const eventTarget = event.target == event.currentTarget ? event.target : event.currentTarget;
-      const view = eventTarget.dataset.target === "avatar" ? this.Avatar : this.Token;
+  static async invisibleButton(event) {
+    event.preventDefault();
+  }
 
-      switch (eventTarget.dataset.type) {
-        case "upload": {
-          const img = await Utils.upload();
-          view.addImageLayer(img, { type: "image" });
-          break;
+  static async boxButton(event, target) {
+    event.preventDefault();
+    const targetName = target.dataset.target;
+    const isAvatar = targetName === "avatar";
+    const view = isAvatar ? this.Avatar : this.Token;
+
+    switch (target.dataset.type) {
+      case "modify-toggle": {
+        const button = document.getElementById(`modify-${targetName}`);
+        const fas = document.getElementById(`modify-${targetName}-fas`);
+        const newState = isAvatar
+          ? !this.modifyAvatar
+          : !this.modifyToken;
+
+        fas.classList.toggle("fa-regular");
+        fas.classList.toggle("fas");
+        fas.classList.toggle("fa-square");
+        fas.classList.toggle("fa-square-check");
+
+        this.element.querySelectorAll(`#${targetName}-options :is(input, select, textarea, button)`).forEach((el) => {
+          el.disabled = !newState;
+        });
+        this.element.querySelectorAll(`#tokenizer-${targetName} :is(input, select, textarea, button)`).forEach((el) => {
+          el.disabled = !newState;
+        });
+
+        if (isAvatar) {
+          this.modifyAvatar = newState;
+        } else {
+          this.modifyToken = newState;
         }
-        case "download-token": {
-          const filename = this.tokenFileName;
-          const blob = await this.Token.get("blob");
-          const file = new File([blob], filename, { type: blob.type });
-          let a = document.createElement("a");
-          a.href = URL.createObjectURL(file);
-          a.download = filename;
-          a.click();
-          break;
+
+        button.classList.toggle('deselected');
+        fas.classList.toggle('deselected');
+        break;
+      }
+      case "paste-toggle": {
+        const avatarButton = document.getElementById(`paste-avatar`);
+        const avatarFas = document.getElementById(`paste-avatar-fas`);
+        const tokenButton = document.getElementById(`paste-token`);
+        const tokenFas = document.getElementById(`paste-token-fas`);
+        game.settings.set("vtta-tokenizer", "paste-target", targetName);
+
+        avatarButton.classList.toggle('deselected');
+        avatarFas.classList.toggle("fa-circle");
+        avatarFas.classList.toggle("fa-circle-dot");
+        tokenButton.classList.toggle('deselected');
+        tokenFas.classList.toggle("fa-circle");
+        tokenFas.classList.toggle("fa-circle-dot");
+        break;
+      }
+      case "quick-preset": {
+        // pop up selection box
+        const button = document.getElementById(`quick-${targetName}`);
+        const menu = document.getElementById(`quick-${targetName}-menu`);
+        menu.classList.toggle("show");
+        this.lastControlButtonClicked = button;
+        this.activeLayerSelectorElement = menu.classList.contains("show")
+          ? menu
+          : null;
+        break;
+      }
+      case "quick-token-dynamic": {
+        this.closeQuickLayerSelector(targetName);
+        const frameIds = view.layers.filter((l) => ["mask", "frame"].includes(l.type)).map((l) => l.id);
+        for (const id of frameIds) {
+          view.removeImageLayer(id);
         }
-        case "download": {
-          // show dialog, then download
-          let urlPrompt = new Dialog({
-            title: "Download from the internet",
-            content: `
-                      <p>${game.i18n.localize("vtta-tokenizer.download.url")}.</p>
-                      <form>
-                      <div class="form-group">
-                         <label>URL</label>
-                         <input id="tokenizerurl" type="text" name="tokenizerurl" placeholder="https://" data-dtype="String">
-                      </div>
-                      </form>`,
-            buttons: {
-              cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: game.i18n.localize("vtta-tokenizer.label.Cancel"),
-                callback: () => logger.debug("Cancelled"),
-              },
-              ok: {
-                icon: '<i class="fas fa-check"></i>',
-                label: game.i18n.localize("vtta-tokenizer.label.OK"),
-                callback: () => {
-                  Utils.download($("#tokenizerurl").val())
-                    .then((img) => view.addImageLayer(img, { type: "image" }))
-                    .catch((error) => {
-                      logger.error("Error fetching image", error);
-                      ui.notification.error(error);
-                    });
-                },
-              },
+        await this._setTokenMask(CONSTANTS.DEFAULT_MASK, true);
+        this.tokenOptions.forceDynamicRing = true;
+        break;
+      }
+      case "quick-avatar-lineart":
+      case "quick-token-lineart": {
+        this.closeQuickLayerSelector(targetName);
+        const removalTypes = isAvatar ? ["mask", "frame"] : ["mask", "frame", "original"];
+        const frameIds = view.layers.filter((l) => removalTypes.includes(l.type)).map((l) => l.id);
+        for (const id of frameIds) {
+          view.removeImageLayer(id);
+        }
+        if (!isAvatar) {
+          const img = await this.Avatar.get("img");
+          view.addImageLayer(img, {
+            activate: true,
+            type: "image",
+            position: { x: this.defaultOffset, y: this.defaultOffset },
+          });
+          await this._setTokenFrame(CONSTANTS.SHADOWDARK_FRAME, true);
+        }
+        view.layers.filter((l) => ["image", "original"].includes(l.type)).forEach((l) => {
+          l.contrast = 40;
+          l.brightness = -30;
+          l.lineArtBlurSize = 25;
+          l.filters.push(l.lineArtEffect.bind(l));
+        });
+        view.refreshControls();
+        view.redraw(true);
+        break;
+      }
+      case "quick-avatar-reset":
+      case "quick-token-reset": {
+        this.closeQuickLayerSelector(targetName);
+        view.removeAllLayers();
+        if (isAvatar) {
+          await this._initAvatar();
+        } else {
+          this._loadTokenImageToTokenView();
+        }
+        break;
+      }
+      default:
+        logger.debug("Unhandled box-button click:", {
+          event,
+          target,
+          type: target.dataset?.type,
+        });
+    }
+  }
+
+  static async menuButton(event, target) {
+    event.preventDefault();
+    const view = target.dataset.target === "avatar" ? this.Avatar : this.Token;
+
+    switch (target.dataset.type) {
+      case "upload": {
+        const img = await Utils.upload();
+        view.addImageLayer(img, { type: "image" });
+        break;
+      }
+      case "download-token": {
+        const filename = this.tokenFileName;
+        const blob = await this.Token.get("blob");
+        const file = new File([blob], filename, { type: blob.type });
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(file);
+        a.download = filename;
+        a.click();
+        break;
+      }
+      case "download": {
+        const result = await foundry.applications.api.DialogV2.prompt({
+          window: { title: "Download from the internet" },
+          content: `
+            <p>${game.i18n.localize("vtta-tokenizer.download.url")}.</p>
+            <div class="form-group">
+              <label>URL</label>
+              <input id="tokenizerurl" type="text" name="tokenizerurl" placeholder="https://" data-dtype="String">
+            </div>`,
+          ok: {
+            label: game.i18n.localize("vtta-tokenizer.label.OK"),
+            callback: (event, button) => {
+              return button.form.elements.tokenizerurl.value;
             },
-          });
-
-          urlPrompt.render(true);
-
-          break;
+          },
+          rejectClose: false,
+        });
+        if (result) {
+          try {
+            const img = await Utils.download(result);
+            view.addImageLayer(img, { type: "image" });
+          } catch (error) {
+            logger.error("Error fetching image", error);
+            ui.notifications.error(error);
+          }
         }
-        case "token": {
-          this.Token.get("img").then((img) => view.addImageLayer(img, { type: "image" }));
-          break;
-        }
-        case "avatar": {
-          this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true, type: "image" }));
-          break;
-        }
-        case "color": {
-          const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
-          view.addColorLayer({ color: defaultColor });
-          break;
-        }
-        case "tokenVariants": {
-          game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
-            callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img, { type: "image" })),
-            searchType: eventTarget.dataset.target === "avatar" ? "Portrait" : "Token",
-          });
-          break;
-        }
-        case "locations": {
-          const locations = new TokenizerSaveLocations(this);
-          locations.render(true);
-          break;
-        }
-        // no default
+        break;
       }
-    });
-
-    super.activateListeners(html);
+      case "token": {
+        this.Token.get("img").then((img) => view.addImageLayer(img, { type: "image" }));
+        break;
+      }
+      case "avatar": {
+        this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true, type: "image" }));
+        break;
+      }
+      case "color": {
+        const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
+        view.addColorLayer({ color: defaultColor });
+        break;
+      }
+      case "tokenVariants": {
+        game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
+          callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img, { type: "image" })),
+          searchType: target.dataset.target === "avatar" ? "Portrait" : "Token",
+        });
+        break;
+      }
+      case "locations": {
+        const locations = new TokenizerSaveLocations(this);
+        locations.render({ force: true });
+        break;
+      }
+      // no default
+    }
   }
 
   async _addBaseTokenLayers() {
@@ -788,12 +798,12 @@ export default class Tokenizer extends FormApplication {
       npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-tint");
     } else {
       switch (parseInt(this.tokenOptions.disposition)) {
-        case 0: 
+        case 0:
         case 1: {
           npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-neutral");
           break;
         }
-        
+
         case -1:
         default: {
           npcFrame = game.settings.get(CONSTANTS.MODULE_ID, "default-frame-npc");
@@ -863,7 +873,7 @@ export default class Tokenizer extends FormApplication {
       : fileName && isDefault
         ? fileName.replace(/^\/|\/$/g, "")
         : defaultMaskPath.replace(/^\/|\/$/g, "");
-        
+
     if (maskPath && maskPath.trim() !== "") {
       const options = DirectoryPicker.parse(fullPath ? fileName : maskPath);
       try {
@@ -913,14 +923,16 @@ export default class Tokenizer extends FormApplication {
 
     // get the target filename for the avatar
     this._getFilename("Avatar", this.nameSuffix).then((targetFilename) => {
-      $('input[name="targetAvatarFilename"]').val(targetFilename);
+      const avatarInput = this.element.querySelector('input[name="targetAvatarFilename"]');
+      if (avatarInput) avatarInput.value = targetFilename;
       this.avatarFileName = targetFilename;
     });
     // get the target filename for the token
     this._getFilename("Token", this.nameSuffix).then((targetFilename) => {
-      // $('span[name="targetPath"]').text(targetFilename);
-      $('span[name="targetFilename"]').text(targetFilename);
-      $('input[name="targetTokenFilename"]').val(targetFilename);
+      const filenameSpan = this.element.querySelector('span[name="targetFilename"]');
+      if (filenameSpan) filenameSpan.textContent = targetFilename;
+      const tokenInput = this.element.querySelector('input[name="targetTokenFilename"]');
+      if (tokenInput) tokenInput.value = targetFilename;
       this.tokenFileName = targetFilename;
     });
 
@@ -951,7 +963,7 @@ Hooks.on("renderTokenizer", (app) => {
     e.stopPropagation();
     app.pasteImage(e);
   });
-  app._element[0].addEventListener("mousedown", async (e) => {
+  app.element.addEventListener("mousedown", async (e) => {
     // this handles clearing if the selector pop ups when a non popup is clicked
     if (!app.activeLayerSelectorElement) return;
     if (!app.activeLayerSelectorElement.contains(e.target)

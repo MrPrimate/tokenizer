@@ -41,8 +41,8 @@ export class TokenizerSaveLocations extends HandlebarsApplicationMixin(Applicati
     },
     tag: "form",
     form: {
-      handler: TokenizerSaveLocations.formHandler,
       submitOnChange: false,
+      submitOnClose: false,
       closeOnSubmit: false,
     },
   };

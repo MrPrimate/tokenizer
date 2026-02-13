@@ -2,22 +2,31 @@ import ImagePicker from "./libs/ImagePicker.js";
 import logger from "./libs/logger.js";
 import CONSTANTS from "./constants.js";
 
-class ResetCustomFrames extends FormApplication {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.id = "cleanup-custom-frames";
-    options.template = `${CONSTANTS.PATH}/templates/cleanup.hbs`;
-    return options;
-  }
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+class ResetCustomFrames extends HandlebarsApplicationMixin(ApplicationV2) {
+
+  static PARTS = {
+    form: {
+      template: `modules/${CONSTANTS.MODULE_ID}/templates/cleanup.hbs`,
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    id: "cleanup-custom-frames",
+    tag: "form",
+    form: {
+      handler: ResetCustomFrames.formHandler,
+      submitOnChange: false,
+      closeOnSubmit: true,
+    },
+    window: {
+      title: "Reset Custom Frames",
+    },
+  };
 
   // eslint-disable-next-line class-methods-use-this
-  get title() {
-    return "Reset Custom Frames";
-  }
-
-  /** @override */
-  // eslint-disable-next-line class-methods-use-this
-  async getData() {
+  async _prepareContext() {
     return {
       labels: {
         name: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-frames.name`),
@@ -26,29 +35,35 @@ class ResetCustomFrames extends FormApplication {
     };
   }
 
-  /** @override */
   // eslint-disable-next-line class-methods-use-this
-  async _updateObject() {
+  static async formHandler() {
     game.settings.set(CONSTANTS.MODULE_ID, "custom-frames", []);
   }
 }
 
-class ResetCustomMasks extends FormApplication {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.id = "cleanup-custom-masks";
-    options.template = `${CONSTANTS.PATH}/templates/cleanup.hbs`;
-    return options;
-  }
+class ResetCustomMasks extends HandlebarsApplicationMixin(ApplicationV2) {
+
+  static PARTS = {
+    form: {
+      template: `modules/${CONSTANTS.MODULE_ID}/templates/cleanup.hbs`,
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    id: "cleanup-custom-masks",
+    tag: "form",
+    form: {
+      handler: ResetCustomMasks.formHandler,
+      submitOnChange: false,
+      closeOnSubmit: true,
+    },
+    window: {
+      title: "Reset Custom Masks",
+    },
+  };
 
   // eslint-disable-next-line class-methods-use-this
-  get title() {
-    return "Reset Custom Masks";
-  }
-
-  /** @override */
-  // eslint-disable-next-line class-methods-use-this
-  async getData() {
+  async _prepareContext() {
     return {
       labels: {
         name: game.i18n.localize(`${CONSTANTS.MODULE_ID}.reset-custom-masks.name`),
@@ -57,29 +72,37 @@ class ResetCustomMasks extends FormApplication {
     };
   }
 
-  /** @override */
   // eslint-disable-next-line class-methods-use-this
-  async _updateObject() {
+  static async formHandler() {
     game.settings.set(CONSTANTS.MODULE_ID, "custom-masks", []);
   }
 }
 
-class QuickSettings extends FormApplication {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.id = "quick-settings";
-    options.template = `${CONSTANTS.PATH}/templates/quick-settings.hbs`;
-    return options;
-  }
+class QuickSettings extends HandlebarsApplicationMixin(ApplicationV2) {
+
+  static PARTS = {
+    form: {
+      template: `modules/${CONSTANTS.MODULE_ID}/templates/quick-settings.hbs`,
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    id: "quick-settings",
+    actions: {
+      applyPreset: QuickSettings.applyPreset,
+    },
+    window: {
+      title: `${CONSTANTS.MODULE_ID}.quick-settings.label`,
+    },
+  };
 
   // eslint-disable-next-line class-methods-use-this
   get title() {
     return game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.label`);
   }
 
-  /** @override */
   // eslint-disable-next-line class-methods-use-this
-  async getData() {
+  async _prepareContext() {
     return {
       labels: {
         description: game.i18n.localize(`${CONSTANTS.MODULE_ID}.quick-settings.description`),
@@ -107,10 +130,9 @@ class QuickSettings extends FormApplication {
     };
   }
 
-  /** @override */
-  // eslint-disable-next-line class-methods-use-this
-  async _updateObject(event) {
-    switch (event.submitter.id) {
+  static async applyPreset(event, target) {
+    const preset = target.dataset.preset;
+    switch (preset) {
       case "tokenring-colour": {
         await game.settings.set(CONSTANTS.MODULE_ID, "add-frame-default", true);
         await game.settings.set(CONSTANTS.MODULE_ID, "default-color-layer", true);
@@ -119,7 +141,6 @@ class QuickSettings extends FormApplication {
         await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
-        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "tokenring-texture": {
@@ -130,7 +151,6 @@ class QuickSettings extends FormApplication {
         await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
-        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "tokenring-transparent": {
@@ -141,7 +161,6 @@ class QuickSettings extends FormApplication {
         await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.default-token-offset`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", false);
-        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "dynamicring": {
@@ -152,7 +171,6 @@ class QuickSettings extends FormApplication {
         await game.settings.set(CONSTANTS.MODULE_ID, "default-token-offset", -65);
         await game.settings.set(CONSTANTS.MODULE_ID, "token-size", game.settings.settings.get(`${CONSTANTS.MODULE_ID}.token-size`).default);
         await game.settings.set(CONSTANTS.MODULE_ID, "auto-apply-dynamic-token-ring", true);
-        // game.settings.set(CONSTANTS.MODULE_ID, "frame-tint", false);
         break;
       }
       case "nothing": {

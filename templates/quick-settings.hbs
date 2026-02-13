@@ -1,21 +1,15 @@
 <div class="form-description">
-  <form id="ddb-importer-settings" autocomplete="off" onsubmit="event.preventDefault();">
-    <div class="form-content">
+  <p>{{ labels.description }}</p>
+  <hr>
 
-<p>{{ labels.description }}</p>
-<hr>
-
-<p>{{ labels.tokenring-colour.description }}</p>
-<button id="tokenring-colour" title="{{ labels.tokenring-colour.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.tokenring-colour.label }}</button>
-<p>{{ labels.tokenring-texture.description }}</p>
-<button id="tokenring-texture" title="{{ labels.tokenring-texture.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.tokenring-texture.label }}</button>
-<p>{{ labels.tokenring-transparent.description }}</p>
-<button id="tokenring-transparent" title="{{ labels.tokenring-transparent.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.tokenring-transparent.label }}</button>
-<p>{{ labels.dynamicring.description }}</p>
-<button id="dynamicring" title="{{ labels.dynamicring.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.dynamicring.label }}</button>
-<p>{{ labels.nothing.description }}</p>
-<button id="nothing" title="{{ labels.nothing.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.nothing.label }}</button>
-
-</div>
-</form>
+  <p>{{ labels.tokenring-colour.description }}</p>
+  <button type="button" data-action="applyPreset" data-preset="tokenring-colour" title="{{ labels.tokenring-colour.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.tokenring-colour.label }}</button>
+  <p>{{ labels.tokenring-texture.description }}</p>
+  <button type="button" data-action="applyPreset" data-preset="tokenring-texture" title="{{ labels.tokenring-texture.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.tokenring-texture.label }}</button>
+  <p>{{ labels.tokenring-transparent.description }}</p>
+  <button type="button" data-action="applyPreset" data-preset="tokenring-transparent" title="{{ labels.tokenring-transparent.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.tokenring-transparent.label }}</button>
+  <p>{{ labels.dynamicring.description }}</p>
+  <button type="button" data-action="applyPreset" data-preset="dynamicring" title="{{ labels.dynamicring.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.dynamicring.label }}</button>
+  <p>{{ labels.nothing.description }}</p>
+  <button type="button" data-action="applyPreset" data-preset="nothing" title="{{ labels.nothing.label }}" class="menu-button"><i class="fas fa-check"></i> {{ labels.nothing.label }}</button>
 </div>

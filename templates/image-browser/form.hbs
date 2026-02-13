@@ -1,0 +1,10 @@
+<div style="overflow-x: scroll">
+    <div class="list">
+      {{#each assets}}
+      <div class="imageresult draggable" title="{{this.label}}" data-action="selectImage" data-idx="{{this.idx}}">
+        <img width="100" height="100" src="{{this.uri}}"/>
+      </div>
+      {{/each}}
+    </div>
+
+</div>
