@@ -1,5 +1,9 @@
 # Changelog
 
+# [5.0.1]
+
+- Italian language update by @GregoryWarn
+
 # [5.0.0]
 
 - Moved to Foundry Application V2 framework. There is a chance that somethings might be broken. I have tried to test as many elements as possible.
