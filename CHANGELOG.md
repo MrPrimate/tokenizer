@@ -1,5 +1,9 @@
 # Changelog
 
+# [5.0.2]
+
+- Not all instances of the filepicker would load the Forge Assets library when using the Forge.
+
 # [5.0.1]
 
 - Italian language update by @GregoryWarn

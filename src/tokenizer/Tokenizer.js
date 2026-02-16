@@ -376,7 +376,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
       current = this.tokenOptions.tokenFilename || "";
     }
 
-    const fp = new foundry.applications.apps.FilePicker({
+    const fp = new foundry.applications.apps.FilePicker.implementation({
       type: "image",
       current: current,
       callback: (path) => {
