@@ -1,5 +1,10 @@
 # Changelog
 
+# [5.0.3]
+
+- Save location box would not save.
+- Scrolling stopped working for people with small screens and many layers could not reach buttons.
+
 # [5.0.2]
 
 - Not all instances of the filepicker would load the Forge Assets library when using the Forge.
