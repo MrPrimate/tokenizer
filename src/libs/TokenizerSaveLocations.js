@@ -42,7 +42,7 @@ export class TokenizerSaveLocations extends HandlebarsApplicationMixin(Applicati
     tag: "form",
     form: {
       submitOnChange: false,
-      submitOnClose: false,
+      handler: TokenizerSaveLocations.formHandler,
       closeOnSubmit: false,
     },
   };
