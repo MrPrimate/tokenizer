@@ -348,7 +348,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
   async _prepareContext() {
     const frames = await this.getFrames();
     const masks = await this.getMasks();
-    const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target");
+    const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target") ?? "token";
     const pasteTargetName = Utils.titleString(pasteTarget);
 
     return {
