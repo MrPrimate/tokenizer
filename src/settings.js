@@ -21,7 +21,7 @@ class ResetCustomFrames extends HandlebarsApplicationMixin(ApplicationV2) {
       closeOnSubmit: true,
     },
     window: {
-      title: "Reset Custom Frames",
+      title: "vtta-tokenizer.reset-custom-frames.name",
     },
   };
 
@@ -58,7 +58,7 @@ class ResetCustomMasks extends HandlebarsApplicationMixin(ApplicationV2) {
       closeOnSubmit: true,
     },
     window: {
-      title: "Reset Custom Masks",
+      title: "vtta-tokenizer.reset-custom-masks.name",
     },
   };
 
@@ -545,9 +545,9 @@ export function registerSettings() {
     config: true,
     type: String,
     choices: {
-      global: "Use global setting",
-      tokenizer: "Tokenizer",
-      default: "Default File Picker",
+      global: "vtta-tokenizer.choice.global",
+      tokenizer: "vtta-tokenizer.module-name",
+      default: "vtta-tokenizer.choice.filePicker",
     },
     default: "global",
   });
@@ -614,11 +614,11 @@ export function registerSettings() {
     config: true,
     type: String,
     choices: {
-      DEBUG: "DEBUG",
-      INFO: "INFO",
-      WARN: "WARN",
-      ERR: "ERROR ",
-      OFF: "OFF",
+      DEBUG: "vtta-tokenizer.log-level.DEBUG",
+      INFO: "vtta-tokenizer.log-level.INFO",
+      WARN: "vtta-tokenizer.log-level.WARN",
+      ERR: "vtta-tokenizer.log-level.ERR",
+      OFF: "vtta-tokenizer.log-level.OFF",
     },
     default: "INFO",
   });

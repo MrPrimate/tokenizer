@@ -71,7 +71,7 @@ class ImageBrowser extends HandlebarsApplicationMixin(ApplicationV2) {
     },
     tag: "form",
     window: {
-      title: "Image Browser",
+      title: "vtta-tokenizer.label.ImageBrowser",
       resizable: true,
       minimizable: false,
       subtitle: "",

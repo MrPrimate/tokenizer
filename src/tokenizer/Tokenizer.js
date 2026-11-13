@@ -339,29 +339,18 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
       height: "auto",
     },
     window: {
-      title: "Tokenizer",
+      title: "vtta-tokenizer.module-name",
     },
   };
 
   /* -------------------------------------------- */
 
-  async _prepareContext() {
-    const frames = await this.getFrames();
-    const masks = await this.getMasks();
-    const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target") ?? "token";
-    const pasteTargetName = Utils.titleString(pasteTarget);
-
-    return {
-      options: this.tokenOptions,
-      canUpload: game.user && game.user.can("FILES_UPLOAD"),
-      canBrowse: game.user && game.user.can("FILES_BROWSE"),
-      tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && game.modules.get("token-variants")?.active,
-      frames,
-      masks,
-      pasteTarget,
-      pasteTargetName,
-      modifyAvatar: this.modifyAvatar,
-    };
+  static async formHandler() {
+    // upload token and avatar
+    const dataResults = await Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]);
+    await this.updateAvatar(dataResults[0]);
+    await this.updateToken(dataResults[1]);
+    await this.callback(this.tokenOptions);
   }
 
   static async #onChooseImage(event, button) {
@@ -410,31 +399,84 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
     return path;
   }
 
-  async _getFilename(suffix = "Avatar", postfix = "") {
-    const actorName = await Utils.makeSlug(this.tokenOptions.name);
+  static async menuButton(event, target) {
+    event.preventDefault();
+    const view = target.dataset.target === "avatar" ? this.Avatar : this.Token;
 
-    if (suffix === "Token" && this.tokenOptions.isWildCard) {
-      // for wildcards we respect the current path of the existing/provided tokenpath
-      const dirOptions = DirectoryPicker.parse(this.wildCardPath);
-      const tokenWildcard = this.tokenOptions.tokenFilename.indexOf("*") === -1
-        // set it to a wildcard we can actually use
-        ? `${dirOptions.current}/${actorName}.Token-*.${this.imageFormat}`
-        : this.tokenOptions.tokenFilename.endsWith(`.${this.imageFormat}`)
-          ? this.tokenOptions.tokenFilename
-          : `${this.tokenOptions.tokenFilename}.${this.imageFormat}`;
-
-      const FPClass = foundry.applications.apps.FilePicker.implementation;
-      const browser = await FPClass.browse(dirOptions.activeSource, tokenWildcard, {
-        wildcard: true,
-      });
-
-      const newCount = browser.files.length + 1;
-      const num = newCount.toString().padStart(3, "0");
-      const targetFilename = tokenWildcard.replace(/\*/g, num).split("/").pop();
-
-      return targetFilename;
+    switch (target.dataset.type) {
+      case "upload": {
+        const img = await Utils.upload();
+        view.addImageLayer(img, { type: "image" });
+        break;
+      }
+      case "download-token": {
+        const filename = this.tokenFileName;
+        const blob = await this.Token.get("blob");
+        const file = new File([blob], filename, { type: blob.type });
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(file);
+        a.download = filename;
+        a.click();
+        break;
+      }
+      case "download": {
+        const result = await foundry.applications.api.DialogV2.prompt({
+          window: { title: "vtta-tokenizer.download.title" },
+          content: `
+            <p>${game.i18n.localize("vtta-tokenizer.download.url")}.</p>
+            <div class="form-group">
+              <label>URL</label>
+              <input id="tokenizerurl" type="text" name="tokenizerurl" placeholder="https://" data-dtype="String">
+            </div>`,
+          ok: {
+            label: game.i18n.localize("vtta-tokenizer.label.OK"),
+            callback: (event, button) => {
+              return button.form.elements.tokenizerurl.value;
+            },
+          },
+          rejectClose: false,
+        });
+        if (result) {
+          try {
+            const img = await Utils.download(result);
+            view.addImageLayer(img, { type: "image" });
+          } catch (error) {
+            logger.error("Error fetching image", error);
+            ui.notifications.error(error);
+          }
+        }
+        break;
+      }
+      case "token": {
+        this.Token.get("img").then((img) => view.addImageLayer(img, { type: "image" }));
+        break;
+      }
+      case "avatar": {
+        this.Avatar.get("img").then((img) => view.addImageLayer(img, {
+          activate: true,
+          type: "image",
+        }));
+        break;
+      }
+      case "color": {
+        const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
+        view.addColorLayer({ color: defaultColor });
+        break;
+      }
+      case "tokenVariants": {
+        game.modules.get("token-variants").api.showArtSelect(this.tokenOptions.name, {
+          callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img, { type: "image" })),
+          searchType: target.dataset.target === "avatar" ? "Portrait" : "Token",
+        });
+        break;
+      }
+      case "locations": {
+        const locations = new TokenizerSaveLocations(this);
+        locations.render({ force: true });
+        break;
+      }
+      // no default
     }
-    return `${actorName}.${suffix}${postfix}.${this.imageFormat}`;
   }
 
   async updateToken(dataBlob) {
@@ -455,12 +497,23 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
     }
   }
 
-  static async formHandler() {
-    // upload token and avatar
-    const dataResults = await Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]);
-    await this.updateAvatar(dataResults[0]);
-    await this.updateToken(dataResults[1]);
-    this.callback(this.tokenOptions);
+  async _prepareContext() {
+    const frames = await this.getFrames();
+    const masks = await this.getMasks();
+    const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target") ?? "token";
+    const pasteTargetName = game.i18n.localize(`vtta-tokenizer.label.${pasteTarget}`);
+
+    return {
+      options: this.tokenOptions,
+      canUpload: game.user && game.user.can("FILES_UPLOAD"),
+      canBrowse: game.user && game.user.can("FILES_BROWSE"),
+      tokenVariantsEnabled: game.user && game.user.can("FILES_BROWSE") && game.modules.get("token-variants")?.active,
+      frames,
+      masks,
+      pasteTarget,
+      pasteTargetName,
+      modifyAvatar: this.modifyAvatar,
+    };
   }
 
   closeQuickLayerSelector(type) {
@@ -663,81 +716,31 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
     }
   }
 
-  static async menuButton(event, target) {
-    event.preventDefault();
-    const view = target.dataset.target === "avatar" ? this.Avatar : this.Token;
+  async _getFilename(suffix = "Avatar", postfix = "") {
+    const actorName = await Utils.makeSlug(this.tokenOptions.name);
 
-    switch (target.dataset.type) {
-      case "upload": {
-        const img = await Utils.upload();
-        view.addImageLayer(img, { type: "image" });
-        break;
-      }
-      case "download-token": {
-        const filename = this.tokenFileName;
-        const blob = await this.Token.get("blob");
-        const file = new File([blob], filename, { type: blob.type });
-        let a = document.createElement("a");
-        a.href = URL.createObjectURL(file);
-        a.download = filename;
-        a.click();
-        break;
-      }
-      case "download": {
-        const result = await foundry.applications.api.DialogV2.prompt({
-          window: { title: "Download from the internet" },
-          content: `
-            <p>${game.i18n.localize("vtta-tokenizer.download.url")}.</p>
-            <div class="form-group">
-              <label>URL</label>
-              <input id="tokenizerurl" type="text" name="tokenizerurl" placeholder="https://" data-dtype="String">
-            </div>`,
-          ok: {
-            label: game.i18n.localize("vtta-tokenizer.label.OK"),
-            callback: (event, button) => {
-              return button.form.elements.tokenizerurl.value;
-            },
-          },
-          rejectClose: false,
-        });
-        if (result) {
-          try {
-            const img = await Utils.download(result);
-            view.addImageLayer(img, { type: "image" });
-          } catch (error) {
-            logger.error("Error fetching image", error);
-            ui.notifications.error(error);
-          }
-        }
-        break;
-      }
-      case "token": {
-        this.Token.get("img").then((img) => view.addImageLayer(img, { type: "image" }));
-        break;
-      }
-      case "avatar": {
-        this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true, type: "image" }));
-        break;
-      }
-      case "color": {
-        const defaultColor = game.settings.get(CONSTANTS.MODULE_ID, "default-color");
-        view.addColorLayer({ color: defaultColor });
-        break;
-      }
-      case "tokenVariants": {
-        game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
-          callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img, { type: "image" })),
-          searchType: target.dataset.target === "avatar" ? "Portrait" : "Token",
-        });
-        break;
-      }
-      case "locations": {
-        const locations = new TokenizerSaveLocations(this);
-        locations.render({ force: true });
-        break;
-      }
-      // no default
+    if (suffix === "Token" && this.tokenOptions.isWildCard) {
+      // for wildcards we respect the current path of the existing/provided tokenpath
+      const dirOptions = DirectoryPicker.parse(this.wildCardPath);
+      const tokenFilename = DirectoryPicker.decodePath(this.tokenOptions.tokenFilename ?? "", dirOptions.activeSource);
+      const tokenWildcard = tokenFilename.indexOf("*") === -1
+        // set it to a wildcard we can actually use
+        ? `${dirOptions.current}/${actorName}.Token-*.${this.imageFormat}`
+        : tokenFilename.endsWith(`.${this.imageFormat}`)
+          ? tokenFilename
+          : `${tokenFilename}.${this.imageFormat}`;
+
+      const FPClass = foundry.applications.apps.FilePicker.implementation;
+      const browser = await FPClass.browse(dirOptions.activeSource, tokenWildcard, {
+        wildcard: true,
+        bucket: dirOptions.bucket,
+      });
+
+      const newCount = browser.files.length + 1;
+      const num = newCount.toString().padStart(3, "0");
+      return tokenWildcard.replace(/\*/g, num).split("/").pop();
     }
+    return `${actorName}.${suffix}${postfix}.${this.imageFormat}`;
   }
 
   async _addBaseTokenLayers() {

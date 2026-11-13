@@ -1,11 +1,11 @@
-import Utils from '../libs/Utils.js';
-import { geom } from '../libs/MarchingSquares.js';
-import CONSTANTS from '../constants.js';
-import { generateRayMask } from '../libs/RayMask.js';
-import { Masker } from './Masker.js';
-import Color from '../libs/Color.js';
-import logger from '../libs/logger.js';
-import { MagicLasso } from './MagicLasso.js';
+import Utils from "../libs/Utils.js";
+import { geom } from "../libs/MarchingSquares.js";
+import CONSTANTS from "../constants.js";
+import { generateRayMask } from "../libs/RayMask.js";
+import { Masker } from "./Masker.js";
+import Color from "../libs/Color.js";
+import logger from "../libs/logger.js";
+import { MagicLasso } from "./MagicLasso.js";
 
 export default class Layer {
 

@@ -1,9 +1,9 @@
-import Layer from './Layer.js';
-import Control from './Control.js';
-import Utils from '../libs/Utils.js';
-import CONSTANTS from '../constants.js';
-import logger from '../libs/logger.js';
-import Color from '../libs/Color.js';
+import Layer from "./Layer.js";
+import Control from "./Control.js";
+import Utils from "../libs/Utils.js";
+import CONSTANTS from "../constants.js";
+import logger from "../libs/logger.js";
+import Color from "../libs/Color.js";
 
 export default class View {
   constructor(tokenizer, dimension, element) {

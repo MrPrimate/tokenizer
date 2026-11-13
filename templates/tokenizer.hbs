@@ -103,12 +103,14 @@
             <button type="button" title="{{localize "vtta-tokenizer.label.SaveLocation"}}" class="menu-button" data-action="menuButton" data-type="locations"><i class="fas fa-folder-open"></i></button>
             <button type="button" title="{{localize "vtta-tokenizer.label.Download"}}" name="downloadToken" class="menu-button" data-action="menuButton" data-type="download-token" data-target="token"><i class="fas fa-download"></i></button>
             <span style="font-weight: bold">{{localize "vtta-tokenizer.label.TokenFilename"}}: </span>
-            <span name="targetFilename">Generating...</span>
+          <span name="targetFilename">{{localize "vtta-tokenizer.label.Generating"}}</span>
             <input type="hidden" name="targetAvatarFilename" />
             <input type="hidden" name="targetTokenFilename" />
         </div>
         <div class="footer-end">
-            <button class="ok-button" title="Save and close" type="submit" id="ok" {{#unless canUpload }}disabled{{/unless}}>{{localize "vtta-tokenizer.label.Apply"}}&nbsp;&nbsp;<i class="fas fa-stamp button-fas"></i></button>
+          <button class="ok-button" title="{{localize 'vtta-tokenizer.label.SaveAndClose'}}" type="submit" id="ok"
+                  {{#unless canUpload }}disabled{{/unless}}>{{localize "vtta-tokenizer.label.Apply"}}&nbsp;&nbsp;<i
+            class="fas fa-stamp button-fas"></i></button>
         </div>
     </div>
 </div>

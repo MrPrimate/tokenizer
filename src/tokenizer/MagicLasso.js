@@ -336,7 +336,7 @@ export class MagicLasso {
   }
 
   showThreshold() {
-    document.getElementById("tokenizer-threshold").innerHTML = `Threshold: ${this.currentThreshold}`;
+    document.getElementById("tokenizer-threshold").textContent = `${game.i18n.localize("vtta-tokenizer.MagicLasso.Threshold")}: ${this.currentThreshold}`;
   }
 
   showBlur() {
