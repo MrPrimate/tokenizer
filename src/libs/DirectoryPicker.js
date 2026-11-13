@@ -63,7 +63,7 @@ class DirectoryPicker extends FPClass {
     return {
       activeSource: "data",
       bucket: null,
-      current: DirectoryPicker.decodePath(str)
+      current: DirectoryPicker.decodePath(str),
     };
   }
 

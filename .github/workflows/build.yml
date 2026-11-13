@@ -64,3 +64,19 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: './module.json,./vtta-tokenizer.zip'  # don't forget to rename module zip thing
         tag: latest
+    -   name: Discord notification
+        env:
+            DISCORD_WEBHOOK: ${{ secrets.DISCORD_HOOK }}
+            DISCORD_USERNAME: "Squint - Intern"
+        uses: Ilshidur/action-discord@0.3.2
+        with:
+            args: "Squint (Intern) has released Tokenizer ${{ steps.get-version.outputs.release_version }}."
+
+    -   name: FoundryVTT AutoPublish
+        uses: fjogeleit/http-request-action@v1
+        continue-on-error: true
+        with:
+            url: 'https://api.foundryvtt.com/_api/packages/release_version'
+            method: 'POST'
+            customHeaders: '{"Content-Type": "application/json", "Authorization" : "${{ secrets.FOUNDRY_KEY }}"}'
+            data: '{"dry_run": false, "id" : "vtta-tokenizer", "release": {"version" :  "${{ steps.get-version.outputs.release_version }}", "manifest": "https://github.com/${{ github.repository }}/releases/download/${{ steps.get-version.outputs.release_version }}/module.json", "notes" : "https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md", "compatibility" : {"minimum": "13", "verified": "13", "maximum": ""} } }'

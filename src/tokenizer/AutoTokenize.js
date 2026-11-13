@@ -28,7 +28,7 @@ export default class AutoTokenize extends HandlebarsApplicationMixin(Application
       width: 350,
     },
     window: {
-      title: "vtta-tokenizer.compendium.auto-tokenize"
+      title: "vtta-tokenizer.compendium.auto-tokenize",
     },
   };
 
@@ -52,7 +52,7 @@ export default class AutoTokenize extends HandlebarsApplicationMixin(Application
       },
       content: `<h1>${content.title}</h1><h3>${content.description}</h3>`,
       ok: {
-        label: game.i18n.localize("vtta-tokenizer.label.OK")
+        label: game.i18n.localize("vtta-tokenizer.label.OK"),
       },
     });
   }

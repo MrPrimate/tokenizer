@@ -339,7 +339,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
       height: "auto",
     },
     window: {
-      title: "vtta-tokenizer.module-name"
+      title: "vtta-tokenizer.module-name",
     },
   };
 
@@ -452,7 +452,10 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
         break;
       }
       case "avatar": {
-        this.Avatar.get("img").then((img) => view.addImageLayer(img, { activate: true, type: "image" }));
+        this.Avatar.get("img").then((img) => view.addImageLayer(img, {
+          activate: true,
+          type: "image",
+        }));
         break;
       }
       case "color": {
@@ -461,7 +464,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
         break;
       }
       case "tokenVariants": {
-        game.modules.get('token-variants').api.showArtSelect(this.tokenOptions.name, {
+        game.modules.get("token-variants").api.showArtSelect(this.tokenOptions.name, {
           callback: (imgSrc) => Utils.download(imgSrc).then((img) => view.addImageLayer(img, { type: "image" })),
           searchType: target.dataset.target === "avatar" ? "Portrait" : "Token",
         });
@@ -730,14 +733,12 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
       const FPClass = foundry.applications.apps.FilePicker.implementation;
       const browser = await FPClass.browse(dirOptions.activeSource, tokenWildcard, {
         wildcard: true,
-        bucket: dirOptions.bucket
+        bucket: dirOptions.bucket,
       });
 
       const newCount = browser.files.length + 1;
       const num = newCount.toString().padStart(3, "0");
-      const targetFilename = tokenWildcard.replace(/\*/g, num).split("/").pop();
-
-      return targetFilename;
+      return tokenWildcard.replace(/\*/g, num).split("/").pop();
     }
     return `${actorName}.${suffix}${postfix}.${this.imageFormat}`;
   }

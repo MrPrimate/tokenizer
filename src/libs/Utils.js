@@ -191,7 +191,7 @@ export default class Utils {
     if (result?.error || typeof result?.path !== "string" || result.path.trim() === "") {
       const message = game.i18n.format("vtta-tokenizer.notification.failedUpload", {
         fileName,
-        directory: options.current
+        directory: options.current,
       });
       ui.notifications.error(message);
       throw new Error(message);
