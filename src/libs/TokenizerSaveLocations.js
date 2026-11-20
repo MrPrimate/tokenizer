@@ -74,13 +74,15 @@ export class TokenizerSaveLocations extends HandlebarsApplicationMixin(Applicati
   static async selectDirectory(event, target) {
     const targetDirSetting = target.dataset.target;
     const currentDir = this.tokenizer[targetDirSetting];
-    const parsedDir = DirectoryPicker.parse(currentDir);
+    // const parsedDir = FileHelper.parseDirectory(currentDir);
+    const current = await DirectoryPicker.getFileUrl(currentDir, "");
 
     const filePicker = new FPClass({
       type: "folder",
-      current: parsedDir.current,
-      activeSource: parsedDir.activeSource,
-      bucket: parsedDir.bucket,
+      current: current,
+      // source: parsedDir.activeSource,
+      // activeSource: parsedDir.activeSource,
+      // bucket: parsedDir.bucket,
       callback: async (path, picker) => {
         const activeSource = picker.activeSource;
         const bucket = activeSource === "s3" && picker.sources.s3?.bucket && picker.sources.s3.bucket !== ""

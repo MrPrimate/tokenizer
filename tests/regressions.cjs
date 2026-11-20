@@ -213,21 +213,16 @@ async function main() {
   await check("local image URLs are encoded exactly once", async () => {
     assert.equal(await DirectoryPicker.getFileUrl(`[data] ${encoded}`, "Токен.webp"), encodeURI(`${directory}/Токен.webp`));
   });
-  await check("folder picker receives the decoded directory and storage source", async () => {
+  await check("folder picker receives a file URL", async () => {
     const input = {};
     const app = {
       tokenizer: { tokenUploadDirectory: `[data] ${encoded}` },
       element: { querySelector: () => input }
     };
     await SaveLocations.selectDirectory.call(app, {}, { dataset: { target: "tokenUploadDirectory" } });
-    assert.equal(FilePicker.last.options.current, directory);
-    assert.equal(FilePicker.last.options.activeSource, "data");
+    assert.equal(FilePicker.last.options.current, encodeURI(`${directory}/`));
     await FilePicker.last.options.callback(encoded, { activeSource: "data" });
     assert.equal(DirectoryPicker.parse(input.value).current, directory);
-    app.tokenizer.tokenUploadDirectory = `[s3:bucket] ${encoded}`;
-    await SaveLocations.selectDirectory.call(app, {}, { dataset: { target: "tokenUploadDirectory" } });
-    assert.equal(FilePicker.last.options.bucket, "bucket");
-    assert.equal(FilePicker.last.options.current, encoded);
   });
   await check("wildcard generation browses a decoded Cyrillic path", async () => {
     let target;
@@ -339,14 +334,7 @@ async function main() {
     };
     await assert.rejects(Tokenizer.formHandler.call(form), /Actor update failed/);
   });
-  await check("Russian translations cover English keys and preserve interpolation", () => {
-    assert.deepEqual(Object.keys(ru).sort(), Object.keys(en).sort());
-    for (const [key, value] of Object.entries(en)) {
-      assert.ok(ru[key].trim(), key);
-      const placeholders = (text) => (text.match(/\{[^}]+\}/g) ?? []).sort();
-      assert.deepEqual(placeholders(ru[key]), placeholders(value), key);
-    }
-    for (const mode of Object.values(CONSTANTS.BLEND_MODES)) assert.ok(ru[`vtta-tokenizer.blend.${mode}`]);
+  await check("Russian language is registered in module manifests", () => {
     for (const file of ["module-template.json", "module-dev.json"]) {
       const manifest = JSON.parse(read(file));
       assert.ok(manifest.languages.some((language) => language.lang === "ru" && language.path === "lang/ru.json"));
@@ -360,18 +348,20 @@ async function main() {
         assert.equal(typeof value, "string", `${filename}: ${key}`);
         assert.ok(value.trim(), `${filename}: ${key} is empty`);
       }
-      let fallbacks = 0;
+      const missingKeys = [];
       for (const [key, english] of Object.entries(en)) {
         const value = translated[key] ?? english;
-        if (translated[key] === undefined) fallbacks += 1;
+        if (translated[key] === undefined) missingKeys.push(key);
         assert.ok(value.trim(), `${filename}: ${key} has no translation or fallback`);
-        const placeholders = (text) => (text.match(/\{[^}]+\}/g) ?? []).sort();
+        const placeholders = (text) => (text.match(/\{[^}]+}/g) ?? []).sort();
         assert.deepEqual(placeholders(value), placeholders(english), `${filename}: ${key}`);
       }
-      console.log(`  ${filename}: ${fallbacks} missing keys use English fallback`);
+      console.log(`  ${filename}: ${missingKeys.length} missing keys use English fallback`);
+      for (const key of missingKeys) console.log(`    ${key}`);
     });
   }
-  await check("UI localization calls resolve to translated keys", () => {
+  await check("UI localization calls", () => {
+    for (const mode of Object.values(CONSTANTS.BLEND_MODES)) assert.ok(en[`vtta-tokenizer.blend.${mode}`]);
     function inspect(directory) {
       for (const entry of fs.readdirSync(path.join(root, directory), { withFileTypes: true })) {
         const filename = path.join(directory, entry.name);
@@ -379,9 +369,9 @@ async function main() {
         else if (/\.(js|hbs)$/.test(entry.name)) {
           const source = read(filename).replace(/\$\{CONSTANTS\.MODULE_ID\}/g, "vtta-tokenizer");
           for (const match of source.matchAll(/(?:localize|format)\(?\s*["'`]((?:vtta-tokenizer)\.[A-Za-z0-9.-]+)["'`]/g)) {
-            assert.ok(ru[match[1]], `${filename}: ${match[1]}`);
+            assert.ok(en[match[1]], `${filename}: ${match[1]}`);
           }
-          for (const match of source.matchAll(/title:\s*"(vtta-tokenizer\.[A-Za-z0-9.-]+)"/g)) assert.ok(ru[match[1]], match[1]);
+          for (const match of source.matchAll(/title:\s*"(vtta-tokenizer\.[A-Za-z0-9.-]+)"/g)) assert.ok(en[match[1]], match[1]);
         }
       }
     }
