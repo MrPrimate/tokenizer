@@ -102,9 +102,12 @@ async function updateActor(tokenizerResponse) {
   // updating the avatar filename
   const update = {};
   const avatarKey = getAvatarKey();
-  update[avatarKey] = tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag;
+  if (typeof tokenizerResponse.avatarFilename === "string" && tokenizerResponse.avatarFilename.trim() !== "") {
+    update[avatarKey] = tokenizerResponse.avatarFilename.split("?")[0] + "?" + dateTag;
+  }
 
-  if (!tokenizerResponse.isWildCard) {
+  if (!tokenizerResponse.isWildCard
+    && typeof tokenizerResponse.tokenFilename === "string" && tokenizerResponse.tokenFilename.trim() !== "") {
     // for non-wildcard tokens, we set the token img now
     const tokenPath = tokenizerResponse.tokenFilename.split("?")[0] + "?" + dateTag;
     foundry.utils.setProperty(update, "prototypeToken.texture.src", tokenPath);
@@ -127,6 +130,7 @@ async function updateActor(tokenizerResponse) {
   // }
 
   logger.debug("Updating with", update);
+  if (Object.keys(update).length === 0) return;
   await tokenizerResponse.actor.update(update);
   if (!update.prototypeToken) return;
   // if there is a scene token, lets update it
@@ -327,7 +331,7 @@ function getActorSheetHeaderButtons(app, buttons) {
   const doc = (app.token) ? app : app.document;
 
   buttons.unshift({
-    label: "Tokenizer",
+    label: game.i18n.localize("vtta-tokenizer.module-name"),
     icon: "far fa-user-circle",
     class: CONSTANTS.MODULE_ID,
     onclick: () => tokenizeDoc(doc),
@@ -347,7 +351,7 @@ function getActorSheetHeaderButtonsV2(config, buttons) {
 
   config.options.actions["tokenizer"] = tokenizeDocV2;
   buttons.push({
-    label: "Tokenizer",
+    label: game.i18n.localize("vtta-tokenizer.module-name"),
     icon: "far fa-user-circle",
     action: "tokenizer",
   });
@@ -508,7 +512,7 @@ function addTokenizerContentOption(contextOptions) {
   }
 
   contextOptions.push({
-    name: "Tokenizer",
+    name: "vtta-tokenizer.module-name",
     callback: (li) => {
       const docId = li.dataset?.entryId
         ?? li.dataset?.documentId

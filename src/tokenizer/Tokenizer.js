@@ -339,7 +339,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
       height: "auto",
     },
     window: {
-      title: "Tokenizer",
+      title: "vtta-tokenizer.module-name",
     },
   };
 
@@ -349,7 +349,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
     const frames = await this.getFrames();
     const masks = await this.getMasks();
     const pasteTarget = game.settings.get(CONSTANTS.MODULE_ID, "paste-target") ?? "token";
-    const pasteTargetName = Utils.titleString(pasteTarget);
+    const pasteTargetName = game.i18n.localize(`vtta-tokenizer.label.${pasteTarget}`);
 
     return {
       options: this.tokenOptions,
@@ -416,16 +416,18 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
     if (suffix === "Token" && this.tokenOptions.isWildCard) {
       // for wildcards we respect the current path of the existing/provided tokenpath
       const dirOptions = DirectoryPicker.parse(this.wildCardPath);
-      const tokenWildcard = this.tokenOptions.tokenFilename.indexOf("*") === -1
+      const tokenFilename = DirectoryPicker.decodePath(this.tokenOptions.tokenFilename ?? "", dirOptions.activeSource);
+      const tokenWildcard = tokenFilename.indexOf("*") === -1
         // set it to a wildcard we can actually use
         ? `${dirOptions.current}/${actorName}.Token-*.${this.imageFormat}`
-        : this.tokenOptions.tokenFilename.endsWith(`.${this.imageFormat}`)
-          ? this.tokenOptions.tokenFilename
-          : `${this.tokenOptions.tokenFilename}.${this.imageFormat}`;
+        : tokenFilename.endsWith(`.${this.imageFormat}`)
+          ? tokenFilename
+          : `${tokenFilename}.${this.imageFormat}`;
 
       const FPClass = foundry.applications.apps.FilePicker.implementation;
       const browser = await FPClass.browse(dirOptions.activeSource, tokenWildcard, {
         wildcard: true,
+        bucket: dirOptions.bucket,
       });
 
       const newCount = browser.files.length + 1;
@@ -460,7 +462,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
     const dataResults = await Promise.all([this.Avatar.get("blob"), this.Token.get("blob")]);
     await this.updateAvatar(dataResults[0]);
     await this.updateToken(dataResults[1]);
-    this.callback(this.tokenOptions);
+    await this.callback(this.tokenOptions);
   }
 
   closeQuickLayerSelector(type) {
@@ -685,7 +687,7 @@ export default class Tokenizer extends HandlebarsApplicationMixin(ApplicationV2)
       }
       case "download": {
         const result = await foundry.applications.api.DialogV2.prompt({
-          window: { title: "Download from the internet" },
+          window: { title: "vtta-tokenizer.download.title" },
           content: `
             <p>${game.i18n.localize("vtta-tokenizer.download.url")}.</p>
             <div class="form-group">

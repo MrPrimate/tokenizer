@@ -119,8 +119,9 @@ export class TokenizerSaveLocations extends HandlebarsApplicationMixin(Applicati
       // eslint-disable-next-line no-await-in-loop
       directoryStatus.push({
         key: dataType.key,
-        value: dataType.value,
-        isBad: CONSTANTS.BAD_DIRS.includes(value),
+        name: dataType.name,
+        value,
+        isBad: CONSTANTS.BAD_DIRS.includes(value) || DirectoryPicker.parse(value).current.trim() === "",
         // eslint-disable-next-line no-await-in-loop
         isValid: await DirectoryPicker.verifyPath(DirectoryPicker.parse(value)),
       });
@@ -129,7 +130,7 @@ export class TokenizerSaveLocations extends HandlebarsApplicationMixin(Applicati
     if (directoryStatus.some((dir) => dir.isBad)) {
       for (const data of directoryStatus.filter((dir) => dir.isBad)) {
         ui.notifications.error(
-          `Please set the image upload directory for ${data.name} to something other than the root.`,
+          game.i18n.format("vtta-tokenizer.notification.rootDirectory", { name: data.name }),
           { permanent: true },
         );
         logger.error("Error setting Image directory", {
@@ -140,7 +141,7 @@ export class TokenizerSaveLocations extends HandlebarsApplicationMixin(Applicati
     } else if (directoryStatus.some((dir) => !dir.isValid)) {
       for (const data of directoryStatus.filter((dir) => !dir.isValid)) {
         ui.notifications.error(
-          `Directory Validation Failed for ${data.name} please check it exists and can be written to.`,
+          game.i18n.format("vtta-tokenizer.notification.invalidDirectory", { name: data.name }),
           { permanent: true },
         );
         logger.error("Error validating Image directory", {

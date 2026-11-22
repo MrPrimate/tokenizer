@@ -3,11 +3,23 @@
  */
 
 import logger from "../libs/logger.js";
-import Utils from "./Utils.js";
 
 const FPClass = foundry.applications.apps.FilePicker.implementation;
 
 class DirectoryPicker extends FPClass {
+
+  // FilePicker URLs are encoded; local filesystem paths must be decoded once.
+  // Remote storage keys are kept as supplied by their provider.
+  static decodePath(path, source = "data") {
+    if (!["data", "public"].includes(source) || (/^https?:\/\//i).test(path)) return path;
+    return path.replace(/(?:%[0-9a-f]{2})+/gi, (sequence) => {
+      try {
+        return decodeURIComponent(sequence);
+      } catch {
+        return sequence;
+      }
+    });
+  }
 
   static async uploadToPath(path, file) {
     const options = DirectoryPicker.parse(path);
@@ -35,14 +47,14 @@ class DirectoryPicker extends FPClass {
         return {
           activeSource: s3,
           bucket: bucket,
-          current: current,
+          current: DirectoryPicker.decodePath(current, s3),
           fullPath: inStr,
         };
       } else {
         return {
           activeSource: s3,
           bucket: null,
-          current: current,
+          current: DirectoryPicker.decodePath(current, s3),
           fullPath: inStr,
         };
       }
@@ -51,7 +63,7 @@ class DirectoryPicker extends FPClass {
     return {
       activeSource: "data",
       bucket: null,
-      current: str,
+      current: DirectoryPicker.decodePath(str),
     };
   }
 
@@ -97,22 +109,21 @@ class DirectoryPicker extends FPClass {
    */
   static async verifyPath(parsedPath, targetPath = null) {
     try {
-      const paths = (targetPath) ? targetPath.split("/") : parsedPath.current.split("/");
-      let currentSource = paths[0];
+      const target = targetPath === null
+        ? parsedPath.current
+        : DirectoryPicker.decodePath(targetPath, parsedPath.activeSource);
+      const paths = target.split("/").filter((part) => part !== "");
+      let currentSource = "";
 
       for (let i = 0; i < paths.length; i += 1) {
         try {
-          if (currentSource !== paths[i]) {
-            currentSource = `${currentSource}/${paths[i]}`;
-          }
+          currentSource = currentSource ? `${currentSource}/${paths[i]}` : paths[i];
           // eslint-disable-next-line no-await-in-loop
           await DirectoryPicker.createDirectory(parsedPath.activeSource, `${currentSource}`, { bucket: parsedPath.bucket });
 
         } catch (err) {
-          const errMessage = `${(err?.message ?? Utils.isString(err) ? err : err)}`.replace(/^Error: /, "").trim();
-          if (!errMessage.startsWith("EEXIST") && !errMessage.startsWith("The S3 key")) {
-            logger.error(`Error trying to verify path [${parsedPath.activeSource}], ${parsedPath.current}`, err);
-          }
+          // eslint-disable-next-line no-await-in-loop
+          if (!await DirectoryPicker.isExistingDirectory(parsedPath, currentSource, err)) return false;
         }
       }
     } catch (err) {
@@ -120,6 +131,19 @@ class DirectoryPicker extends FPClass {
     }
 
     return true;
+  }
+
+  static async isExistingDirectory(parsedPath, currentSource, error) {
+    const message = String(error?.message ?? error).replace(/^Error: /, "").trim();
+    if (message.startsWith("EEXIST") || message.startsWith("The S3 key")) return true;
+    try {
+      // Existing directories may be reported with a localized message.
+      await FPClass.browse(parsedPath.activeSource, currentSource, { bucket: parsedPath.bucket });
+      return true;
+    } catch {
+      logger.error(`Error trying to verify path [${parsedPath.activeSource}], ${parsedPath.current}`, error);
+      return false;
+    }
   }
 
   static async getForgeUrl(directoryPath, filename) {

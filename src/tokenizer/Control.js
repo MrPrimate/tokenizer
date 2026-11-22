@@ -155,7 +155,7 @@ export default class Control {
     this.maskManagementSection.name = 'mask-management';
     this.maskManagementSection.classList.add('section');
     let maskManagementTitle = document.createElement('span');
-    maskManagementTitle.innerHTML = 'Masks';
+    maskManagementTitle.innerHTML = game.i18n.localize("vtta-tokenizer.label.Masks");
     this.maskManagementSection.appendChild(maskManagementTitle);
 
     // Set the basic mask of this layer
@@ -232,7 +232,7 @@ export default class Control {
       for (const mode of Object.values(CONSTANTS.BLEND_MODES)) {
         const option = document.createElement('option');
         option.value = mode;
-        option.innerHTML = mode;
+        option.textContent = game.i18n.localize(`vtta-tokenizer.blend.${mode}`);
         if ((blendControlElement.classList.contains("blend-control-image") && mode === this.layer.compositeOperation)
           || (blendControlElement.classList.contains("blend-control-mask") && mode === this.layer.maskCompositeOperation)) {
           option.selected = true;

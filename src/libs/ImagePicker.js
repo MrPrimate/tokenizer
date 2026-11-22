@@ -84,7 +84,7 @@ class ImagePicker extends FPClass {
         let pickerButton = document.createElement("button");
         pickerButton.type = "button";
         pickerButton.className = "file-picker";
-        pickerButton.title = "Pick image";
+        pickerButton.title = game.i18n.localize("vtta-tokenizer.label.PickImage");
         pickerButton.innerHTML = '<i class="fas fa-file-import fa-fw"></i>';
         pickerButton.addEventListener("click", () => {
           picker.render({ force: true });
@@ -99,7 +99,7 @@ class ImagePicker extends FPClass {
   _onRender() {
     const footerButton = this.element.querySelector("footer button");
     if (footerButton) {
-      footerButton.textContent = "Select Image";
+      footerButton.textContent = game.i18n.localize("vtta-tokenizer.label.PickImage");
     }
   }
 }
